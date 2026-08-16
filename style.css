@@ -1284,11 +1284,12 @@ dex-empty-state {
 
 .recent-cards-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 1rem;
 }
 
 .recent-card {
+  min-width: 0;
   position: relative;
   background: var(--color-surface);
   border: 2px solid var(--color-border);
@@ -1358,12 +1359,18 @@ dex-empty-state {
   color: var(--color-text);
   margin-bottom: 0.2rem;
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .recent-card-meta {
   font-family: var(--font-body);
   font-size: 0.7rem;
   color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Right column: Dex Overview */
@@ -1428,7 +1435,8 @@ dex-empty-state {
 
 .overview-stat-number {
   font-family: var(--font-display);
-  font-size: 2.5rem;
+  font-size: clamp(1.5rem, 6vw, 2.5rem);
+  word-break: break-word;
   color: var(--white);
   line-height: 1;
   margin-bottom: 0.3rem;
@@ -1691,6 +1699,14 @@ dex-empty-state {
     padding: 3rem 1rem;
   }
 
+  .recent-overview-section {
+    padding: 3rem 1rem;
+  }
+
+  .overview-column {
+    padding: 1.5rem 1rem;
+  }
+
   .explore-header {
     flex-direction: column;
     align-items: flex-start;
@@ -1711,10 +1727,6 @@ dex-empty-state {
     font-size: clamp(1.5rem, 6vw, 2.2rem);
   }
 
-  /* Recently Added */
-  .recent-cards-row {
-    grid-template-columns: repeat(2, 1fr);
-  }
 
   /* Footer */
   .footer-inner {
@@ -1787,11 +1799,11 @@ dex-empty-state {
   }
 
   .recent-cards-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .overview-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
   }
 }
