@@ -1,0 +1,252 @@
+{
+  "profile": {
+    "name": "Fradana",
+    "handle": "@afif_fradana",
+    "tagline": "A personal database of the things I love. Games. Manhwa. Anime. Music. And more.",
+    "quote": "Living a life surrounded by stories I love.",
+    "location": "Solo, ID",
+    "avatar": "Asset/Profile/Wisadel_Skin.webp",
+    "heroImage": "Asset/Profile/Wisadel_Skin.webp"
+  },
+  "socials": [
+    {
+      "platform": "instagram",
+      "url": "https://instagram.com/afif_fradana",
+      "label": "Instagram"
+    },
+    {
+      "platform": "steam",
+      "url": "https://steamcommunity.com/id/Fradana/",
+      "label": "Steam"
+    },
+    {
+      "platform": "github",
+      "url": "https://github.com/afif25fradana",
+      "label": "GitHub"
+    }
+  ],
+  "categories": [
+    {
+      "id": "games",
+      "title": "GAMES",
+      "accentLabel": "now playing",
+      "description": "Games I’ve played and enjoyed.",
+      "icon": "gamepad",
+      "items": [
+        {
+          "title": "Arknights",
+          "subtitle": "Tactical RPG · Hypergryph",
+          "image": "Asset/Games/Arknight.webp",
+          "dateAdded": "2026-08-15"
+        },
+        {
+          "title": "Cyberpunk 2077",
+          "subtitle": "Open World RPG · CD Projekt Red",
+          "image": "Asset/Games/CyberPunk_2077.webp",
+          "dateAdded": "2026-07-28"
+        },
+        {
+          "title": "Assassin's Creed: Brotherhood",
+          "subtitle": "Action Adventure · Ubisoft",
+          "image": "Asset/Games/Assassin_Creed_BrotherHood.webp",
+          "dateAdded": "2026-06-05"
+        },
+        {
+          "title": "Detroit: Become Human",
+          "subtitle": "Choice-Driven Drama · Quantic Dream",
+          "image": "Asset/Games/Detroit_Become_Human.webp",
+          "dateAdded": "2026-05-19"
+        },
+        {
+          "title": "The Witcher 3: Wild Hunt",
+          "subtitle": "Action RPG · CD Projekt Red",
+          "image": "Asset/Games/The_Witcher_3.webp",
+          "dateAdded": "2026-04-30"
+        },
+        {
+          "title": "Monster Hunter: World",
+          "subtitle": "Action RPG · Capcom",
+          "image": "Asset/Games/Monster_Hunter_World.webp",
+          "dateAdded": "2026-03-22"
+        },
+        {
+          "title": "Forza Horizon 6",
+          "subtitle": "Racing / Open World · Playground Games",
+          "image": "Asset/Games/Forza_Horizon_6.webp",
+          "dateAdded": "2026-02-11"
+        },
+        {
+          "title": "No Man's Sky",
+          "subtitle": "Sci-Fi Exploration · Hello Games",
+          "image": "Asset/Games/No_Mans_Sky.webp",
+          "dateAdded": "2026-01-19"
+        }
+      ]
+    },
+    {
+      "id": "manga-manhwa",
+      "title": "MANGA & MANHWA",
+      "accentLabel": "reading list",
+      "description": "Manga and manhwa I’ve read and collected.",
+      "icon": "book",
+      "items": [
+        {
+          "title": "Absolute Regression",
+          "subtitle": "Jang Young-hoon · A4 · Nara Yeo",
+          "image": "Asset/ManhwaManga Cover/Absolute Regression.webp",
+          "dateAdded": "2026-08-12"
+        },
+        {
+          "title": "I'm An Evil God",
+          "subtitle": "Xie Yan",
+          "image": "Asset/ManhwaManga Cover/I'm An Evil God.webp",
+          "dateAdded": "2026-07-17"
+        },
+        {
+          "title": "Mist, Might, Mayhem",
+          "subtitle": "Han Joong Wueol Ya",
+          "image": "Asset/ManhwaManga Cover/Mist, Might, Mayhem.webp",
+          "dateAdded": "2026-06-24"
+        },
+        {
+          "title": "Pick Me Up, Infinite Gacha",
+          "subtitle": "Hermod · nicesun",
+          "image": "Asset/ManhwaManga Cover/Pick Me Up, Infinite Gacha.webp",
+          "dateAdded": "2026-05-08"
+        },
+        {
+          "title": "Sakamoto Days",
+          "subtitle": "Yuto Suzuki",
+          "image": "Asset/ManhwaManga Cover/Sakamoto Days.webp",
+          "dateAdded": "2026-04-21"
+        },
+        {
+          "title": "Star-Embracing Swordmaster",
+          "subtitle": "Q10 · Hong Dae-ui · Juno",
+          "image": "Asset/ManhwaManga Cover/Star-Embracing Swordmaster.webp",
+          "dateAdded": "2026-03-14"
+        },
+        {
+          "title": "The Greatest Estate Developer",
+          "subtitle": "BK_Moon · Lee Hyun-min · Kim Hyun-soo",
+          "image": "Asset/ManhwaManga Cover/The Greatest Estate Developer.webp",
+          "dateAdded": "2026-02-26"
+        },
+        {
+          "title": "The Regressed Mercenary's Machinations",
+          "subtitle": "Gold Line · Lee Park Jin-seok",
+          "image": "Asset/ManhwaManga Cover/The Regressed Mercenary's Machinations.webp",
+          "dateAdded": "2026-01-19"
+        }
+      ]
+    },
+    {
+      "id": "movies-tv",
+      "title": "MOVIES & SERIES",
+      "accentLabel": "watchlist",
+      "description": "Movies and series I’ve watched and loved.",
+      "icon": "tv",
+      "items": [
+        {
+          "title": "Better Call Saul",
+          "subtitle": "Crime Drama · AMC",
+          "image": "Asset/Movie&TV/Better_Call_Saul.webp",
+          "dateAdded": "2026-08-07"
+        },
+        {
+          "title": "Blade Runner 2049",
+          "subtitle": "Sci-Fi / Neo-Noir · 2017",
+          "image": "Asset/Movie&TV/Blade Runner 2045, movie poster_ Featuring none other than Ryan Gosling.webp",
+          "dateAdded": "2026-07-02"
+        },
+        {
+          "title": "Breaking Bad",
+          "subtitle": "Crime Drama · AMC",
+          "image": "Asset/Movie&TV/Breaking_Bad.webp",
+          "dateAdded": "2026-06-18"
+        },
+        {
+          "title": "Code Geass: Lelouch of the Rebellion",
+          "subtitle": "Mecha / Strategy · Sunrise",
+          "image": "Asset/Movie&TV/Code_Geass.webp",
+          "dateAdded": "2026-05-09"
+        },
+        {
+          "title": "Interstellar",
+          "subtitle": "Sci-Fi / Space Drama · 2014",
+          "image": "Asset/Movie&TV/Poster Interstellar (2014) _ Wall Art _ 3+1 FREE _ UKposters.webp",
+          "dateAdded": "2026-04-13"
+        },
+        {
+          "title": "Frieren: Beyond Journey's End",
+          "subtitle": "Fantasy / Adventure · 2023",
+          "image": "Asset/Movie&TV/Sousou no Frieren__Frieren_ Beyond Journey's End.webp",
+          "dateAdded": "2026-03-05"
+        },
+        {
+          "title": "Vinland Saga",
+          "subtitle": "Historical Drama · 2014",
+          "image": "Asset/Movie&TV/Vinland Saga_Poster.webp",
+          "dateAdded": "2026-02-20"
+        }
+      ]
+    },
+    {
+      "id": "music",
+      "title": "MUSIC",
+      "accentLabel": "on repeat",
+      "description": "Songs that define my moods and playlists.",
+      "icon": "music",
+      "items": [
+        {
+          "title": "Aria Math",
+          "subtitle": "Daniel Rosenfeld",
+          "image": "Asset/Music/Aria_Math-C418.webp",
+          "dateAdded": "2026-08-16"
+        },
+        {
+          "title": "Dracula",
+          "subtitle": "Tame Impala",
+          "image": "Asset/Music/Dracula-Tame_Impala.webp",
+          "dateAdded": "2026-08-09"
+        },
+        {
+          "title": "DILATING",
+          "subtitle": "PIXY",
+          "image": "Asset/Music/Dilatin-Pixy.webp",
+          "dateAdded": "2026-07-31"
+        },
+        {
+          "title": "Freakin Out",
+          "subtitle": "Dexter and The Moonrocks",
+          "image": "Asset/Music/Freakin_out-Dexter.webp",
+          "dateAdded": "2026-07-11"
+        },
+        {
+          "title": "Tate McRae - Siren Sounds [Altare Remix]",
+          "subtitle": "Altare",
+          "image": "Asset/Music/Siren_Sound-Altare.webp",
+          "dateAdded": "2026-06-29"
+        },
+        {
+          "title": "Surabaya",
+          "subtitle": "Crayon Case",
+          "image": "Asset/Music/Surabaya-Crayon_case.webp",
+          "dateAdded": "2026-06-02"
+        },
+        {
+          "title": "Wassup?",
+          "subtitle": "Kei",
+          "image": "Asset/Music/wassup-kei.webp",
+          "dateAdded": "2026-05-15"
+        },
+        {
+          "title": "Paparazzi (Dubstep)",
+          "subtitle": "Alximo",
+          "image": "Asset/Music/Papparazi(Dubstep)-Alximo.webp",
+          "dateAdded": "2026-04-06"
+        }
+      ]
+    }
+  ]
+}
