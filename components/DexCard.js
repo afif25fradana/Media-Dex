@@ -23,7 +23,7 @@ template.innerHTML = `
     :host(.card-ready) {
       opacity: 1;
       transform: translateY(0) rotate(var(--rotation)) translateZ(0);
-      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: opacity 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .card {
@@ -33,7 +33,7 @@ template.innerHTML = `
       opacity: 1;
       -webkit-font-smoothing: subpixel-antialiased;
       outline: 1px solid transparent;
-      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       border: 3px solid #000;
       box-shadow: var(--shadow-card, 6px 6px 0 #000, -4px -4px 0 #FF0000);
       
