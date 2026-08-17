@@ -92,6 +92,16 @@ button {
 
 html {
   scroll-behavior: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 body {
@@ -99,6 +109,8 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   min-height: 100vh;
   position: relative;
   transition: background-color 0.3s ease, color 0.3s ease;
