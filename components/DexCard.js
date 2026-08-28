@@ -18,12 +18,12 @@ template.innerHTML = `
       opacity: 1;
       transform: translateY(0) rotate(var(--rotation)) translateZ(0);
       transition: opacity 80ms step-start var(--delay),
-                  transform 380ms cubic-bezier(0.175, 0.885, 0.32, 1.275) var(--delay);
+                  transform 380ms var(--ease-snap) var(--delay);
     }
     :host(.card-ready) {
       opacity: 1;
       transform: translateY(0) rotate(var(--rotation)) translateZ(0);
-      transition: opacity 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: opacity 0.2s var(--ease-snap), transform 0.2s var(--ease-snap);
     }
 
     .card {
@@ -33,9 +33,9 @@ template.innerHTML = `
       opacity: 1;
       -webkit-font-smoothing: subpixel-antialiased;
       outline: 1px solid transparent;
-      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.2s var(--ease-snap), box-shadow 0.2s var(--ease-snap);
       border: 3px solid #000;
-      box-shadow: var(--shadow-card, 6px 6px 0 #000, -4px -4px 0 #FF0000);
+      box-shadow: var(--shadow-card, 6px 6px 0 #000, -4px -4px 0 #D80000);
       
       text-align: left;
       padding: 0;
@@ -52,7 +52,7 @@ template.innerHTML = `
     }
     
     .card:focus-visible {
-      outline: 4px solid var(--red, #FF0000);
+      outline: 4px solid var(--red, #D80000);
       outline-offset: 4px;
     }
 
@@ -74,13 +74,13 @@ template.innerHTML = `
       opacity: 0;
       pointer-events: none;
       z-index: 10;
-      transition: opacity 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: opacity 0.2s var(--ease-snap);
     }
 
     .card:hover {
       transform: translateY(-8px) scale(1.05) rotate(0deg) translateZ(0);
       z-index: 20;
-      box-shadow: var(--shadow-card-hover, 10px 10px 0 #000, -6px -6px 0 #FF0000);
+      box-shadow: var(--shadow-card-hover, 10px 10px 0 #000, -6px -6px 0 #D80000);
     }
 
     .card:hover .card-flash {
@@ -89,7 +89,7 @@ template.innerHTML = `
 
     .card:active {
       transform: translateY(-2px) scale(0.95) rotate(0deg) translateZ(0);
-      box-shadow: var(--shadow-card-press, 2px 2px 0 #000, -2px -2px 0 #FF0000);
+      box-shadow: var(--shadow-card-press, 2px 2px 0 #000, -2px -2px 0 #D80000);
       transition-duration: 60ms;
     }
 
@@ -161,7 +161,7 @@ template.innerHTML = `
     .fallback-bg {
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, var(--red, #FF0000) 0%, var(--black, #0C0C0C) 100%);
+      background: linear-gradient(135deg, var(--red, #D80000) 0%, var(--black, #0C0C0C) 100%);
       z-index: 0;
     }
 

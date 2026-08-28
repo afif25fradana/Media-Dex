@@ -33,7 +33,7 @@ template.innerHTML = `
     .icon-container {
       width: 64px;
       height: 64px;
-      background: var(--red, #FF0000);
+      background: var(--red, #D80000);
       color: var(--white, #FFFFFF);
       display: flex;
       align-items: center;
