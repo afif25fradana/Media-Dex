@@ -1,7 +1,8 @@
 
 :root {
   /* Brand colors — preserved from original */
-  --red: #FF0000;
+  /* NOTE: If you change --red, manually sync the fallback values in DexCard.js & DexEmptyState.js */
+  --red: #D80000;
   --red-dark: #CC0000;
   --red-text: #CC0000;
   --black: #0C0C0C;
@@ -30,7 +31,7 @@
   --font-messy: 'Caveat', cursive;
 
   /* Easing — preserved P5 sharp/punch feel */
-  --ease-snap: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-snap: cubic-bezier(0.1, 0.9, 0.2, 1);
   --ease-hard: cubic-bezier(0.7, 0, 0.3, 1);
   --ease-punch: cubic-bezier(0.22, 1.2, 0.36, 1);
   --dur-fast: 150ms;
@@ -536,7 +537,7 @@ body:has(#mobile-menu.menu-open) {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--red-text);
+  color: var(--red-dark);
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
