@@ -15,9 +15,21 @@ import { dismissLoading, triggerPageEntrance, setupScrollReveals } from './anima
 
 document.addEventListener('DOMContentLoaded', async () => {
   initTheme();
-  
+
+  const fetchWithTimeout = async () => {
+    let timer;
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error('timeout')), 10000);
+    });
+    try {
+      return await Promise.race([DataStore.fetch(), timeout]);
+    } finally {
+      clearTimeout(timer);
+    }
+  };
+
   try {
-    const data = await DataStore.fetch();
+    const data = await fetchWithTimeout();
     
     renderNavbar(data.profile);
     renderMobileMenu();
@@ -25,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderExploreCategories(data.categories);
     renderCategories(data.categories);
     renderRecentlyAdded(data.categories);
-    renderFooter();
+    renderFooter(data.profile, data.socials);
 
     setupNavbarScroll();
     setupScrollSpy();
@@ -34,7 +46,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const openBtn = document.getElementById('navbar-menu-btn');
     const closeBtn = document.getElementById('mobile-menu-close');
 
+    let lastFocusedEl = null;
+
     function openMenu() {
+      lastFocusedEl = document.activeElement;
       menu.classList.add('menu-open');
       menu.setAttribute('aria-hidden', 'false');
       if (openBtn) openBtn.setAttribute('aria-expanded', 'true');
@@ -45,6 +60,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       menu.classList.remove('menu-open');
       menu.setAttribute('aria-hidden', 'true');
       if (openBtn) openBtn.setAttribute('aria-expanded', 'false');
+      const target = lastFocusedEl && lastFocusedEl.isConnected ? lastFocusedEl : openBtn;
+      if (target && target.focus) target.focus();
+      lastFocusedEl = null;
     }
 
     initEvents({
@@ -63,11 +81,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const loader = document.getElementById('loading-screen');
     if (loader) {
       loader.innerHTML = `
-        <div class="loading-error" style="color: var(--red); padding: 2rem; text-align: center;">
-          <h2 style="font-family: var(--font-heading); text-transform: uppercase;">System Error</h2>
-          <p style="font-family: var(--font-body); opacity: 0.8;">Failed to load connection data.</p>
+        <div class="loading-error">
+          <h2 class="loading-error-title">System Error</h2>
+          <p class="loading-error-msg">Failed to load the dex data. Check your connection and try again.</p>
+          <button class="error-retry" id="error-retry-btn">RETRY CONNECTION</button>
         </div>
       `;
+      const retryBtn = document.getElementById('error-retry-btn');
+      if (retryBtn) retryBtn.addEventListener('click', () => window.location.reload());
     }
   }
 });
@@ -136,7 +157,7 @@ function setupScrollSpy() {
     }
   }, {
     rootMargin: '-10% 0px -10% 0px',
-    threshold: [0, 0.1, 0.25, 0.5, 0.75, 1]
+    threshold: [0, 0.5]
   });
 
   sections.forEach(sec => observer.observe(sec));

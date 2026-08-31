@@ -37,6 +37,9 @@ export function dismissLoading(onDone) {
 export function triggerPageEntrance() {
   if (isReducedMotion) return;
 
+  const hero = document.getElementById('hero-section');
+  if (hero) hero.classList.add('hero-entrance');
+
   const sections = document.querySelectorAll('.panel-enter');
   sections.forEach((el, i) => {
     if (isInViewport(el)) {

@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-31T00:00:00Z",
+  "title": "Design System: Personal Media Dex",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Combat Red", "canonical": "oklch(55.4% 0.227 29)", "tonalRamp": ["oklch(15.0% 0.227 29)", "oklch(26.4% 0.227 29)", "oklch(37.9% 0.227 29)", "oklch(49.3% 0.227 29)", "oklch(60.7% 0.227 29)", "oklch(72.1% 0.227 29)", "oklch(83.6% 0.227 29)", "oklch(95.0% 0.227 29)"] },
+      "primary-deep": { "role": "primary", "displayName": "Combat Red Deep", "canonical": "oklch(53.1% 0.218 29)", "tonalRamp": ["oklch(15.0% 0.218 29)", "oklch(26.4% 0.218 29)", "oklch(37.9% 0.218 29)", "oklch(49.3% 0.218 29)", "oklch(60.7% 0.218 29)", "oklch(72.1% 0.218 29)", "oklch(83.6% 0.218 29)", "oklch(95.0% 0.218 29)"] },
+      "primary-bright": { "role": "primary", "displayName": "Combat Red Bright", "canonical": "oklch(64.9% 0.237 27)", "tonalRamp": ["oklch(15.0% 0.237 27)", "oklch(26.4% 0.237 27)", "oklch(37.9% 0.237 27)", "oklch(49.3% 0.237 27)", "oklch(60.7% 0.237 27)", "oklch(72.1% 0.237 27)", "oklch(83.6% 0.237 27)", "oklch(95.0% 0.237 27)"] },
+      "neutral-bg": { "role": "neutral", "displayName": "Dex Cream", "canonical": "oklch(94.3% 0.014 89)", "tonalRamp": ["oklch(15.0% 0.014 89)", "oklch(26.4% 0.014 89)", "oklch(37.9% 0.014 89)", "oklch(49.3% 0.014 89)", "oklch(60.7% 0.014 89)", "oklch(72.1% 0.014 89)", "oklch(83.6% 0.014 89)", "oklch(95.0% 0.014 89)"] },
+      "neutral-bg-dark": { "role": "neutral", "displayName": "Void", "canonical": "oklch(15.4% 0 90)", "tonalRamp": ["oklch(15.0% 0 90)", "oklch(26.4% 0 90)", "oklch(37.9% 0 90)", "oklch(49.3% 0 90)", "oklch(60.7% 0 90)", "oklch(72.1% 0 90)", "oklch(83.6% 0 90)", "oklch(95.0% 0 90)"] },
+      "neutral-surface": { "role": "neutral", "displayName": "Paper White", "canonical": "oklch(100% 0 90)", "tonalRamp": ["oklch(15.0% 0 90)", "oklch(26.4% 0 90)", "oklch(37.9% 0 90)", "oklch(49.3% 0 90)", "oklch(60.7% 0 90)", "oklch(72.1% 0 90)", "oklch(83.6% 0 90)", "oklch(95.0% 0 90)"] },
+      "neutral-surface-dark": { "role": "neutral", "displayName": "Charcoal Surface", "canonical": "oklch(22% 0.012 285)", "tonalRamp": ["oklch(15.0% 0.012 285)", "oklch(26.4% 0.012 285)", "oklch(37.9% 0.012 285)", "oklch(49.3% 0.012 285)", "oklch(60.7% 0.012 285)", "oklch(72.1% 0.012 285)", "oklch(83.6% 0.012 285)", "oklch(95.0% 0.012 285)"] },
+      "neutral-ink": { "role": "neutral", "displayName": "Ink", "canonical": "oklch(15.4% 0 90)", "tonalRamp": ["oklch(15.0% 0 90)", "oklch(26.4% 0 90)", "oklch(37.9% 0 90)", "oklch(49.3% 0 90)", "oklch(60.7% 0 90)", "oklch(72.1% 0 90)", "oklch(83.6% 0 90)", "oklch(95.0% 0 90)"] },
+      "neutral-cream": { "role": "neutral", "displayName": "Cream Text", "canonical": "oklch(94.3% 0.014 89)", "tonalRamp": ["oklch(15.0% 0.014 89)", "oklch(26.4% 0.014 89)", "oklch(37.9% 0.014 89)", "oklch(49.3% 0.014 89)", "oklch(60.7% 0.014 89)", "oklch(72.1% 0.014 89)", "oklch(83.6% 0.014 89)", "oklch(95.0% 0.014 89)"] },
+      "neutral-border": { "role": "neutral", "displayName": "Warm Border", "canonical": "oklch(85.9% 0.012 85)", "tonalRamp": ["oklch(15.0% 0.012 85)", "oklch(26.4% 0.012 85)", "oklch(37.9% 0.012 85)", "oklch(49.3% 0.012 85)", "oklch(60.7% 0.012 85)", "oklch(72.1% 0.012 85)", "oklch(83.6% 0.012 85)", "oklch(95.0% 0.012 85)"] },
+      "neutral-border-dark": { "role": "neutral", "displayName": "Steel Border", "canonical": "oklch(35.2% 0.014 286)", "tonalRamp": ["oklch(15.0% 0.014 286)", "oklch(26.4% 0.014 286)", "oklch(37.9% 0.014 286)", "oklch(49.3% 0.014 286)", "oklch(60.7% 0.014 286)", "oklch(72.1% 0.014 286)", "oklch(83.6% 0.014 286)", "oklch(95.0% 0.014 286)"] },
+      "neutral-muted-on-dark": { "role": "neutral", "displayName": "Muted On Dark", "canonical": "oklch(60.0% 0.008 85)", "tonalRamp": ["oklch(15.0% 0.008 85)", "oklch(26.4% 0.008 85)", "oklch(37.9% 0.008 85)", "oklch(49.3% 0.008 85)", "oklch(60.7% 0.008 85)", "oklch(72.1% 0.008 85)", "oklch(83.6% 0.008 85)", "oklch(95.0% 0.008 85)"] },
+      "neutral-placeholder-deep": { "role": "neutral", "displayName": "Placeholder Deep", "canonical": "oklch(21.0% 0.025 290)", "tonalRamp": ["oklch(12.0% 0.025 290)", "oklch(22.0% 0.025 290)", "oklch(32.0% 0.025 290)", "oklch(42.0% 0.025 290)", "oklch(52.0% 0.025 290)", "oklch(62.0% 0.025 290)", "oklch(72.0% 0.025 290)", "oklch(82.0% 0.025 290)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headline only; always uppercase Anton." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles and section-banner text." },
+      "title": { "displayName": "Title", "purpose": "Card, recent-card, and explore-card names." },
+      "body": { "displayName": "Body", "purpose": "Hero bio, descriptions; max width ~440px." },
+      "label": { "displayName": "Label", "purpose": "Eyebrows, nav links, buttons, tags, stat labels." },
+      "script": { "displayName": "Script", "purpose": "Handwritten accents: card subtitles, section accent labels." },
+      "mono": { "displayName": "Mono", "purpose": "System data labels: eyebrows, ID codes, catalog indices, menu labels, tags, scroll indicators." }
+    },
+    "shadows": [
+      { "name": "card", "value": "6px 6px 0 #000, -4px -4px 0 #D80000", "purpose": "Structural lift for cover cards at rest." },
+      { "name": "card-hover", "value": "10px 10px 0 #000, -6px -6px 0 #D80000", "purpose": "Deepened lift on hover." },
+      { "name": "card-press", "value": "2px 2px 0 #000, -2px -2px 0 #D80000", "purpose": "Pressed-in state on active." },
+      { "name": "explore", "value": "4px 4px 0 rgba(0,0,0,0.6)", "purpose": "Explore-card offset at rest." },
+      { "name": "explore-hover", "value": "8px 8px 0 rgba(0,0,0,0.7), -4px -4px 0 #D80000", "purpose": "Explore-card lift on hover." },
+      { "name": "overview", "value": "6px 6px 0 rgba(0,0,0,0.8)", "purpose": "Overview panel offset." },
+      { "name": "id-card", "value": "drop-shadow(4px 4px 0 rgba(0,0,0,0.5))", "purpose": "The only drop shadow; floats the hero ID card." },
+      { "name": "navbar-scrolled", "value": "0 2px 12px rgba(0,0,0,0.15)", "purpose": "The system's only soft shadow; navbar after scroll." }
+    ],
+    "motion": [
+      { "name": "ease-snap", "value": "cubic-bezier(0.1, 0.9, 0.2, 1)", "purpose": "Punchy snap for reveals, hover lifts, underlines." },
+      { "name": "ease-hard", "value": "cubic-bezier(0.7, 0, 0.3, 1)", "purpose": "Hard swipe-out for the loading screen." },
+      { "name": "dur-fast", "value": "150ms", "purpose": "Hover and state transitions." },
+      { "name": "dur-normal", "value": "250ms", "purpose": "General transitions." },
+      { "name": "dur-entry", "value": "400ms", "purpose": "Section entry wipes (slashInLeft/Right/Bottom)." },
+      { "name": "card-stagger", "value": "70ms per card", "purpose": "Stagger for cover-card reveals." },
+      { "name": "reduced-motion", "value": "respects prefers-reduced-motion", "purpose": "All transforms, animations, and reveals disabled." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "480px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1200px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The system's one loud call-to-action; a red trapezoid stamp.",
+      "html": "<button class=\"ds-btn-primary\">EXPLORE DEX<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"/><polyline points=\"12 5 19 12 12 19\"/></svg></button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;gap:0.5rem;background:var(--red,#D80000);color:#fff;font-family:var(--font-body,'Schibsted Grotesk','Segoe UI',Arial,sans-serif);font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:0.85rem 2rem;clip-path:polygon(3% 0%,100% 0%,97% 100%,0% 100%);border:none;cursor:pointer;transition:background 0.15s ease,transform 0.15s cubic-bezier(0.1,0.9,0.2,1)}.ds-btn-primary:hover{background:var(--red-dark,#CC0000);transform:translateY(-2px)}.ds-btn-primary:active{transform:translateY(1px)}.ds-btn-primary:focus-visible{outline:3px solid var(--red,#D80000);outline-offset:4px}.ds-btn-primary svg{width:16px;height:16px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "The quiet inverse: a square outlined button that inverts on hover.",
+      "html": "<button class=\"ds-btn-secondary\">ABOUT ME<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><path d=\"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2\"/><circle cx=\"12\" cy=\"7\" r=\"4\"/></svg></button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;gap:0.5rem;background:transparent;color:var(--color-text,#0C0C0C);font-family:var(--font-body,'Schibsted Grotesk','Segoe UI',Arial,sans-serif);font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:0.85rem 2rem;border:2px solid var(--color-text,#0C0C0C);cursor:pointer;transition:background 0.15s ease,color 0.15s ease,transform 0.15s cubic-bezier(0.1,0.9,0.2,1)}.ds-btn-secondary:hover{background:var(--color-text,#0C0C0C);color:var(--color-text-on-dark,#F0ECE2);transform:translateY(-2px)}.ds-btn-secondary:active{transform:translateY(1px)}.ds-btn-secondary:focus-visible{outline:3px solid var(--red,#D80000);outline-offset:4px}.ds-btn-secondary svg{width:16px;height:16px}"
+    },
+    {
+      "name": "Navbar Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Uppercase Schibsted Grotesk link with a Combat Red underline that scales in.",
+      "html": "<a href=\"#collection\" class=\"ds-nav-link\">COLLECTION</a>",
+      "css": ".ds-nav-link{font-family:var(--font-body,'Schibsted Grotesk','Segoe UI',Arial,sans-serif);font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--color-text,#0C0C0C);text-decoration:none;padding:0.25rem 0;position:relative;transition:color 0.15s ease}.ds-nav-link::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:3px;background:var(--red,#D80000);transform:scaleX(0);transform-origin:left;transition:transform 0.15s cubic-bezier(0.1,0.9,0.2,1)}.ds-nav-link:hover::after,.ds-nav-link:focus-visible::after{transform:scaleX(1)}.ds-nav-link:hover{color:var(--red-text,#CC0000)}.ds-nav-link:focus-visible{outline:3px solid var(--red,#D80000);outline-offset:4px}"
+    },
+    {
+      "name": "Dex Cover Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The signature cover tile: square art, halftone, Anton title over Caveat subtitle.",
+      "html": "<button class=\"ds-dex-card\"><div class=\"ds-dex-cover\"><span class=\"ds-dex-letter\">A</span></div><div class=\"ds-dex-info\"><span class=\"ds-dex-title\">ARKNIGHTS</span><span class=\"ds-dex-sub\">Tactical RPG</span></div></button>",
+      "css": ".ds-dex-card{position:relative;width:100%;display:flex;flex-direction:column;background:var(--color-surface-dark,#1A1A20);border:3px solid #000;box-shadow:6px 6px 0 #000,-4px -4px 0 var(--red,#D80000);transform:rotate(-3deg);cursor:pointer;padding:0;border-radius:0;color:inherit;font-family:inherit;transition:transform 0.2s cubic-bezier(0.1,0.9,0.2,1),box-shadow 0.2s cubic-bezier(0.1,0.9,0.2,1)}.ds-dex-card:hover{transform:translateY(-8px) scale(1.05);box-shadow:10px 10px 0 #000,-6px -6px 0 var(--red,#D80000)}.ds-dex-card:active{transform:translateY(-2px) scale(0.95);box-shadow:2px 2px 0 #000,-2px -2px 0 var(--red,#D80000);transition-duration:60ms}.ds-dex-card:focus-visible{outline:4px solid var(--red,#D80000);outline-offset:4px}.ds-dex-cover{aspect-ratio:1;position:relative;border-bottom:3px solid #000;background:#0C0C0C;display:flex;align-items:center;justify-content:center}.ds-dex-cover::after{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,0,0.4) 15%,transparent 16%);background-size:6px 6px;pointer-events:none}.ds-dex-letter{font-family:var(--font-display,'Anton',Impact,sans-serif);font-size:4rem;color:#fff;text-shadow:2px 2px 0 rgba(0,0,0,0.4);position:relative;z-index:1}.ds-dex-info{padding:0.7rem 0.75rem;text-align:left;display:flex;flex-direction:column;justify-content:center}.ds-dex-title{font-family:var(--font-display,'Anton',Impact,sans-serif);font-size:0.95rem;text-transform:uppercase;letter-spacing:0.02em;line-height:1.2;color:var(--color-text-on-dark,#F0ECE2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ds-dex-sub{font-family:var(--font-messy,'Caveat',cursive);font-size:0.85rem;font-weight:700;color:rgba(240,236,226,0.45);margin-top:0.2rem;line-height:1.3}"
+    },
+    {
+      "name": "Explore Category Card",
+      "kind": "card",
+      "refersTo": "explore-card",
+      "description": "Cream face, numbered, with a parallelogram icon tile and a red count.",
+      "html": "<a href=\"#games\" class=\"ds-explore-card\"><span class=\"ds-explore-num\">01</span><span class=\"ds-explore-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><line x1=\"6\" y1=\"12\" x2=\"10\" y2=\"12\"/><line x1=\"8\" y1=\"10\" x2=\"8\" y2=\"14\"/><path d=\"M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.544-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z\"/></svg></span><h3 class=\"ds-explore-name\">GAMES</h3><span class=\"ds-explore-count\">8 Items</span><p class=\"ds-explore-desc\">Games I've played and enjoyed.</p></a>",
+      "css": ".ds-explore-card{position:relative;display:flex;flex-direction:column;background:var(--color-bg,#F0ECE2);padding:1.5rem;border:3px solid #000;box-shadow:4px 4px 0 rgba(0,0,0,0.6);transform:rotate(-1deg);min-height:200px;color:var(--color-text,#0C0C0C);text-decoration:none;transition:transform 0.15s cubic-bezier(0.1,0.9,0.2,1),box-shadow 0.15s cubic-bezier(0.1,0.9,0.2,1)}.ds-explore-card:hover{transform:translateY(-6px) scale(1.02) rotate(-1deg);box-shadow:8px 8px 0 rgba(0,0,0,0.7),-4px -4px 0 var(--red,#D80000)}.ds-explore-card:focus-visible{outline:3px solid var(--red,#D80000);outline-offset:4px}.ds-explore-num{font-family:var(--font-display,'Anton',Impact,sans-serif);font-size:1rem;color:rgba(12,12,12,0.2);letter-spacing:0.05em;margin-bottom:auto}.ds-explore-icon{position:absolute;top:1rem;right:1rem;width:40px;height:40px;background:var(--color-bg-dark,#0C0C0C);color:#fff;display:flex;align-items:center;justify-content:center;transform:rotate(6deg);clip-path:polygon(5% 0%,100% 5%,95% 100%,0% 95%)}.ds-explore-icon svg{width:20px;height:20px}.ds-explore-name{font-family:var(--font-display,'Anton',Impact,sans-serif);font-size:1.1rem;text-transform:uppercase;letter-spacing:0.03em;color:var(--color-text,#0C0C0C);margin:0 0 0.3rem}.ds-explore-count{font-family:var(--font-body,'Schibsted Grotesk','Segoe UI',Arial,sans-serif);font-size:0.8rem;font-weight:700;color:var(--red,#D80000);margin-bottom:0.4rem}.ds-explore-desc{font-family:var(--font-body,'Schibsted Grotesk','Segoe UI',Arial,sans-serif);font-size:0.78rem;color:rgba(12,12,12,0.6);line-height:1.4;margin:0 0 0.8rem}"
+    },
+    {
+      "name": "Section Banner",
+      "kind": "chip",
+      "refersTo": "section-banner",
+      "description": "Skewed Combat Red parallelogram with outlined italic Anton title.",
+      "html": "<div class=\"ds-banner\"><h2 class=\"ds-banner-title\">GAMES</h2></div>",
+      "css": ".ds-banner{display:inline-block;background:var(--red,#D80000);padding:0.6rem 2.5rem 0.6rem 1.5rem;transform:skewX(-8deg);border:2px solid #000;box-shadow:inset 0 4px 10px rgba(0,0,0,0.4),5px 5px 0 #000;position:relative;overflow:hidden}.ds-banner::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,0,0.4) 15%,transparent 16%);background-size:6px 6px;pointer-events:none}.ds-banner-title{position:relative;z-index:1;font-family:var(--font-display,'Anton',Impact,sans-serif);font-size:clamp(1.8rem,4vw,2.8rem);font-style:italic;color:#fff;text-transform:uppercase;letter-spacing:0.03em;transform:skewX(8deg);-webkit-text-stroke:1.5px #000;paint-order:stroke fill;text-shadow:3px 3px 0 rgba(0,0,0,0.8);margin:0}"
+    },
+    {
+      "name": "Theme Toggle",
+      "kind": "custom",
+      "refersTo": "nav-link",
+      "description": "40x22px pill track with a sliding Combat Red round thumb.",
+      "html": "<button class=\"ds-theme-toggle\" role=\"switch\" aria-label=\"Toggle dark/light theme\"><span class=\"ds-toggle-track\"><span class=\"ds-toggle-thumb\"></span></span></button>",
+      "css": ".ds-theme-toggle{display:flex;align-items:center;background:none;border:none;padding:0.25rem;cursor:pointer}.ds-toggle-track{width:40px;height:22px;background:var(--color-border,#D4D0C8);border-radius:11px;position:relative;transition:background 0.15s ease}.ds-theme-toggle:focus-visible .ds-toggle-track{outline:3px solid var(--red,#D80000);outline-offset:3px}.ds-toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;background:var(--red,#D80000);border-radius:50%;transition:transform 0.15s cubic-bezier(0.22,1.2,0.36,1)}.ds-theme-toggle[aria-pressed=\"true\"] .ds-toggle-thumb{transform:translateX(18px)}.ds-theme-toggle[aria-pressed=\"true\"] .ds-toggle-track{background:#3A3A42}"
+    },
+    {
+      "name": "Red Tag",
+      "kind": "chip",
+      "refersTo": "section-banner",
+      "description": "Combat Red stamp chip for category labels on cards.",
+      "html": "<span class=\"ds-tag\">NOW PLAYING</span>",
+      "css": ".ds-tag{display:inline-block;font-family:var(--font-body,'Schibsted Grotesk','Segoe UI',Arial,sans-serif);font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;background:var(--red,#D80000);color:#fff;padding:0.15rem 0.5rem}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Media Dex",
+    "overview": "The Media Dex is one person's taste rendered as a sharp, disciplined game-interface — a Persona 5-inspired catalog where games, manga, movies, and music are logged, stamped, and inventoried with the precision of a well-run system. It reads like the between-missions screen of a game you trust: bold condensed display type, a single violent accent, cream-and-void paper, and geometry that is always slightly defiant (rotated cards, skewed banners, clipped corners) but never chaotic. Discipline is the point: one hue, one display voice, one shadow language, repeated relentlessly.\n\nThe surface is an Experience-mode archive: the interface recedes just enough to let cover art lead, while the game chrome gives every entry the weight of a logged achievement. Density is comfortable on desktop (four-up grids, generous section padding) and collapses to two-up on phones without losing attitude.",
+    "keyCharacteristics": [
+      "Monochrome paper (cream / void / charcoal) + a single Combat Red accent. Red is always a stamp, never a wash.",
+      "Anton display type for every heading: heavy, uppercase, near-tight tracking.",
+      "Sharp geometry: 3px solid black borders, angled clip-path cuts, slight rotations on cards.",
+      "Structural hard shadows on interactive elements; tonal layering on static surfaces.",
+      "Halftone dot texture on dark fields and cover cards."
+    ],
+    "rules": [
+      { "name": "The One-Accent Rule", "body": "Combat Red is the system's only hue. The preserved cyan, magenta, and yellow tokens are dormant legacy and must stay unused — a second hue on any screen is a failure.", "section": "colors" },
+      { "name": "The Stamp Rule", "body": "Combat Red appears as a stamp: buttons, banners, tags, underlines, bars — small, high-authority marks. Red never covers a page surface; its rarity is what makes it read as authoritative.", "section": "colors" },
+      { "name": "The Uppercase Rule", "body": "Anton is only ever set uppercase; lowercase Anton reads broken.", "section": "typography" },
+      { "name": "The Two-Voice Command Rule", "body": "A given surface uses the display voice (Anton) plus at most one expressive secondary voice (Schibsted Grotesk or Caveat) — never all three competing on the same card. The mono system voice is exempt: it labels data and never fights the display voice.", "section": "typography" },
+      { "name": "The Hard Shadow Rule", "body": "Interactive elements lift with hard offset shadows, never soft glows. Static surfaces use tonal layering, never hard shadows. Mixing the two vocabularies on one surface is a failure.", "section": "elevation" },
+      { "name": "The Lift-On-Respond Rule", "body": "Elevation is a response to state: flat-ish at rest, deeper offset on hover, pressed down on active.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep every Anton heading uppercase and pair it with at most one expressive secondary voice (Schibsted Grotesk or Caveat); reserve JetBrains Mono for system data labels.",
+      "Do use Combat Red as a stamp — buttons, banners, tags, underlines, stat bars — and leave page grounds to void, cream, and charcoal.",
+      "Do lift interactive elements with hard offset shadows (6px 6px 0 #000, -4px -4px 0 var(--red)) and deepen the offset on hover.",
+      "Do cut corners with clip-path angles and skews; reserve radius for the empty state (4px) and the theme toggle (pill).",
+      "Do keep 3px solid black borders on cover cards, banners, and the overview panel; 2px on smaller elements.",
+      "Do respect prefers-reduced-motion: strip transforms and animations and reveal all content at once.",
+      "Do keep red text on void >=4.5:1: labels that always sit on dark use --red-on-dark (Combat Red Bright), never full-strength --red."
+    ],
+    "donts": [
+      "Don't introduce cyan, magenta, or yellow — the preserved legacy tokens are dormant and must stay unused.",
+      "Don't use soft blurred shadows or glow effects; this system's depth is hard-edged or tonal.",
+      "Don't set lowercase Anton, or stack all three type voices on one surface.",
+      "Don't wash Combat Red across a page background; its rarity is its power.",
+      "Don't hand-edit the rendered sections in index.html; content comes from data.json and rendering is owned by ui.js."
+    ]
+  }
+}
