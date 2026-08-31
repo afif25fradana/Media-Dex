@@ -21,6 +21,13 @@ yarn-error.log*
 .env.*
 !.env.example
 
+# Python (local static server)
+__pycache__/
+*.pyc
+
+# Node (npx serve may drop packages)
+node_modules/
+
 # Temporary and cache files
 .cache/
 tmp/
@@ -35,3 +42,14 @@ coverage/
 
 # Local development files
 *.local
+
+# Impeccable runtime artifacts (design.json + live config.json stay tracked)
+.impeccable/live/sessions/
+.impeccable/live/roots.json
+.impeccable/live/server.json
+.impeccable/live/inject-journal.json
+.impeccable/critique/
+.impeccable/config.local.json
+
+# opencode skill/tooling files
+.opencode/

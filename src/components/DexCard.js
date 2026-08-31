@@ -127,7 +127,7 @@ template.innerHTML = `
     .skeleton {
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+      background: linear-gradient(90deg, var(--skeleton-base, #333) 25%, var(--skeleton-shine, #444) 50%, var(--skeleton-base, #333) 75%);
       background-size: 200% 100%;
       animation: shimmer 1.5s infinite;
       z-index: 1;
@@ -195,7 +195,7 @@ template.innerHTML = `
       font-family: var(--font-messy, 'Caveat', cursive);
       font-size: 0.85rem;
       font-weight: 700;
-      color: rgba(240, 236, 226, 0.45);
+      color: var(--color-text-muted-on-dark, rgba(240, 236, 226, 0.55));
       margin: 0.2rem 0 0 0;
       line-height: 1.3;
       letter-spacing: 0.01em;
@@ -218,8 +218,8 @@ template.innerHTML = `
       </div>
     </div>
     <div class="card-info">
-      <h3 class="card-title"></h3>
-      <p class="card-subtitle"></p>
+      <span class="card-title"></span>
+      <span class="card-subtitle"></span>
     </div>
   </button>
 `;

@@ -36,7 +36,7 @@ export const NAV_LINKS = [
   { label: 'Home', href: '#hero-section' },
   { label: 'Profile', href: '#hero-id-card-anchor' },
   { label: 'Collection', href: '#explore-categories' },
-  { label: 'Journal', href: '#recent-overview' },
+  { label: 'Recently Added', href: '#recent-overview' },
   { label: 'About', href: '#site-footer' }
 ];
 export const MAX_CATEGORY_CARDS = 6;
@@ -79,6 +79,12 @@ export function initTheme() {
   try { saved = localStorage.getItem('dex-theme'); } catch (e) { }
   let theme = saved ? saved : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   document.documentElement.setAttribute('data-theme', theme);
+  applyThemeMeta(theme);
+}
+
+function applyThemeMeta(theme) {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', theme === 'dark' ? '#0C0C0C' : '#F0ECE2');
 }
 
 export function toggleTheme() {
@@ -88,6 +94,7 @@ export function toggleTheme() {
   const applyAndSave = () => {
     document.documentElement.setAttribute('data-theme', next);
     try { localStorage.setItem('dex-theme', next); } catch (e) { }
+    applyThemeMeta(next);
   };
 
   if (!document.startViewTransition) {
@@ -195,24 +202,35 @@ export function renderHero(profile, socials) {
   `;
 }
 
-export function renderFooter() {
+export function renderFooter(profile, socials) {
   const footer = document.getElementById('site-footer');
   const year = new Date().getFullYear();
+  const ownerName = profile?.name || 'GUEST';
+  const socialsHTML = (socials || []).map(s => `
+    <a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(s.label)}" title="${esc(s.label)}" class="footer-social">
+      ${SOCIAL_ICONS[s.platform] || ''}
+    </a>
+  `).join('');
   footer.innerHTML = `
     <div class="footer-inner">
-      <span class="footer-left">© ${year} Fradana Dex. All rights reserved.</span>
-      <span class="footer-center">${FOOTER_WINGS_SVG}</span>
-      <span class="footer-right">BUILT WITH <span class="footer-heart">♥</span> AND PASSION</span>
+      <div class="footer-top">
+        <span class="footer-left">© ${year} ${esc(ownerName)} Dex. All rights reserved.</span>
+        <span class="footer-center">${FOOTER_WINGS_SVG}</span>
+        <a class="footer-top-link" href="#hero-section" aria-label="Back to top">BACK TO TOP ↑</a>
+      </div>
+      <div class="footer-bottom">
+        ${socialsHTML ? `<div class="footer-socials">${socialsHTML}</div>` : ''}
+        <span class="footer-right">BUILT WITH <span class="footer-heart">♥</span> AND PASSION</span>
+      </div>
     </div>
   `;
 }
 
-// Stage 3 Dynamic Elements below using native DOM API / DocumentFragment
-
-function createCard(item, index) {
+function createCard(item, index, cat) {
   const rotation = CARD_ROTATIONS[index % CARD_ROTATIONS.length];
 
   const card = document.createElement('dex-card');
+
   card.className = 'card-will-animate';
 
   card.setAttribute('title', item.title);
@@ -224,8 +242,8 @@ function createCard(item, index) {
     card.setAttribute('image-src', item.image);
   }
 
-  // Bind full item data directly for event delegation access.
-  card.itemData = item;
+  // Bind full item data (enriched with category) directly for event delegation + detail modal.
+  card.itemData = { ...item, categoryTitle: cat?.title || '', categoryId: cat?.id || '' };
 
   return card;
 }
@@ -233,6 +251,8 @@ function createCard(item, index) {
 export function renderCategories(categories) {
   const container = document.getElementById('categories-container');
   const fragment = document.createDocumentFragment();
+
+  fragment.appendChild(buildSearchBar());
 
   categories.forEach((cat, i) => {
     const dir = ENTRANCE_DIRS[i % 2];
@@ -254,14 +274,15 @@ export function renderCategories(categories) {
       ),
       h('div', { className: 'card-grid' },
         items.length > 0
-          ? items.map((item, j) => createCard(item, j))
-          : h('dex-empty-state', { 'icon': cat.icon || 'bookmark', 'message': `No ${cat.title?.toLowerCase() || 'items'} added yet.` })
+          ? items.map((item, j) => createCard(item, j, cat))
+          : h('dex-empty-state', { 'icon': cat.icon || 'bookmark', 'message': `No ${cat.title?.toLowerCase() || 'items'} added yet.`, 'action-text': 'VIEW CATEGORIES' })
       )
     );
     fragment.appendChild(section);
   });
 
   container.replaceChildren(fragment);
+  attachSearch(container.querySelector('.dex-search'), container);
 }
 
 export function renderExploreCategories(categories) {
@@ -351,8 +372,8 @@ export function renderRecentlyAdded(categories) {
         h('span', { className: 'recent-card-tag' }, tagLabel)
       ),
       h('div', { className: 'recent-card-body' },
-        h('h3', { className: 'recent-card-title' }, item.title || 'Unknown'),
-        h('p', { className: 'recent-card-meta' }, `${item.subtitle || ''} · ${dateStr}`)
+        h('span', { className: 'recent-card-title' }, item.title || 'Unknown'),
+        h('span', { className: 'recent-card-meta' }, `${item.subtitle || ''} · ${dateStr}`)
       )
     );
     recentCardsRow.appendChild(card);
@@ -379,26 +400,86 @@ export function renderRecentlyAdded(categories) {
 
 function buildDexOverview(categories) {
   const totalEntries = categories.reduce((sum, cat) => sum + (cat.items || []).length, 0);
-  let earliestYear = new Date().getFullYear();
-  categories.forEach(cat => {
-    (cat.items || []).forEach(item => {
-      if (item.dateAdded) {
-        const year = new Date(item.dateAdded).getFullYear();
-        if (year < earliestYear) earliestYear = year;
-      }
-    });
-  });
+  const categoryCount = categories.length;
 
   return h('div', { className: 'overview-column' },
     h('div', { className: 'overview-header' },
-      h('span', { className: 'section-eyebrow', style: 'color: var(--red);' }, 'AT A GLANCE'),
+      h('span', { className: 'section-eyebrow', style: 'color: var(--red-on-dark);' }, 'AT A GLANCE'),
       h('h2', { className: 'overview-heading' }, 'DEX OVERVIEW')
     ),
     h('div', { className: 'overview-grid' },
       h('div', { className: 'overview-stat' }, h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' }), h('span', { className: 'overview-stat-number' }, totalEntries), h('span', { className: 'overview-stat-label' }, 'Total Entries')),
-      h('div', { className: 'overview-stat' }, h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' }), h('span', { className: 'overview-stat-number' }, earliestYear), h('span', { className: 'overview-stat-label' }, 'Since')),
+      h('div', { className: 'overview-stat' }, h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>' }), h('span', { className: 'overview-stat-number' }, categoryCount), h('span', { className: 'overview-stat-label' }, 'Categories')),
       h('div', { className: 'overview-stat' }, h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>' }), h('span', { className: 'overview-stat-number' }, 'Sometimes'), h('span', { className: 'overview-stat-label' }, 'Updates')),
       h('div', { className: 'overview-stat' }, h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' }), h('span', { className: 'overview-stat-number' }, '100%'), h('span', { className: 'overview-stat-label' }, 'Personal'))
     )
   );
+}
+
+const SEARCH_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>';
+const CLEAR_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+function buildSearchBar() {
+  return h('div', { className: 'dex-search', role: 'search' },
+    h('span', { className: 'dex-search-icon', innerHTML: SEARCH_ICON_SVG }),
+    h('input', {
+      type: 'search',
+      className: 'dex-search-input',
+      placeholder: 'Search the dex…',
+      'aria-label': 'Search the dex'
+    }),
+    h('span', { className: 'dex-search-count', 'aria-live': 'polite' }),
+    h('button', { className: 'dex-search-clear', 'aria-label': 'Clear search', innerHTML: CLEAR_ICON_SVG })
+  );
+}
+
+function attachSearch(bar, container) {
+  if (!bar) return;
+  const input = bar.querySelector('.dex-search-input');
+  const clearBtn = bar.querySelector('.dex-search-clear');
+  const countEl = bar.querySelector('.dex-search-count');
+
+  const noResults = h('div', { className: 'dex-no-results', 'aria-live': 'polite' },
+    h('p', { className: 'dex-no-results-code' }, 'NO RESULTS'),
+    h('p', { className: 'dex-no-results-msg' }, 'No entries in the dex match this query.')
+  );
+  container.appendChild(noResults);
+
+  const sections = Array.from(container.querySelectorAll('.category-section'));
+
+  const apply = () => {
+    const q = input.value.trim().toLowerCase();
+    let total = 0;
+
+    sections.forEach(section => {
+      const divider = section.previousElementSibling
+        && section.previousElementSibling.classList.contains('slash-divider')
+        ? section.previousElementSibling : null;
+
+      let visible = 0;
+      section.querySelectorAll('dex-card').forEach(card => {
+        const hay = `${card.getAttribute('title') || ''} ${card.getAttribute('subtitle') || ''}`.toLowerCase();
+        const show = !q || hay.includes(q);
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+
+      const hasContent = visible > 0;
+      section.style.display = hasContent ? '' : 'none';
+      if (divider) divider.style.display = hasContent ? '' : 'none';
+      total += visible;
+    });
+
+    countEl.textContent = q ? `${total} RESULT${total === 1 ? '' : 'S'}` : '';
+    clearBtn.style.display = q ? 'flex' : 'none';
+    noResults.style.display = (q && total === 0) ? 'flex' : 'none';
+  };
+
+  input.addEventListener('input', apply);
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    apply();
+    input.focus();
+  });
+  apply();
 }

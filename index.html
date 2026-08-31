@@ -16,14 +16,14 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Anton&display=swap" as="style">
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@400&family=Inter:wght@400;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@400;700&family=JetBrains+Mono:wght@400;500;700&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
   <a href="#app" class="skip-link">Skip to content</a>
 
   <!-- LOADING SCREEN -->
-  <div id="loading-screen" class="loading-screen" aria-hidden="false" role="status">
+  <div id="loading-screen" class="loading-screen" role="status">
     <div class="loading-inner">
       <span class="loading-text">LOADING</span>
       <span class="loading-dots">...</span>
@@ -31,9 +31,11 @@
   </div>
 
   <!-- STICKY NAVBAR -->
-  <nav id="site-navbar" class="site-navbar" aria-label="Main navigation">
-    <!-- Rendered by JS -->
-  </nav>
+  <header class="site-header">
+    <nav id="site-navbar" class="site-navbar" aria-label="Main navigation">
+      <!-- Rendered by JS -->
+    </nav>
+  </header>
 
   <!-- MOBILE MENU OVERLAY -->
   <div id="mobile-menu" class="mobile-menu" aria-hidden="true" role="dialog" aria-label="Mobile navigation menu">
@@ -69,6 +71,6 @@
     </footer>
 
   </main>
-  <script type="module" src="script.js"></script>
+  <script type="module" src="src/script.js"></script>
 </body>
 </html>

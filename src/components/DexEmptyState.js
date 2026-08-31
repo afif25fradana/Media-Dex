@@ -66,7 +66,7 @@ template.innerHTML = `
       appearance: none;
       background: transparent;
       color: var(--color-text-on-dark, #F0ECE2);
-      font-family: var(--font-body, 'Inter', sans-serif);
+      font-family: var(--font-body, 'Schibsted Grotesk', sans-serif);
       font-size: 0.85rem;
       font-weight: 700;
       text-transform: uppercase;

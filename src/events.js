@@ -1,3 +1,5 @@
+import { openDetailModal } from './modal.js';
+
 export function initEvents(actions) {
   const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   let isReducedMotion = motionQuery.matches;
@@ -26,6 +28,12 @@ export function initEvents(actions) {
       actions.closeMenu();
       // Don't early return if it's a link, so smooth scroll logic below still runs.
       if (closeMenuBtn) return;
+    }
+
+    const card = e.target.closest('dex-card');
+    if (card && card.itemData) {
+      openDetailModal(card.itemData);
+      return;
     }
 
     const trigger = e.target.closest('[data-scroll-to]');
@@ -70,13 +78,32 @@ export function initEvents(actions) {
     }
   });
 
+  document.addEventListener('action-click', () => {
+    const target = document.querySelector('#explore-categories');
+    if (target) target.scrollIntoView({ behavior: isReducedMotion ? 'instant' : 'smooth' });
+  });
+
   document.addEventListener('keydown', (e) => {
+    const menu = document.getElementById('mobile-menu');
+
     if (e.key === 'Escape') {
-      const menu = document.getElementById('mobile-menu');
       if (menu && menu.classList.contains('menu-open') && actions.closeMenu) {
         actions.closeMenu();
-        const openBtn = document.getElementById('navbar-menu-btn');
-        if (openBtn) openBtn.focus();
+      }
+    }
+
+    if (e.key === 'Tab' && menu && menu.classList.contains('menu-open')) {
+      const focusables = menu.querySelectorAll('.mobile-menu-close, .mobile-menu-link');
+      if (focusables.length) {
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     }
   });
