@@ -1,12 +1,7 @@
 import { openDetailModal } from './modal.js';
+import { prefersReducedMotion } from './motion.js';
 
 export function initEvents(actions) {
-  const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let isReducedMotion = motionQuery.matches;
-  motionQuery.addEventListener('change', e => {
-    isReducedMotion = e.matches;
-  });
-
   let navScrollTimeout;
 
   document.addEventListener('click', (e) => {
@@ -42,7 +37,7 @@ export function initEvents(actions) {
       const target = document.querySelector(trigger.getAttribute('data-scroll-to'));
       if (target) {
         target.scrollIntoView({
-          behavior: isReducedMotion ? 'instant' : 'smooth'
+          behavior: prefersReducedMotion() ? 'instant' : 'smooth'
         });
       }
       return;
@@ -56,7 +51,7 @@ export function initEvents(actions) {
         if (target) {
           e.preventDefault();
           target.scrollIntoView({
-            behavior: isReducedMotion ? 'instant' : 'smooth'
+            behavior: prefersReducedMotion() ? 'instant' : 'smooth'
           });
 
           // Deep-link: keep the URL hash in sync so Back works and sections are shareable.
@@ -91,7 +86,7 @@ export function initEvents(actions) {
 
   document.addEventListener('action-click', () => {
     const target = document.querySelector('#explore-categories');
-    if (target) target.scrollIntoView({ behavior: isReducedMotion ? 'instant' : 'smooth' });
+    if (target) target.scrollIntoView({ behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
   });
 
   document.addEventListener('keydown', (e) => {
@@ -127,7 +122,7 @@ export function initEvents(actions) {
       const input = document.querySelector('.dex-search-input');
       if (input) {
         e.preventDefault();
-        input.scrollIntoView({ behavior: isReducedMotion ? 'instant' : 'smooth', block: 'center' });
+        input.scrollIntoView({ behavior: prefersReducedMotion() ? 'instant' : 'smooth', block: 'center' });
         input.focus();
       }
     }
@@ -138,9 +133,9 @@ export function initEvents(actions) {
     const hash = window.location.hash;
     if (hash && hash !== '#') {
       const target = document.querySelector(hash);
-      if (target) target.scrollIntoView({ behavior: isReducedMotion ? 'instant' : 'smooth' });
+      if (target) target.scrollIntoView({ behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
     } else {
-      window.scrollTo({ top: 0, behavior: isReducedMotion ? 'instant' : 'smooth' });
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
     }
   });
 }
