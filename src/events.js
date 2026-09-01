@@ -23,7 +23,7 @@ export function initEvents(actions) {
     }
 
     const closeMenuBtn = e.target.closest('#mobile-menu-close');
-    const menuLink = e.target.closest('.mobile-menu-link');
+    const menuLink = e.target.closest('.mobile-menu-link, .mobile-menu-cat');
     if ((closeMenuBtn || menuLink) && actions.closeMenu) {
       actions.closeMenu();
       // Don't early return if it's a link, so smooth scroll logic below still runs.
@@ -58,9 +58,20 @@ export function initEvents(actions) {
           target.scrollIntoView({
             behavior: isReducedMotion ? 'instant' : 'smooth'
           });
-          
+
+          // Deep-link: keep the URL hash in sync so Back works and sections are shareable.
+          if (window.location.hash !== targetId) {
+            history.pushState(null, '', targetId);
+          }
+
+          // Move focus to the destination so keyboard/SR users land where they navigated.
+          if (anchorLink.matches('.mobile-menu-link, .mobile-menu-cat')) {
+            target.setAttribute('tabindex', '-1');
+            target.focus({ preventScroll: true });
+          }
+
           // Scroll-spy debounce integration
-          if (anchorLink.classList.contains('navbar-link') || anchorLink.classList.contains('mobile-menu-link')) {
+          if (anchorLink.classList.contains('navbar-link') || anchorLink.matches('.mobile-menu-link, .mobile-menu-cat')) {
             window.isNavScrolling = true;
             clearTimeout(navScrollTimeout);
             
@@ -93,7 +104,7 @@ export function initEvents(actions) {
     }
 
     if (e.key === 'Tab' && menu && menu.classList.contains('menu-open')) {
-      const focusables = menu.querySelectorAll('.mobile-menu-close, .mobile-menu-link');
+      const focusables = menu.querySelectorAll('.mobile-menu-close, .mobile-menu-link, .mobile-menu-cat');
       if (focusables.length) {
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
@@ -105,6 +116,31 @@ export function initEvents(actions) {
           first.focus();
         }
       }
+    }
+
+    // Focus the dex search from anywhere: "/" or Ctrl/Cmd+K.
+    const target = e.target;
+    const isTyping = target && (target.matches('input, textarea, select') || target.isContentEditable);
+    const isSlash = e.key === '/' && !isTyping;
+    const isCmdK = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k';
+    if ((isSlash || isCmdK) && !(menu && menu.classList.contains('menu-open'))) {
+      const input = document.querySelector('.dex-search-input');
+      if (input) {
+        e.preventDefault();
+        input.scrollIntoView({ behavior: isReducedMotion ? 'instant' : 'smooth', block: 'center' });
+        input.focus();
+      }
+    }
+  });
+
+  // Back/forward: honor the hash history pushed on section navigation.
+  window.addEventListener('popstate', () => {
+    const hash = window.location.hash;
+    if (hash && hash !== '#') {
+      const target = document.querySelector(hash);
+      if (target) target.scrollIntoView({ behavior: isReducedMotion ? 'instant' : 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: isReducedMotion ? 'instant' : 'smooth' });
     }
   });
 }

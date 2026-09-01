@@ -32,16 +32,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     const data = await fetchWithTimeout();
     
     renderNavbar(data.profile);
-    renderMobileMenu();
+    renderMobileMenu(data.categories);
     renderHero(data.profile, data.socials);
     renderExploreCategories(data.categories);
     renderCategories(data.categories);
     renderRecentlyAdded(data.categories);
     renderFooter(data.profile, data.socials);
 
+    window.__dexBooted = true;
+
     setupNavbarScroll();
     setupScrollSpy();
-    
+
+    // Deep-link arrival: land on the section referenced by the URL hash.
+    const initialHash = window.location.hash;
+    if (initialHash && initialHash !== '#') {
+      const initialTarget = document.querySelector(initialHash);
+      if (initialTarget) {
+        requestAnimationFrame(() => {
+          initialTarget.scrollIntoView({ behavior: 'instant' });
+        });
+      }
+    }
+
     const menu = document.getElementById('mobile-menu');
     const openBtn = document.getElementById('navbar-menu-btn');
     const closeBtn = document.getElementById('mobile-menu-close');
@@ -50,6 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function openMenu() {
       lastFocusedEl = document.activeElement;
+      menu.removeAttribute('inert');
       menu.classList.add('menu-open');
       menu.setAttribute('aria-hidden', 'false');
       if (openBtn) openBtn.setAttribute('aria-expanded', 'true');
@@ -59,6 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function closeMenu() {
       menu.classList.remove('menu-open');
       menu.setAttribute('aria-hidden', 'true');
+      menu.setAttribute('inert', '');
       if (openBtn) openBtn.setAttribute('aria-expanded', 'false');
       const target = lastFocusedEl && lastFocusedEl.isConnected ? lastFocusedEl : openBtn;
       if (target && target.focus) target.focus();
@@ -78,6 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   } catch (error) {
     console.error('Failed to load dex data:', error);
+    window.__dexBooted = true;
     const loader = document.getElementById('loading-screen');
     if (loader) {
       loader.innerHTML = `

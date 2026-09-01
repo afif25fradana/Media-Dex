@@ -70,7 +70,7 @@ template.innerHTML = `
     .card-flash {
       position: absolute;
       inset: 0;
-      background: rgba(255, 0, 85, 0.4);
+      background: rgba(216, 0, 0, 0.4);
       opacity: 0;
       pointer-events: none;
       z-index: 10;
@@ -280,7 +280,9 @@ export class DexCard extends HTMLElement {
       // Only set src if it has actually changed to prevent aborting pending loads
       if (this.imgEl.getAttribute('src') !== newSrc) {
         this.imgEl.src = newSrc;
-        this.imgEl.alt = `Cover for ${title}`;
+        // Decorative: the <button>'s aria-label already names the item, so an
+        // inner img alt would double-announce it to screen readers.
+        this.imgEl.alt = '';
         this.imgEl.style.display = '';
         this.placeholderEl.style.display = 'none';
         
