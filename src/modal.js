@@ -44,7 +44,7 @@ export function openDetailModal(item) {
         ${subtitle ? `<p class="dex-modal-sub">${esc(subtitle)}</p>` : ''}
         <dl class="dex-modal-meta">
           ${dateStr ? `<div><dt>Added</dt><dd>${esc(dateStr)}</dd></div>` : ''}
-          ${tagLabel ? `<div><dt>Entry</dt><dd>${esc(tagLabel)}</dd></div>` : ''}
+          ${tagLabel ? `<div><dt>Category</dt><dd>${esc(tagLabel)}</dd></div>` : ''}
         </dl>
       </div>
     </div>
@@ -69,7 +69,11 @@ export function openDetailModal(item) {
       return;
     }
     if (e.key === 'Tab') {
-      const focusables = overlay.querySelectorAll('.dex-modal-close, .dex-modal');
+      // Real focusable elements inside the dialog (the close button is the only
+      // interactive control today). The .dex-modal panel itself is focused on
+      // open but excluded from the tabbable list.
+      const focusables = Array.from(overlay.querySelectorAll('button:not([disabled]), a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+        .filter(el => el.offsetParent !== null || el === document.activeElement);
       if (focusables.length) {
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
@@ -77,6 +81,10 @@ export function openDetailModal(item) {
           e.preventDefault();
           last.focus();
         } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        } else if (!focusables.includes(document.activeElement)) {
+          // Focus is on the panel (or the page behind); pull it inside the dialog.
           e.preventDefault();
           first.focus();
         }
@@ -94,6 +102,7 @@ export function openDetailModal(item) {
 
   requestAnimationFrame(() => {
     overlay.classList.add('is-open');
-    closeBtn.focus();
+    const panel = overlay.querySelector('.dex-modal');
+    if (panel) panel.focus();
   });
 }

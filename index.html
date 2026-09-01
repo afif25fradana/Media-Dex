@@ -30,6 +30,32 @@
     </div>
   </div>
 
+  <noscript>
+    <div style="position: fixed; inset: 0; z-index: 10000; background: #0C0C0C; color: #F0ECE2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem; padding: 2rem; text-align: center; font-family: 'Segoe UI', Arial, sans-serif;">
+      <span style="font-family: 'Anton', Impact, sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); letter-spacing: 0.05em; text-transform: uppercase; color: #FF3333;">System Error</span>
+      <span style="font-size: 0.95rem; max-width: 36ch; line-height: 1.6;">This dex is rendered in your browser, so it needs JavaScript to display the collection. Please enable JavaScript and reload.</span>
+    </div>
+  </noscript>
+
+  <script>
+    // Boot watchdog: if the module graph never finishes loading (blocked script,
+    // broken module, partial outage), replace the LOADING screen with a recovery
+    // message instead of leaving a permanent black screen.
+    window.addEventListener('DOMContentLoaded', function () {
+      setTimeout(function () {
+        if (window.__dexBooted) return;
+        var loader = document.getElementById('loading-screen');
+        if (!loader) return;
+        loader.innerHTML =
+          '<div class="loading-error">' +
+            '<h2 class="loading-error-title">System Error</h2>' +
+            '<p class="loading-error-msg">The dex could not be loaded. Check your connection and try again.</p>' +
+            '<button class="error-retry" onclick="window.location.reload()">RETRY CONNECTION</button>' +
+          '</div>';
+      }, 8000);
+    });
+  </script>
+
   <!-- STICKY NAVBAR -->
   <header class="site-header">
     <nav id="site-navbar" class="site-navbar" aria-label="Main navigation">
@@ -38,7 +64,7 @@
   </header>
 
   <!-- MOBILE MENU OVERLAY -->
-  <div id="mobile-menu" class="mobile-menu" aria-hidden="true" role="dialog" aria-label="Mobile navigation menu">
+  <div id="mobile-menu" class="mobile-menu" aria-hidden="true" inert role="dialog" aria-label="Mobile navigation menu">
     <!-- Rendered by JS -->
   </div>
 

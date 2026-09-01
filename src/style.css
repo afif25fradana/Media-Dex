@@ -434,7 +434,8 @@ body::after {
   display: none;
 }
 
-/* Desktop MENU button is a deliberate Persona 5 aesthetic, not a redundant nav link */
+/* Desktop MENU button opens the full-screen system menu — its category
+   quick-jump chips are a job the section-level nav links can't do. */
 .navbar-menu-desktop {
   display: flex;
 }
@@ -501,7 +502,7 @@ body::after {
 
 .mobile-menu-link:hover,
 .mobile-menu-link.active {
-  color: var(--red-text);
+  color: var(--red-on-dark);
 }
 
 .mobile-menu-link::after {
@@ -522,8 +523,60 @@ body::after {
   transform: scaleX(1);
 }
 
+/* Category quick-jump chips inside the full-screen menu */
+.mobile-menu-cats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: -0.75rem;
+}
+
+.mobile-menu-cats-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.mobile-menu-cat {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 0.35rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+
+.mobile-menu-cat:hover,
+.mobile-menu-cat.active {
+  color: var(--red-on-dark);
+  border-color: var(--red);
+}
+
+.mobile-menu-cat:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+}
+
 body:has(#mobile-menu.menu-open) {
   overflow: hidden;
+}
+
+/* Keep scroll targets clear of the 64px sticky navbar */
+#hero-section,
+.explore-section,
+.category-section,
+.recent-overview-section,
+.site-footer,
+.hero-right,
+#dex-overview {
+  scroll-margin-top: 64px;
 }
 
 
@@ -537,7 +590,20 @@ body:has(#mobile-menu.menu-open) {
 
 .hero-left {
   position: relative;
-  background: var(--cream);
+  background-color: var(--cream);
+  /* Crumpled monochrome texture over the cream ground. Multiply-blended (see
+     background-blend-mode) so dark creases darken the cream instead of sitting
+     as a grey wash on top; the top white layer dilutes it to ~25% strength so
+     it stays a subtle foil. Pure background-layer blending = painted once, no
+     page-level re-composite (see the grain-layer note for why we avoid
+     mix-blend-mode on page-wide/fixed layers). */
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)),
+    url('../Asset/monochrome-overlay-background.webp');
+  background-size: cover, cover;
+  background-repeat: repeat, no-repeat;
+  background-position: center, center;
+  background-blend-mode: normal, multiply;
   padding: 8rem 4rem 4rem 5rem;
   display: flex;
   flex-direction: column;
@@ -545,30 +611,15 @@ body:has(#mobile-menu.menu-open) {
   z-index: 2;
 }
 
-/* Star pattern corner texture — bottom-left of hero left panel.
-   Placed bottom-left to anchor to the edge of the screen and sit behind the social rail. */
-.hero-left::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url('Asset/Star Persona.webp') no-repeat bottom left;
-  background-size: clamp(400px, 45vw, 800px);
-  opacity: 0.08;
-  pointer-events: none;
-  z-index: 0;
-  -webkit-mask-image: radial-gradient(ellipse at bottom left, black 0%, transparent 70%);
-  mask-image: radial-gradient(ellipse at bottom left, black 0%, transparent 70%);
-}
-
 /* Diagonal clip on the left panel to create the angled split */
 .hero-left::after {
   content: '';
   position: absolute;
   top: 0;
-  right: -80px;
+  right: -60px;
   bottom: 0;
-  width: 160px;
-  background: var(--cream);
+  width: 60px;
+  background: transparent;
   transform: skewX(-6deg);
   z-index: 1;
 }
@@ -977,28 +1028,6 @@ body:has(#mobile-menu.menu-open) {
   pointer-events: none;
 }
 
-/* Star pattern corner texture — top-right of explore section.
-   Uses filter: invert(1) so the black linework becomes white,
-   staying visible against the #0C0C0C dark background. */
-.explore-section::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url('Asset/Star Persona.webp') no-repeat top right;
-  background-size: clamp(600px, 75vw, 1350px);
-  opacity: 0.10;
-  pointer-events: none;
-  z-index: 0;
-  filter: invert(1);
-  -webkit-mask-image: radial-gradient(ellipse at top right, black 0%, transparent 70%);
-  mask-image: radial-gradient(ellipse at top right, black 0%, transparent 70%);
-}
-
-/* Base: Hide independent mobile star on desktop */
-.explore-star-mobile {
-  display: none;
-}
-
 .explore-header {
   display: flex;
   justify-content: space-between;
@@ -1058,7 +1087,13 @@ body:has(#mobile-menu.menu-open) {
 }
 
 .view-all-link:hover {
-  color: var(--red);
+  color: var(--red-text);
+}
+
+/* The explore section is always void, so its hover needs the bright red that
+   stays ≥4.5:1 on dark regardless of theme. */
+.explore-section .view-all-link:hover {
+  color: var(--red-on-dark);
 }
 
 .view-all-link svg {
@@ -1108,7 +1143,7 @@ body:has(#mobile-menu.menu-open) {
 .explore-card-number {
   font-family: var(--font-mono);
   font-size: 0.95rem;
-  color: rgba(12, 12, 12, 0.25);
+  color: rgba(12, 12, 12, 0.55);
   letter-spacing: 0.05em;
   margin-bottom: auto;
 }
@@ -1186,6 +1221,14 @@ body:has(#mobile-menu.menu-open) {
   filter: none;
 }
 
+/* Non-interactive placeholder: never lift, never show a pointer cursor. */
+.explore-card--more,
+.explore-card--more:hover {
+  cursor: default;
+  transform: rotate(-1deg);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.6);
+}
+
 .explore-card--more .explore-card-name {
   color: var(--cream);
 }
@@ -1205,10 +1248,6 @@ body:has(#mobile-menu.menu-open) {
 .explore-card--more .explore-card-icon {
   background: rgba(240, 236, 226, 0.1);
   color: var(--cream);
-}
-
-.explore-card--more .explore-card-arrow {
-  color: rgba(240, 236, 226, 0.3);
 }
 
 
@@ -1525,6 +1564,7 @@ dex-empty-state {
 .overview-stat-number {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 6vw, 2.5rem);
+  text-transform: uppercase;
   word-break: break-word;
   color: var(--white);
   line-height: 1;
@@ -1900,32 +1940,6 @@ dex-empty-state {
     flex-direction: column;
     align-items: center;
   }
-
-  .explore-section::after {
-    display: none; /* Hide desktop version on mobile */
-  }
-
-  .explore-star-mobile {
-    display: block;
-    position: absolute;
-    top: 1.5rem;
-    right: -1rem;
-    width: 250px;
-    height: 250px;
-    
-    /* Anchor to bottom right so the empty top gap gets clipped out of the 250px box */
-    background: url('Asset/Star Persona.webp') no-repeat bottom right;
-    background-size: 250px auto;
-    
-    opacity: 0.10; /* Match desktop opacity exactly */
-    filter: invert(1);
-    pointer-events: none;
-    z-index: 0;
-    
-    /* Centered circle fading outward */
-    -webkit-mask-image: radial-gradient(circle, black 0%, transparent 70%);
-    mask-image: radial-gradient(circle, black 0%, transparent 70%);
-  }
 }
 
 @media (max-width: 480px) {
@@ -2143,7 +2157,7 @@ dex-empty-state {
 }
 
 .dex-search-input::placeholder {
-  color: rgba(240, 236, 226, 0.4);
+  color: rgba(240, 236, 226, 0.55);
 }
 
 .dex-search-input:focus-visible {

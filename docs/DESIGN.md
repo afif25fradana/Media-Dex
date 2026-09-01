@@ -225,7 +225,7 @@ Sharp and reactive.
 - **Tag** (`.recent-card-tag`, `.hero-id-code`): Combat Red ground, white or red uppercase micro-label (Inter 700, 0.6–0.65rem, 0.08–0.1em), small padding, sits at a card corner or above an ID name.
 
 ### Cards / Containers
-- **DexCard** (`.dex-card`, shadow-DOM component): 3px solid black border, Charcoal ground, hard two-tone shadow; square 1:1 cover with halftone overlay and skeleton shimmer; 0.7rem info strip with Anton title (cream) and Caveat subtitle (45% cream). Rotated via `--rotation`; hover lifts -8px with scale 1.05, straightens rotation, and flashes a magenta overlay; active presses down. Focus ring is 4px Combat Red.
+- **DexCard** (`.dex-card`, shadow-DOM component): 3px solid black border, Charcoal ground, hard two-tone shadow; square 1:1 cover with halftone overlay and skeleton shimmer; 0.7rem info strip with Anton title (cream) and Caveat subtitle (45% cream). Rotated via `--rotation`; hover lifts -8px with scale 1.05, straightens rotation, and flashes a Combat Red overlay; active presses down. Focus ring is 4px Combat Red.
 - **ExploreCard** (`.explore-card`): cream face, 3px solid black border, 4px offset black shadow, rotated -1deg; ghost number, parallelogram icon tile (Void ground), Anton name, Combat Red count, Inter description, arrow that nudges on hover. The "More / Coming Soon" variant is a dashed cream outline on a 5% cream wash.
 - **RecentCard** (`.recent-card`): 2px Warm/Steel border on Paper/Charcoal, 16:10 image, Combat Red tag chip; hover lifts -4px with a soft offset.
 - **ID Card** (`.hero-id-card`): Charcoal ground, clipped corners, Combat Red top bar, red code chip (`ID: FRD-125`), Anton name, uppercase location, italic quote with a Combat Red left border, oversized "❝" mark.

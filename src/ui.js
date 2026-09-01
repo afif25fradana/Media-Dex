@@ -34,7 +34,6 @@ export const CARD_ROTATIONS = [-3, 2, -1, 3, -1, 2, -2, 1, -2, 2, -1, 2];
 export const ENTRANCE_DIRS = ['left', 'right'];
 export const NAV_LINKS = [
   { label: 'Home', href: '#hero-section' },
-  { label: 'Profile', href: '#hero-id-card-anchor' },
   { label: 'Collection', href: '#explore-categories' },
   { label: 'Recently Added', href: '#recent-overview' },
   { label: 'About', href: '#site-footer' }
@@ -145,8 +144,9 @@ export function renderNavbar(profile) {
   `;
 }
 
-export function renderMobileMenu() {
+export function renderMobileMenu(categories) {
   const menu = document.getElementById('mobile-menu');
+  const cats = categories || [];
   menu.innerHTML = `
     <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -154,6 +154,12 @@ export function renderMobileMenu() {
       </svg>
     </button>
     ${NAV_LINKS.map(link => `<a href="${link.href}" class="mobile-menu-link">${esc(link.label)}</a>`).join('')}
+    ${cats.length ? `
+      <div class="mobile-menu-cats" role="group" aria-label="Jump to a category">
+        <span class="mobile-menu-cats-label">JUMP TO CATEGORY</span>
+        ${cats.map(cat => `<a href="#section-${esc(cat.id)}" class="mobile-menu-cat">${esc(cat.title)}</a>`).join('')}
+      </div>
+    ` : ''}
   `;
 }
 
@@ -178,7 +184,7 @@ export function renderHero(profile, socials) {
           EXPLORE DEX
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
-        <button class="btn-secondary" data-scroll-to="#hero-id-card-anchor" aria-label="Learn more about me">
+        <button class="btn-secondary" data-scroll-to="#dex-overview" aria-label="Learn more about me">
           ABOUT ME
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </button>
@@ -289,10 +295,6 @@ export function renderExploreCategories(categories) {
   const section = document.getElementById('explore-categories');
   const fragment = document.createDocumentFragment();
 
-  // Mobile-only star texture (avoids desktop pseudo-element inheritance bugs).
-  const mobileStar = h('div', { className: 'explore-star-mobile', 'aria-hidden': 'true' });
-  fragment.appendChild(mobileStar);
-
   const exploreGrid = h('div', { className: 'explore-grid' });
 
   categories.forEach((cat, i) => {
@@ -324,8 +326,7 @@ export function renderExploreCategories(categories) {
         h('span', { className: 'explore-card-icon', innerHTML: CATEGORY_ICONS.more }),
         h('h3', { className: 'explore-card-name' }, 'MORE'),
         h('span', { className: 'explore-card-count' }, 'Coming Soon'),
-        h('p', { className: 'explore-card-desc' }, 'More categories coming soon.'),
-        h('svg', { className: 'explore-card-arrow', viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', innerHTML: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>' })
+        h('p', { className: 'explore-card-desc' }, 'More categories coming soon.')
       )
     );
   }
@@ -402,7 +403,7 @@ function buildDexOverview(categories) {
   const totalEntries = categories.reduce((sum, cat) => sum + (cat.items || []).length, 0);
   const categoryCount = categories.length;
 
-  return h('div', { className: 'overview-column' },
+  return h('div', { className: 'overview-column', id: 'dex-overview' },
     h('div', { className: 'overview-header' },
       h('span', { className: 'section-eyebrow', style: 'color: var(--red-on-dark);' }, 'AT A GLANCE'),
       h('h2', { className: 'overview-heading' }, 'DEX OVERVIEW')
