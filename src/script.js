@@ -139,13 +139,7 @@ function setupScrollSpy() {
 
   const visibleSections = new Map();
 
-  const observer = new IntersectionObserver((entries) => {
-    if (window.isNavScrolling) return;
-
-    entries.forEach(entry => {
-      visibleSections.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
-    });
-
+  const applyActive = () => {
     let maxRatio = 0;
     let activeId = null;
     visibleSections.forEach((ratio, id) => {
@@ -161,12 +155,24 @@ function setupScrollSpy() {
         else link.classList.remove('active');
       });
     }
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      visibleSections.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
+    });
+
+    if (window.isNavScrolling) return;
+
+    applyActive();
   }, {
     rootMargin: '-10% 0px -10% 0px',
     threshold: [0, 0.5]
   });
 
   sections.forEach(sec => observer.observe(sec));
+
+  window.refreshNavActive = applyActive;
 }
 
 

@@ -77,6 +77,7 @@ export function initEvents(actions) {
             
             navScrollTimeout = setTimeout(() => {
               window.isNavScrolling = false;
+              if (window.refreshNavActive) window.refreshNavActive();
             }, 800);
           }
         }
