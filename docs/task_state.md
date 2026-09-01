@@ -4,8 +4,9 @@
 
 Full audit prep — awaiting next instruction.
 
-> Working tree is ahead of `main` (HEAD `eceaeca`) with an uncommitted UX-hardening pass in
-> progress. See **Completed Steps → WIP (uncommitted)** below for what is staged-but-not-shipped.
+> Repo state: HEAD `bdc939f` is committed **and pushed** to `origin/main` (verified via
+> `git ls-remote origin main`). Working tree clean. The UX-hardening pass described under
+> "Shipped" is live on `main`, not WIP.
 
 ## Completed Steps
 
@@ -51,60 +52,43 @@ Full audit prep — awaiting next instruction.
   - **Note:** at HEAD this commit still contained the now-fixed P1/P2 issues found by the
     Aug-31 critique (magenta card flash, non-inert mobile menu, dead "ABOUT ME", no hash
     deep-links, `.overview-stat-number` lowercase Anton, etc.).
-
-### WIP (uncommitted — the current hardening pass)
-
-Addresses the two `.impeccable/critique/*.md` reports (Aug 30 & Aug 31) plus polish. Files
-modified: `index.html`, `src/ui.js`, `src/events.js`, `src/modal.js`, `src/script.js`,
-`src/style.css`, `src/components/DexCard.js`, `.gitignore`, `docs/DESIGN.md`; **docs moved
-into `docs/`** (`AGENTS.md`, `DESIGN.md`, `PRODUCT.md` via `git mv`, plus untracked
-`architecture.md`/`task_state.md`); untracked:
-`Asset/monochrome-overlay-background.webp`; deleted: `Asset/Star Persona.webp`. The local
-Playwright test infra (`package.json`, `playwright.config.js`, `tests/`, `node_modules/`,
-`test-results/`) was **removed** — browser automation now relies exclusively on the global
-Playwright MCP (configured in `~/.config/opencode/opencode.jsonc`, using ungoogled
-Chromium).
-
-- **No-JS / broken-module recovery**: `<noscript>` block (`index.html:33-38`) + inline
-  8-second boot watchdog that replaces the LOADING screen with a "System Error + retry" if
-  `window.__dexBooted` never flips (`index.html:40-57`); `__dexBooted` is also set in the
-  fetch catch path (`src/script.js:96`).
-- **Focus/`inert` correctness**: closed mobile menu is now `inert` (`index.html:67`,
-  toggled at `src/script.js:66,76`); modal focus trap rebuilt to enumerate real focusables
-  and pull focus inside on Tab from the panel (`src/modal.js:71-93`); modal focuses the
-  panel (not the close button) on open (`src/modal.js:103-107`); focus moves to the target
-  section after mobile-menu navigation (`src/events.js:68-71`).
-- **Deep links + Back/forward**: delegated anchor clicks now `history.pushState` the hash
-  (`src/events.js:62-65`); `popstate` restores scroll position (`src/events.js:137-145`);
-  cold-load hash arrival scrolls to the section (`src/script.js:48-56`).
-- **Keyboard search shortcut**: `/` or Ctrl/Cmd+K focuses the dex search from anywhere
-  (`src/events.js:121-133`).
-- **Critique-flagged design fixes**: card hover flash changed magenta → Combat Red
-  (`src/components/DexCard.js:73`); card `img alt` emptied to stop double-announcement
-  (`src/components/DexCard.js:284-285`); "ABOUT ME" now scrolls to real content
-  (`#dex-overview`, `src/ui.js:187`); "MORE" explore card de-clicked (no arrow, no lift,
-  `src/ui.js:327-336` + `src/style.css:1257-1262`); `.overview-stat-number` gains
-  `text-transform: uppercase` (`src/style.css:1599`); view-all hover uses `--red-on-dark`
-  on the explore section (`src/style.css:1127-1129`); explore-card number contrast
-  1.9:1 → ~3.6:1 (`rgba(12,12,12,.25)` → `.55`, `src/style.css:1178`); search placeholder
-  contrast bump (`src/style.css:2218`); mobile-menu links use `--red-on-dark`;
-  `scroll-margin-top: 64px` on all scroll targets (`src/style.css:572-580`); modal meta label
-  "Entry" → "Category" (`src/modal.js:47`); nav label "Profile" removed.
-- **Hero texture / seam rework**: `Asset/monochrome-overlay-background.webp` (untracked)
-  covers the whole hero-left cream panel, multiply-blended over the cream via
-  `background-blend-mode: normal, multiply` with a `rgba(255,255,255,0.75)` dilution layer
-  ≈ 25% strength (`src/style.css:591-612`; tune strength by changing `0.75` → `0.85` ≈ 15%).
-  The cream divider slab (`.hero-left::after`) was made `transparent` and narrowed to
-  `right:-60px; width:60px` — the old opaque `var(--cream)` slab painted a flat band over
-  the texture (the seam bug), and its right-hand sliver was unwanted. The red bar
-  (`.hero-right::before`, unchanged) does the diagonal; it's clipped to the black panel by
-  `.hero-right { overflow: hidden }`, so it never covered the cream side. **All three dead
-  `Star Persona.webp` refs** (`.hero-left::before`, `.explore-section::after`,
-  `.explore-star-mobile`) and the `.explore-star-mobile` element in `src/ui.js:298-300` were
-  **removed** (asset deleted).
-- **Housekeeping**: markdown docs moved from root into `docs/` (README.md stays at root);
-  the temporary local Playwright test infra was deleted (it duplicated the global MCP and
-  its test-runner browser binary was never installed).
+- **`bdc939f` — Harden UX, fix hero texture seam, reorganize repo** (2026-09-02): the
+  critique hardening pass. Confirmed **committed and pushed** (`git log` shows it at HEAD;
+  `git ls-remote origin main` returns `bdc939f...`, so `origin/main` == `HEAD`) —
+  - **Hero visual fixes**: `Asset/monochrome-overlay-background.webp` (new asset) covers the
+    whole hero-left cream panel, multiply-blended over the cream via
+    `background-blend-mode: normal, multiply` with a `rgba(255,255,255,0.75)` dilution layer
+    ≈ 25% strength (`src/style.css:591-612`; tune by changing `0.75` → `0.85` ≈ 15%). The
+    cream divider slab (`.hero-left::after`) was made `transparent` and narrowed to
+    `right:-60px; width:60px` — the old opaque `var(--cream)` slab painted a flat band over
+    the texture (the seam bug) plus an unwanted right-hand sliver. The red bar
+    (`.hero-right::before`, unchanged) does the diagonal; it's clipped to the black panel by
+    `.hero-right { overflow: hidden }`, so it never covered the cream side. **All three dead
+    `Star Persona.webp` refs** (`.hero-left::before`, `.explore-section::after`,
+    `.explore-star-mobile`) and the `.explore-star-mobile` element in `src/ui.js:298-300` were
+    **removed** (asset deleted).
+  - **UX hardening**: `<noscript>` block (`index.html:33-38`) + inline 8s boot watchdog
+    (`index.html:40-57`); `inert` on the closed mobile menu (`index.html:67`, toggled at
+    `src/script.js:66,76`); rebuilt modal focus trap + focus return (`src/modal.js:71-93,103-107`);
+    focus moves to the target section after mobile-menu navigation (`src/events.js:68-71`);
+    hash deep-links via `history.pushState` (`src/events.js:62-65`) + `popstate` restore
+    (`src/events.js:137-145`) + cold-load hash arrival (`src/script.js:48-56`); `/` or
+    Ctrl/Cmd+K focuses search (`src/events.js:121-133`); error screen retry; `scroll-margin-top:
+    64px` on scroll targets (`src/style.css:572-580`); category quick-jump chips in the
+    full-screen menu (`src/ui.js:158-162`, `src/style.css:526-565`).
+  - **Accessibility / contrast**: card flash magenta → Combat Red (`src/components/DexCard.js:73`);
+    card `img alt` emptied to stop double-announcement (`src/components/DexCard.js:284-285`);
+    "ABOUT ME" → `#dex-overview` (`src/ui.js:187`); "MORE" explore card de-clicked
+    (`src/ui.js:327-336` + `src/style.css:1257-1262`); `.overview-stat-number` uppercase
+    (`src/style.css:1599`); view-all hover `--red-on-dark` on void (`src/style.css:1127-1129`);
+    explore-card number + search placeholder contrast bumps (`src/style.css:1178,2218`);
+    mobile-menu links `--red-on-dark`; modal label "Entry" → "Category" (`src/modal.js:47`);
+    nav label "Profile" removed.
+  - **Repo cleanup**: docs moved into `docs/` (AGENTS/DESIGN/PRODUCT via `git mv`; new
+    `architecture.md`/`task_state.md` audits; README stays at root); dev-only impeccable-live
+    script stripped from `index.html`; the local Playwright test infra was deleted (global
+    Playwright MCP covers browser automation — the repo test-runner's browser was never
+    installed).
 
 ## Known Edge Cases
 
@@ -197,12 +181,12 @@ Gotchas, browser workarounds, and fragile areas — each with the *why* in the c
   `--red-text`/`--red-on-dark`); using the wrong one on a void surface drops below the 4.5:1
   floor the DESIGN.md promises (`DESIGN.md:259`). `--red-on-dark` is the only safe red on
   always-dark surfaces.
-- **Uncommitted WIP + untracked test infra** mean `git status` and `main` diverge
-  significantly; a reviewer or collaborator working off HEAD sees the pre-hardening code
-  (magenta flash, non-inert menu, no deep links).
-- **`index.html:101-103` impeccable-live script** must be stripped before any deploy.
+- **Repo is in sync**: `bdc939f` is committed and pushed (`origin/main` == `HEAD`, working
+  tree clean). Anyone checking out `main` sees the hardened, hero-fixed code — no local-only
+  divergence.
+- **Impeccable-live script was stripped from `index.html`** in `bdc939f`; if the live tool
+  re-injects it, strip it again before any deploy.
 - **Hero seam stays fragile by design**: `.hero-left::after` is now `transparent`
   (vestigial — kept only to preserve the skew geometry), and the red bar is clipped by
   `.hero-right { overflow: hidden }`. If the cream slab is ever given a visible background
-  again, the flat-band-over-texture bug will return (see the WIP "Hero texture / seam
-  rework" note).
+  again, the flat-band-over-texture bug will return (see the `bdc939f` shipped entry).
