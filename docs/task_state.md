@@ -2,11 +2,12 @@
 
 ## Current Task
 
-Full audit prep — awaiting next instruction.
+All audit fixes shipped — awaiting next instruction.
 
-> Repo state: HEAD `cfeb249` is committed **and pushed** to `origin/main` (verified via
+> Repo state: HEAD `2b04101` is committed **and pushed** to `origin/main` (verified via
 > `git ls-remote origin main`). Working tree clean. The ponytail cleanup (Stage 1 `0b5c9a8` +
-> Stage 2 `cfeb249`) described under "Shipped" is live on `main`.
+> Stage 2 `cfeb249`) and the scroll-spy stuck-indicator fix (`2b04101`) described under
+> "Shipped" are live on `main`.
 
 ## Completed Steps
 
@@ -124,6 +125,18 @@ Full audit prep — awaiting next instruction.
   - Deduped the X-close SVG into exported `CLOSE_ICON_SVG` (modal close, search-clear,
     mobile-menu close) and the hamburger SVG into `MENU_ICON_SVG` (`renderNavbar`); the
     ui.js `DataStore` import and modal.js local `CLOSE_ICON_SVG` were dropped.
+- **`2b04101` — Fix stuck navbar active indicator (scroll-spy debounce)** (2026-09-02):
+  Root cause: the scroll-spy froze the active link (e.g. stuck on RECENTLY ADDED) when a
+  manual scroll happened during the 800ms `isNavScrolling` debounce after a nav click — the
+  IntersectionObserver callback early-returned while the flag was true, **discarding**
+  threshold-crossing entries instead of queueing them, and IO only re-fires on the next
+  crossing so a static page never recovered. Fix: `src/script.js` now always updates
+  `visibleSections` from entries (gating only the DOM `.active` update on `isNavScrolling`),
+  recompute extracted to `applyActive()` / `window.refreshNavActive`; `src/events.js:78-81`
+  calls `refreshNavActive()` at the end of the debounce to self-heal. Verified live: stuck-bug
+  fixed, rapid re-click race clean (clearTimeout cancels the prior refresh), click-settle has
+  no flicker, pure scroll unchanged, and the `#categories-container` gap freeze is
+  byte-identical to pre-fix code.
 
 ## Known Edge Cases
 
@@ -183,10 +196,12 @@ Gotchas, browser workarounds, and fragile areas — each with the *why* in the c
     the detail modal (z-index 3000) and below the loading screen (9999) — intentional: grain
     covers everything once loaded. The comment at `src/style.css:142-144` explicitly rejects
     `mix-blend-mode` because a full-viewport blend layer forces a re-blend every scroll frame.
-13. **Scroll-spy debounce** (`src/script.js:147-148`, `src/events.js:74-85`):
-    `window.isNavScrolling` is set true on manual nav and cleared after 800ms to stop
-    observer-driven active-state flicker mid-scroll. Any code that scrolls to an anchor should
-    respect this window or the active link will fight the user.
+13. **Scroll-spy debounce** (`src/script.js:121-175`, `src/events.js:69-81`):
+    `window.isNavScrolling` is set true on a nav-link click and cleared after 800ms to stop
+    observer-driven active-state flicker mid-scroll. Since `2b04101` the `visibleSections`
+    map is always updated from IO entries (only the DOM `.active` update is gated) and
+    `window.refreshNavActive()` runs at the end of the debounce. Any code that scrolls to an
+    anchor should respect this window or the active link will fight the user.
 14. **Search hides sections by inline `style.display`** (`src/ui.js:468-475`) and matches
     dividers via `previousElementSibling` class checks — the divider lookup assumes every
     category section is immediately preceded by `.slash-divider` (true in `renderCategories`,
@@ -210,6 +225,14 @@ Gotchas, browser workarounds, and fragile areas — each with the *why* in the c
     will need re-tuning.
 20. **Hard-coded persona strings** in JS (`ID: FRD-125`, `01`) at `src/ui.js:195,197` do not
     come from `data.json`; they stay correct only while the profile name/theme matches.
+21. **`isNavScrolling` debounce self-heals via `refreshNavActive`** (`src/script.js:140-175`,
+    `src/events.js:78-81`): during the 800ms window after a nav click the internal
+    `visibleSections` map is **always** updated from IntersectionObserver entries; only the
+    DOM `.active` class update is gated on the flag. `window.refreshNavActive()` is invoked at
+    the end of the debounce so the active section is reapplied even if a scroll happened
+    mid-window and no further crossing fires afterward. Rapid re-clicks rely on
+    `clearTimeout` cancelling the prior instance's timer before its refresh runs — verified,
+    not just assumed — so only the latest click's `refreshNavActive()` actually fires.
 
 ### Fragile spots flagged for the reviewer
 
@@ -219,7 +242,7 @@ Gotchas, browser workarounds, and fragile areas — each with the *why* in the c
   `--red-text`/`--red-on-dark`); using the wrong one on a void surface drops below the 4.5:1
   floor the DESIGN.md promises (`DESIGN.md:259`). `--red-on-dark` is the only safe red on
   always-dark surfaces.
-- **Repo is in sync**: `cfeb249` is committed and pushed (`origin/main` == `HEAD`, working
+- **Repo is in sync**: `2b04101` is committed and pushed (`origin/main` == `HEAD`, working
   tree clean). Anyone checking out `main` sees the hardened, hero-fixed code — no local-only
   divergence.
 - **Impeccable-live script was stripped from `index.html`** in `bdc939f`; if the live tool
