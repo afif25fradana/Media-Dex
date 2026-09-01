@@ -4,9 +4,9 @@
 
 Full audit prep — awaiting next instruction.
 
-> Repo state: HEAD `bdc939f` is committed **and pushed** to `origin/main` (verified via
-> `git ls-remote origin main`). Working tree clean. The UX-hardening pass described under
-> "Shipped" is live on `main`, not WIP.
+> Repo state: HEAD `cfeb249` is committed **and pushed** to `origin/main` (verified via
+> `git ls-remote origin main`). Working tree clean. The ponytail cleanup (Stage 1 `0b5c9a8` +
+> Stage 2 `cfeb249`) described under "Shipped" is live on `main`.
 
 ## Completed Steps
 
@@ -89,6 +89,41 @@ Full audit prep — awaiting next instruction.
     script stripped from `index.html`; the local Playwright test infra was deleted (global
     Playwright MCP covers browser automation — the repo test-runner's browser was never
     installed).
+- **`0b5c9a8` — Remove dead CSS (ponytail audit Stage 1)** (2026-09-02): deleted ~157 lines
+  from `src/style.css` —
+  - Dead keyframes/selectors: `@keyframes p5HeartbeatPulse`; `@keyframes slashInBottom` +
+    `.panel-enter--bottom.revealed` (that entrance direction is never emitted — `ENTRANCE_DIRS`
+    only yields `left`/`right`); the `.panel-animate` base rule + its two
+    `.panel-animate .section-*` rules (the class is never added by JS).
+  - Vestigial `.hero-left::after` (transparent, `position: absolute` — out-of-flow, no layout/
+    hit-test effect; the seam is handled by `.hero-left`'s multiply-blended texture +
+    `.hero-right::before`) plus its now-orphaned 1024px media override.
+  - Unused tokens: `--halftone`/`--halftone-size`/`--halftone-dark` + the `.halftone` utility,
+    `--in-oklch` + its `@supports` block, and `--cyan`/`--magenta`/`--yellow`/`--ease-hard`/
+    `--dur-normal`/`--border-thick`/`--border-thin`.
+  - Dead light-DOM selectors targeting DexCard shadow internals
+    (`.card-placeholder-letter`/`.card-title`/`.card-subtitle`) and the dead `.card*`
+    reduced-motion rules. **Kept** the load-bearing `.card-will-animate` reduced-motion rule
+    (without it reduced-motion cards would stay `opacity: 0`).
+- **`cfeb249` — JS consolidation (ponytail audit Stage 2)** (2026-09-02):
+  - **Reduced-motion is now a single source of truth**: new `src/motion.js` exports
+    `prefersReducedMotion()` — a fresh `matchMedia(...).matches` read per call, no cached state,
+    no `change` listener. The duplicate listener + `isReducedMotion` state in `animations.js`
+    and `events.js` was removed. Verified: an OS-level toggle mid-session (no reload) flips
+    `smooth`↔`instant` scroll on the very next interaction; CSS `@media (prefers-reduced-motion)`
+    rules also re-evaluate live.
+  - Fetch timeout: hand-rolled `Promise.race` + `setTimeout` replaced with
+    `AbortSignal.timeout(10000)` threaded through `DataStore.fetch(signal)`
+    (`src/script.js:19`, `src/store.js:5-11`). Timeout (`TimeoutError`) and network failure
+    (`TypeError`) both hit the same error UI (verified).
+  - Removed `DataStore.getRecentItems` + `cachedRecent`; the recent-items flatten+sort is now
+    inlined in `renderRecentlyAdded` (`src/ui.js`).
+  - Removed unused `profile.handle`/`profile.avatar` (`data.json`) and unused
+    `SOCIAL_ICONS.twitter`/`discord` (`src/ui.js`) — the social render loops iterate the
+    `socials` array, not the icon map.
+  - Deduped the X-close SVG into exported `CLOSE_ICON_SVG` (modal close, search-clear,
+    mobile-menu close) and the hamburger SVG into `MENU_ICON_SVG` (`renderNavbar`); the
+    ui.js `DataStore` import and modal.js local `CLOSE_ICON_SVG` were dropped.
 
 ## Known Edge Cases
 
@@ -97,7 +132,7 @@ Gotchas, browser workarounds, and fragile areas — each with the *why* in the c
 ### Deliberate workarounds (comments in the code — do not remove)
 
 1. **Brave `animation-timeline` bug → card reveal rules live in Light DOM, not Shadow DOM.**
-   `src/style.css:1399-1407`: `.card-will-animate.card-visible/.card-ready` are authored in
+   `src/style.css:1285-1298`: `.card-will-animate.card-visible/.card-ready` are authored in
    `style.css` (not inside the `DexCard` shadow template) because Brave's animation-timeline
    handling needs Light-DOM specificity to fire `.card-ready` reveals. The same classes also
    exist inside the shadow template (`src/components/DexCard.js:13-27`) — **both copies must
@@ -107,29 +142,32 @@ Gotchas, browser workarounds, and fragile areas — each with the *why* in the c
    `#D80000`/`#FFFFFF`/etc. as `var(--red, #D80000)` fallbacks because custom-property
    fallbacks do not cross into Shadow DOM styles reliably for these usages.
 3. **`encodeURI` is applied to image paths** because filenames contain spaces/apostrophes/`&`/
-   parentheses (`src/components/DexCard.js:278`, `src/modal.js:32`). Caveat: `#`/`?` are NOT
+   parentheses (`src/components/DexCard.js:278`, `src/modal.js:30`). Caveat: `#`/`?` are NOT
    encoded — one such filename away from a broken cover.
 4. **`img src` is only re-set when changed** (`src/components/DexCard.js:280-291`) to avoid
    aborting in-flight loads on `attributeChangedCallback` re-renders; then "instantly cached"
    images are resolved synchronously via `imgEl.complete` (`src/components/DexCard.js:294-299`).
    Ordering here is subtle — if you add attributes to cards after they enter the DOM, cached
    images must still hit the `complete` path.
-5. **Circular import `ui.js` ↔ `DexEmptyState.js`** (`src/ui.js:3`, `src/components/DexEmptyState.js:1`)
+5. **Circular import `ui.js` ↔ `DexEmptyState.js`** (`src/ui.js:2`, `src/components/DexEmptyState.js:1`)
    only works because the cross-reference is runtime-only (`DexEmptyState._render()`). Any
    refactor that lifts it to module-evaluation time (e.g. a top-level `CATEGORY_ICONS` read)
    will throw a TDZ/undefined error. AGENTS.md forbids this restructure.
 6. **Boot watchdog trusts `window.__dexBooted`** (`index.html:46`) — this flag is set at
    `src/script.js:42` (after renders) and `src/script.js:96` (catch). If a future module
    sets it earlier/later, the 8-second fallback timing drifts.
-7. **Fetch timeout uses `Promise.race`** (`src/script.js:19-29`) — the winning rejection is a
-   generic `Error('timeout')`, indistinguishable from a network error in the catch; fine today
-   (both render the same error UI).
-8. **`DataStore.fetch()` is not in-flight-memoized** (`src/store.js:6-13`): `cachedData` stays
+7. **Fetch timeout uses `AbortSignal.timeout(10000)`** (`src/script.js:19`) — an abort rejects
+   with a `TimeoutError` DOMException, distinct from a network `TypeError`; both render the same
+   error UI. Needs Chrome 103+/Safari 16+/FF 100+. The signal is threaded through
+   `DataStore.fetch(signal)` (`src/store.js:5-11`).
+8. **`DataStore.fetch()` is not in-flight-memoized** (`src/store.js:5-11`): `cachedData` stays
    null until the first fetch resolves, so a second concurrent call would start a duplicate
    fetch. Only one caller exists today; safe unless parallelized.
-9. **`prefers-reduced-motion` is tracked twice**, once in `src/animations.js:8-12` and once in
-   `src/events.js:4-8`, each with its own `change` listener. Both must stay in sync if the
-   media query logic ever changes.
+9. **`prefers-reduced-motion` is a single source of truth** in `src/motion.js` —
+   `prefersReducedMotion()` does a fresh `matchMedia(...).matches` read at each call site (no
+   cached state, no `change` listener). All consumers (`src/animations.js`, `src/events.js`)
+   import it, so a mid-session OS toggle is honored on the next interaction without a reload.
+   New code needing the preference must import from `motion.js`, not re-roll a listener.
 10. **View Transitions theme toggle** (`src/ui.js:99-105`): guarded by
     `document.startViewTransition` existence. On unsupported browsers it silently falls back
     to an instant swap — no crossfade, no error. Browsers that support VT but not
@@ -154,8 +192,8 @@ Gotchas, browser workarounds, and fragile areas — each with the *why* in the c
     category section is immediately preceded by `.slash-divider` (true in `renderCategories`,
     `src/ui.js:267`). Inserting other content between sections will break divider hiding.
 15. **Reduced-motion content visibility:** with `reduce`, `dismissLoading` immediately marks
-    every card `card-ready` (`src/animations.js:17-25`) and CSS forces opacity/transform none
-    (`src/style.css:2073-2150`) so **all content is visible at once** — this is the intended
+    every card `card-ready` (`src/animations.js:13-20`) and CSS forces opacity/transform none
+    (`src/style.css:1884-1944`) so **all content is visible at once** — this is the intended
     no-motion UX, not a bug.
 16. **`:has()` scroll-lock** (`src/style.css:567-569`): `body:has(#mobile-menu.menu-open)`
     needs Chrome 105+/Safari 15.4+/FF 121+. Older browsers can scroll behind the open
@@ -181,12 +219,14 @@ Gotchas, browser workarounds, and fragile areas — each with the *why* in the c
   `--red-text`/`--red-on-dark`); using the wrong one on a void surface drops below the 4.5:1
   floor the DESIGN.md promises (`DESIGN.md:259`). `--red-on-dark` is the only safe red on
   always-dark surfaces.
-- **Repo is in sync**: `bdc939f` is committed and pushed (`origin/main` == `HEAD`, working
+- **Repo is in sync**: `cfeb249` is committed and pushed (`origin/main` == `HEAD`, working
   tree clean). Anyone checking out `main` sees the hardened, hero-fixed code — no local-only
   divergence.
 - **Impeccable-live script was stripped from `index.html`** in `bdc939f`; if the live tool
   re-injects it, strip it again before any deploy.
-- **Hero seam stays fragile by design**: `.hero-left::after` is now `transparent`
-  (vestigial — kept only to preserve the skew geometry), and the red bar is clipped by
-  `.hero-right { overflow: hidden }`. If the cream slab is ever given a visible background
-  again, the flat-band-over-texture bug will return (see the `bdc939f` shipped entry).
+- **Hero seam stays fragile by design**: the cream divider slab (`.hero-left::after`) was
+  **removed** entirely in `0b5c9a8` — it was transparent/out-of-flow and added nothing; the
+  seam is now carried by `.hero-left`'s multiply-blended texture (which reaches the panel edge)
+  plus the red bar (`.hero-right::before`), clipped by `.hero-right { overflow: hidden }`. If
+  the texture is ever replaced with a flat color, verify the red bar still sits flush with no
+  cream sliver (see the `bdc939f` shipped entry for the original bug).
