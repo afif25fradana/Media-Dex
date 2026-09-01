@@ -16,17 +16,7 @@ import { dismissLoading, triggerPageEntrance, setupScrollReveals } from './anima
 document.addEventListener('DOMContentLoaded', async () => {
   initTheme();
 
-  const fetchWithTimeout = async () => {
-    let timer;
-    const timeout = new Promise((_, reject) => {
-      timer = setTimeout(() => reject(new Error('timeout')), 10000);
-    });
-    try {
-      return await Promise.race([DataStore.fetch(), timeout]);
-    } finally {
-      clearTimeout(timer);
-    }
-  };
+  const fetchWithTimeout = () => DataStore.fetch(AbortSignal.timeout(10000));
 
   try {
     const data = await fetchWithTimeout();

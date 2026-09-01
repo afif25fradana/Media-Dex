@@ -1,11 +1,9 @@
 {
   "profile": {
     "name": "Fradana",
-    "handle": "@afif_fradana",
     "tagline": "A personal database of the things I love. Games. Manhwa. Anime. Music. And more.",
     "quote": "Living a life surrounded by stories I love.",
     "location": "Solo, ID",
-    "avatar": "Asset/Profile/Wisadel_Skin.webp",
     "heroImage": "Asset/Profile/Wisadel_Skin.webp"
   },
   "socials": [

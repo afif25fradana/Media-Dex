@@ -1,3 +1,5 @@
+import { prefersReducedMotion } from './motion.js';
+
 const TIMING = {
   PAGE_ENTRANCE_STAGGER: 120,
   SCROLL_READY_DELAY: 1000,
@@ -5,16 +7,10 @@ const TIMING = {
   LOADING_HIDE_DELAY: 400
 };
 
-const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-let isReducedMotion = motionQuery.matches;
-motionQuery.addEventListener('change', e => {
-  isReducedMotion = e.matches;
-});
-
 export function dismissLoading(onDone) {
   const loader = document.getElementById('loading-screen');
 
-  if (isReducedMotion) {
+  if (prefersReducedMotion()) {
     loader.style.display = 'none';
     loader.setAttribute('aria-hidden', 'true');
     document.querySelectorAll('dex-card, .card').forEach(card => {
@@ -35,7 +31,7 @@ export function dismissLoading(onDone) {
 }
 
 export function triggerPageEntrance() {
-  if (isReducedMotion) return;
+  if (prefersReducedMotion()) return;
 
   const hero = document.getElementById('hero-section');
   if (hero) hero.classList.add('hero-entrance');
@@ -54,7 +50,7 @@ function isInViewport(el) {
 }
 
 export function setupScrollReveals() {
-  if (isReducedMotion) return;
+  if (prefersReducedMotion()) return;
 
   const sections = document.querySelectorAll('.category-section');
   const footer = document.querySelector('.site-footer');
