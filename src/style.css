@@ -1839,7 +1839,29 @@ dex-empty-state {
   }
 
   .explore-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .explore-card {
+    padding: 1rem;
+  }
+
+  .explore-card-name {
+    font-size: 0.95rem;
+  }
+
+  .explore-card-desc {
+    font-size: 0.7rem;
+  }
+
+  .explore-card-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .explore-card-icon svg {
+    width: 16px;
+    height: 16px;
   }
 
   .card-grid {
