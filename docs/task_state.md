@@ -4,10 +4,16 @@
 
 All audit fixes shipped — awaiting next instruction.
 
-> Repo state: HEAD `2b04101` is committed **and pushed** to `origin/main` (verified via
+> Repo state: HEAD `039d9b2` is committed **and pushed** to `origin/main` (verified via
 > `git ls-remote origin main`). Working tree clean. The ponytail cleanup (Stage 1 `0b5c9a8` +
-> Stage 2 `cfeb249`) and the scroll-spy stuck-indicator fix (`2b04101`) described under
-> "Shipped" are live on `main`.
+> Stage 2 `cfeb249`), the scroll-spy stuck-indicator fix (`2b04101`), the favicon +
+> search-input id (`727cadd`), and the Google-Fonts preload removal (`039d9b2`) described
+> under "Shipped" are live on `main`.
+
+**Impeccable AI-tells findings (reviewed, intentionally unchanged):** the
+icon-tile-above-heading on the explore cards and the repeated section kickers are deliberate
+recurring design patterns (Persona-5-style section motif), not templated/generic markup. No
+action needed unless the design direction changes.
 
 ## Completed Steps
 
@@ -137,6 +143,20 @@ All audit fixes shipped — awaiting next instruction.
   fixed, rapid re-click race clean (clearTimeout cancels the prior refresh), click-settle has
   no flicker, pure scroll unchanged, and the `#categories-container` gap freeze is
   byte-identical to pre-fix code.
+- **`727cadd` — Add favicon + search-input id** (2026-09-02): new `favicon.svg` (brand
+  hexagon logo, red `#D80000` on cream) linked as `rel="icon" type="image/svg+xml"` in
+  `index.html` — stops the `/favicon.ico` 404. Gave the dex search input
+  `id="dex-search-input"` (`src/ui.js` `buildSearchBar`) to fix the DevTools "form field has
+  neither id nor name" issue; no `name` added (the input is not in a form) and all JS bindings
+  use the `.dex-search-input` class selector, so the id is purely additive.
+- **`039d9b2` — Remove unused Google Fonts preload** (2026-09-02): deleted
+  `<link rel="preload" as="style" href="...?family=Anton&display=swap">` from `index.html`.
+  The preload targeted an Anton-only URL that was never consumed — the page only applies the
+  all-families stylesheet URL, so it was dead weight and triggered the "preloaded but not
+  used" warning (a URL mismatch, not an `as`-type problem). Kept the preconnects and the
+  stylesheet (which already includes Anton); per web.dev guidance preloading Google Fonts CSS
+  is an anti-pattern anyway. Verified Anton still renders above-the-fold with no warning or
+  console errors.
 
 ## Known Edge Cases
 
