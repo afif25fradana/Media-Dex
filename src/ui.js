@@ -436,6 +436,7 @@ function buildSearchBar() {
     h('span', { className: 'dex-search-icon', innerHTML: SEARCH_ICON_SVG }),
     h('input', {
       type: 'search',
+      id: 'dex-search-input',
       className: 'dex-search-input',
       placeholder: 'Search the dex…',
       'aria-label': 'Search the dex'
