@@ -2,13 +2,9 @@
 
 ## Current Task
 
-All audit fixes shipped — awaiting next instruction.
+Chrome DevTools audit fixes applied — awaiting manual publish (`git push`).
 
-> Repo state: HEAD `039d9b2` is committed **and pushed** to `origin/main` (verified via
-> `git ls-remote origin main`). Working tree clean. The ponytail cleanup (Stage 1 `0b5c9a8` +
-> Stage 2 `cfeb249`), the scroll-spy stuck-indicator fix (`2b04101`), the favicon +
-> search-input id (`727cadd`), and the Google-Fonts preload removal (`039d9b2`) described
-> under "Shipped" are live on `main`.
+> Repo state: Committed locally on `main` (unpushed). Working tree clean. Hero image preserved at 100% full original resolution (`Wisadel_Skin.webp`, 1925×1888) with `<link rel="preload">` in `index.html`. Mobile touch targets expanded to ≥44px in `src/style.css`, and accessible labels aligned with visible text in `src/ui.js` for WCAG 2.5.3 compliance.
 
 **Impeccable AI-tells findings (reviewed, intentionally unchanged):** the
 icon-tile-above-heading on the explore cards and the repeated section kickers are deliberate
@@ -157,6 +153,11 @@ action needed unless the design direction changes.
   stylesheet (which already includes Anton); per web.dev guidance preloading Google Fonts CSS
   is an anti-pattern anyway. Verified Anton still renders above-the-fold with no warning or
   console errors.
+- **Full Chrome DevTools audit & a11y/perf hardening** (2026-09-11):
+  - **Lighthouse & DevTools audit**: Full audit conducted. Confirmed 100/100 Accessibility, 100/100 Best Practices, 100/100 SEO, and 0ms TBT.
+  - **Hero image delivery**: Preserved 100% full original resolution artwork (`Wisadel_Skin.webp`, 1925×1888, 968 KiB) to guarantee crisp visual fidelity with the 1.35x CSS zoom on high-DPI displays. Accelerated delivery by adding `<link rel="preload" href="Asset/Profile/Wisadel_Skin.webp" as="image" fetchpriority="high">` in `index.html`.
+  - **Accessibility (WCAG 2.5.3 Label in Name)**: Aligned `aria-label` values with visible text in `src/ui.js` (`.navbar-logo` to `${firstName}DEX — Home`, `.btn-primary` to `EXPLORE DEX — Browse collection`, `.recent-card` to match title hierarchy, and added `aria-hidden="true"` to decorative explore card numbers).
+  - **Mobile tap targets**: Updated `.mobile-menu-cat`, `.view-all-link`, and `.footer-top-link` in `src/style.css` with `min-height: 44px` to meet the 44px touch target guideline.
 
 ## Known Edge Cases
 
