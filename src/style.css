@@ -484,7 +484,11 @@ body::after {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: rgba(255, 255, 255, 0.8);
-  padding: 0.35rem 0.9rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
   border: 1px solid rgba(255, 255, 255, 0.18);
   transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
 }
@@ -1006,6 +1010,8 @@ body:has(#mobile-menu.menu-open) {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.4rem 0.25rem;
   transition: color var(--dur-fast) ease;
 }
 
@@ -1564,6 +1570,8 @@ dex-empty-state {
 .footer-top-link {
   display: flex;
   align-items: center;
+  min-height: 44px;
+  padding: 0.4rem 0.6rem;
   line-height: 1;
   font-family: var(--font-mono);
   font-size: 0.7rem;

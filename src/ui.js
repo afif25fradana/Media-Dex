@@ -113,7 +113,7 @@ export function renderNavbar(profile) {
 
   navbar.innerHTML = `
     <div class="navbar-left">
-      <a href="#hero-section" class="navbar-logo" aria-label="Home">
+      <a href="#hero-section" class="navbar-logo" aria-label="${firstName}DEX — Home">
         ${LOGO_SVG}
         <span class="navbar-wordmark">${firstName}<span class="navbar-wordmark-accent">DEX</span></span>
       </a>
@@ -179,7 +179,7 @@ export function renderHero(profile, socials) {
       <h1 class="hero-headline">WELCOME TO<br>MY <span class="hero-headline-accent">PERSONAL</span> DEX</h1>
       <p class="hero-bio">${esc(profile?.tagline || '')}</p>
       <div class="hero-cta-row">
-        <button class="btn-primary" data-scroll-to="#explore-categories" aria-label="Explore the Dex collection">
+        <button class="btn-primary" data-scroll-to="#explore-categories" aria-label="EXPLORE DEX — Browse collection">
           EXPLORE DEX
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
@@ -307,7 +307,7 @@ export function renderExploreCategories(categories) {
       className: 'explore-card',
       'aria-label': `${cat.title} — ${items.length} items`
     },
-      h('span', { className: 'explore-card-number' }, num),
+      h('span', { className: 'explore-card-number', 'aria-hidden': 'true' }, num),
       h('span', { className: 'explore-card-icon', innerHTML: iconSVG }),
       h('h3', { className: 'explore-card-name' }, cat.title),
       h('span', { className: 'explore-card-count' }, `${items.length} Items`),
@@ -379,7 +379,7 @@ export function renderRecentlyAdded(categories) {
     }
 
     // ACCESSIBILITY: Changed to semantic <button> instead of article
-    const card = h('button', { className: 'recent-card', 'aria-label': `${item.title || 'Unknown'}, ${tagLabel}, added on ${dateStr}` },
+    const card = h('button', { className: 'recent-card', 'aria-label': `${item.title || 'Unknown'} — ${item.subtitle ? item.subtitle + ' · ' : ''}${dateStr}` },
       h('div', { className: 'recent-card-image' },
         imageHTML,
         h('span', { className: 'recent-card-tag' }, tagLabel)
