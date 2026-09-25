@@ -134,11 +134,11 @@ export function renderNavbar(profile) {
           <span class="theme-toggle-thumb"></span>
         </span>
       </button>
-      <button class="navbar-menu-desktop" id="navbar-menu-desktop-btn" aria-label="Open menu" aria-expanded="false">
+      <button class="navbar-menu-desktop" id="navbar-menu-desktop-btn" aria-label="MENU — Open navigation menu" aria-expanded="false">
         MENU
         ${MENU_ICON_SVG}
       </button>
-      <button class="navbar-menu-btn" id="navbar-menu-btn" aria-label="Open mobile menu" aria-expanded="false">
+      <button class="navbar-menu-btn" id="navbar-menu-btn" aria-label="MENU — Open mobile navigation menu" aria-expanded="false">
         MENU
         ${MENU_ICON_SVG}
       </button>
@@ -305,8 +305,7 @@ export function renderExploreCategories(categories) {
 
     const card = h('a', {
       href: `#section-${cat.id}`,
-      className: 'explore-card',
-      'aria-label': `${cat.title} — ${items.length} items`
+      className: 'explore-card'
     },
       h('span', { className: 'explore-card-number', 'aria-hidden': 'true' }, num),
       h('span', { className: 'explore-card-icon', innerHTML: iconSVG }),
@@ -321,7 +320,7 @@ export function renderExploreCategories(categories) {
   if (categories.length < MAX_CATEGORY_CARDS) {
     const moreNum = String(categories.length + 1).padStart(2, '0');
     exploreGrid.appendChild(
-      h('div', { className: 'explore-card explore-card--more', 'aria-label': 'More categories coming soon' },
+      h('div', { className: 'explore-card explore-card--more' },
         h('span', { className: 'explore-card-number' }, moreNum),
         h('span', { className: 'explore-card-icon', innerHTML: CATEGORY_ICONS.more }),
         h('h3', { className: 'explore-card-name' }, 'MORE'),
@@ -374,20 +373,21 @@ export function renderRecentlyAdded(categories) {
 
     let imageHTML;
     if (item.image) {
-      imageHTML = h('img', { src: item.image, alt: item.title || 'Unknown', loading: 'lazy', width: "120", height: "120" });
+      imageHTML = h('img', { src: item.image, alt: '', loading: 'lazy', width: "120", height: "120" });
     } else {
-      imageHTML = h('div', { className: 'recent-card-image-placeholder' }, h('span', {}, (item.title || '?').charAt(0)));
+      imageHTML = h('div', { className: 'recent-card-image-placeholder', 'aria-hidden': 'true' }, h('span', {}, (item.title || '?').charAt(0)));
     }
 
     // ACCESSIBILITY: Changed to semantic <button> instead of article
-    const card = h('button', { className: 'recent-card', 'aria-label': `${item.title || 'Unknown'} — ${item.subtitle ? item.subtitle + ' · ' : ''}${dateStr}` },
+    const card = h('button', { className: 'recent-card' },
       h('div', { className: 'recent-card-image' },
         imageHTML,
         h('span', { className: 'recent-card-tag' }, tagLabel)
       ),
       h('div', { className: 'recent-card-body' },
         h('span', { className: 'recent-card-title' }, item.title || 'Unknown'),
-        h('span', { className: 'recent-card-meta' }, `${item.subtitle || ''} · ${dateStr}`)
+        ' ',
+        h('span', { className: 'recent-card-meta' }, `${item.subtitle ? item.subtitle + ' · ' : ''}${dateStr}`)
       )
     );
     card.itemData = item;
