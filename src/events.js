@@ -76,9 +76,17 @@ export function initEvents(actions) {
             window.isNavScrolling = true;
             clearTimeout(navScrollTimeout);
             
+            const isCategory = target && target.classList.contains('category-section');
+            const mainTargetHref = isCategory ? '#explore-categories' : targetId;
+
             document.querySelectorAll('.navbar-link, .mobile-menu-link').forEach(l => {
-              if (l.getAttribute('href') === targetId) l.classList.add('active');
+              if (l.getAttribute('href') === mainTargetHref) l.classList.add('active');
               else l.classList.remove('active');
+            });
+
+            document.querySelectorAll('.mobile-menu-cat').forEach(c => {
+              if (isCategory && c.getAttribute('href') === targetId) c.classList.add('active');
+              else c.classList.remove('active');
             });
             
             navScrollTimeout = setTimeout(() => {

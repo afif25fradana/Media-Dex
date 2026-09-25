@@ -126,6 +126,7 @@ function setupScrollSpy() {
   if (!window.IntersectionObserver) return;
 
   const navLinks = document.querySelectorAll('.navbar-link, .mobile-menu-link');
+  const catLinks = document.querySelectorAll('.mobile-menu-cat');
   const sections = [];
   
   navLinks.forEach(link => {
@@ -135,6 +136,12 @@ function setupScrollSpy() {
       if (el && !sections.includes(el)) {
         sections.push(el);
       }
+    }
+  });
+
+  document.querySelectorAll('.category-section').forEach(sec => {
+    if (!sections.includes(sec)) {
+      sections.push(sec);
     }
   });
 
@@ -154,8 +161,17 @@ function setupScrollSpy() {
     });
 
     if (activeId) {
+      const activeEl = document.querySelector(activeId);
+      const isCategory = activeEl && activeEl.classList.contains('category-section');
+      const mainTargetHref = isCategory ? '#explore-categories' : activeId;
+
       navLinks.forEach(link => {
-        if (link.getAttribute('href') === activeId) link.classList.add('active');
+        if (link.getAttribute('href') === mainTargetHref) link.classList.add('active');
+        else link.classList.remove('active');
+      });
+
+      catLinks.forEach(link => {
+        if (isCategory && link.getAttribute('href') === activeId) link.classList.add('active');
         else link.classList.remove('active');
       });
     }
