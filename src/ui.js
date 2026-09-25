@@ -379,7 +379,7 @@ export function renderRecentlyAdded(categories) {
     }
 
     // ACCESSIBILITY: Changed to semantic <button> instead of article
-    const card = h('button', { className: 'recent-card' },
+    const card = h('button', { type: 'button', className: 'recent-card' },
       h('div', { className: 'recent-card-image' },
         imageHTML,
         h('span', { className: 'recent-card-tag' }, tagLabel)
@@ -444,7 +444,7 @@ function buildSearchBar() {
       'aria-label': 'Search the dex'
     }),
     h('span', { className: 'dex-search-count', 'aria-live': 'polite' }),
-    h('button', { className: 'dex-search-clear', 'aria-label': 'Clear search', innerHTML: CLOSE_ICON_SVG })
+    h('button', { type: 'button', className: 'dex-search-clear', 'aria-label': 'Clear search', innerHTML: CLOSE_ICON_SVG })
   );
 }
 

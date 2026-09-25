@@ -210,7 +210,7 @@ template.innerHTML = `
     }
   </style>
 
-  <button class="card" aria-label="Media item">
+  <button type="button" class="card" aria-label="Media item">
     <div class="card-flash"></div>
     <div class="card-cover">
       <div class="skeleton" aria-hidden="true"></div>

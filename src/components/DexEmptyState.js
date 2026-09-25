@@ -92,7 +92,7 @@ template.innerHTML = `
 
   <div class="icon-container"></div>
   <h3 class="message"></h3>
-  <button class="cta-button" style="display: none;"></button>
+  <button type="button" class="cta-button" style="display: none;"></button>
 `;
 
 export class DexEmptyState extends HTMLElement {
@@ -122,7 +122,7 @@ export class DexEmptyState extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue !== newValue) {
+    if (this.isConnected && oldValue !== newValue) {
       this._render();
     }
   }
