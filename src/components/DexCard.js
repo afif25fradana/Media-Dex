@@ -258,7 +258,7 @@ export class DexCard extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue !== newValue) {
+    if (this.isConnected && oldValue !== newValue) {
       this._render();
     }
   }
