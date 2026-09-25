@@ -31,6 +31,12 @@ export function initEvents(actions) {
       return;
     }
 
+    const recentCard = e.target.closest('.recent-card');
+    if (recentCard && recentCard.itemData) {
+      openDetailModal(recentCard.itemData);
+      return;
+    }
+
     const trigger = e.target.closest('[data-scroll-to]');
     if (trigger) {
       e.preventDefault();

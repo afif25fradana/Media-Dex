@@ -389,6 +389,7 @@ export function renderRecentlyAdded(categories) {
         h('span', { className: 'recent-card-meta' }, `${item.subtitle || ''} · ${dateStr}`)
       )
     );
+    card.itemData = item;
     recentCardsRow.appendChild(card);
   });
 
