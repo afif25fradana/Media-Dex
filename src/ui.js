@@ -489,8 +489,20 @@ function attachSearch(bar, container) {
     noResults.style.display = (q && total === 0) ? 'flex' : 'none';
   };
 
-  input.addEventListener('input', apply);
+  let rafId = null;
+  input.addEventListener('input', () => {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(() => {
+      apply();
+      rafId = null;
+    });
+  });
+
   clearBtn.addEventListener('click', () => {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
     input.value = '';
     apply();
     input.focus();
