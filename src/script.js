@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const menu = document.getElementById('mobile-menu');
-    const openBtn = document.getElementById('navbar-menu-btn');
+    const menuTriggers = document.querySelectorAll('#navbar-menu-btn, #navbar-menu-desktop-btn');
     const closeBtn = document.getElementById('mobile-menu-close');
 
     let lastFocusedEl = null;
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       menu.removeAttribute('inert');
       menu.classList.add('menu-open');
       menu.setAttribute('aria-hidden', 'false');
-      if (openBtn) openBtn.setAttribute('aria-expanded', 'true');
+      menuTriggers.forEach(btn => btn.setAttribute('aria-expanded', 'true'));
       setTimeout(() => closeBtn && closeBtn.focus(), 100);
     }
 
@@ -68,8 +68,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       menu.classList.remove('menu-open');
       menu.setAttribute('aria-hidden', 'true');
       menu.setAttribute('inert', '');
-      if (openBtn) openBtn.setAttribute('aria-expanded', 'false');
-      const target = lastFocusedEl && lastFocusedEl.isConnected ? lastFocusedEl : openBtn;
+      menuTriggers.forEach(btn => btn.setAttribute('aria-expanded', 'false'));
+      const fallbackTarget = document.getElementById('navbar-menu-btn');
+      const target = lastFocusedEl && lastFocusedEl.isConnected ? lastFocusedEl : fallbackTarget;
       if (target && target.focus) target.focus();
       lastFocusedEl = null;
     }

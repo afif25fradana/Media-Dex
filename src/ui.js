@@ -133,7 +133,7 @@ export function renderNavbar(profile) {
           <span class="theme-toggle-thumb"></span>
         </span>
       </button>
-      <button class="navbar-menu-desktop" id="navbar-menu-desktop-btn" aria-label="Open menu">
+      <button class="navbar-menu-desktop" id="navbar-menu-desktop-btn" aria-label="Open menu" aria-expanded="false">
         MENU
         ${MENU_ICON_SVG}
       </button>
