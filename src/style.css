@@ -2115,7 +2115,47 @@ dex-empty-state {
   background: var(--color-surface-dark);
   border: 3px solid #000;
   box-shadow: 4px 4px 0 #000;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 1.25rem 0.5rem 0.75rem;
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+  transition: box-shadow var(--dur-fast) var(--ease-snap);
+}
+
+.dex-search::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--red);
+  transform: scaleY(0);
+  transition: transform var(--dur-fast) var(--ease-snap);
+  z-index: 2;
+}
+
+.dex-search:focus-within::before {
+  transform: scaleY(1);
+}
+
+.dex-search:focus-within {
+  box-shadow: 6px 6px 0 #000, -2px 0 0 var(--red);
+}
+
+.dex-search-prompt {
+  background: var(--red);
+  color: var(--white);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+  user-select: none;
 }
 
 .dex-search-icon {
@@ -2246,13 +2286,13 @@ dex-empty-state {
   background: var(--color-surface-dark);
   border: 3px solid #000;
   box-shadow: 8px 8px 0 #000, -4px -4px 0 var(--red);
-  transform: translateY(24px) scale(0.98);
+  transform: skewX(-4deg) rotate(-1.5deg) scale(0.92);
   opacity: 0;
-  transition: transform 0.3s var(--ease-snap), opacity 0.3s var(--ease-snap);
+  transition: transform 280ms var(--ease-snap), opacity 280ms var(--ease-snap);
 }
 
 .dex-modal-overlay.is-open .dex-modal {
-  transform: translateY(0) scale(1);
+  transform: skewX(0deg) rotate(0deg) scale(1);
   opacity: 1;
 }
 
@@ -2451,16 +2491,15 @@ dex-empty-state {
 @media (prefers-reduced-motion: reduce) {
   .dex-modal-overlay,
   .dex-modal {
-    transition: none;
+    transition: opacity 0.15s ease !important;
   }
 
-  .dex-modal-overlay {
-    opacity: 1;
+  .dex-modal {
+    transform: none !important;
   }
 
-  .dex-modal-overlay .dex-modal {
-    transform: none;
-    opacity: 1;
+  .dex-modal-overlay.is-open .dex-modal {
+    transform: none !important;
   }
 }
 

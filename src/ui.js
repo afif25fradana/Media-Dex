@@ -436,6 +436,7 @@ const SEARCH_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentCol
 function buildSearchBar() {
   return h('div', { className: 'dex-search', role: 'search' },
     h('span', { className: 'dex-search-icon', innerHTML: SEARCH_ICON_SVG }),
+    h('span', { className: 'dex-search-prompt', 'aria-hidden': 'true' }, '>'),
     h('input', {
       type: 'search',
       id: 'dex-search-input',
