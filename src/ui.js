@@ -183,7 +183,7 @@ export function renderHero(profile, socials) {
           EXPLORE DEX
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
-        <button class="btn-secondary" data-scroll-to="#dex-overview" aria-label="Learn more about me">
+        <button class="btn-secondary" data-scroll-to="#dex-overview" aria-label="ABOUT ME — Learn more about me">
           ABOUT ME
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </button>
