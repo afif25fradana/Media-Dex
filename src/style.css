@@ -1674,10 +1674,6 @@ dex-empty-state {
   clip-path: inset(0 0 0 0);
 }
 
-.section-accent {
-  transform: rotate(-2deg);
-}
-
 .category-section.revealed .section-accent {
   opacity: 1;
   transform: rotate(-2deg) translateX(0);

@@ -53,11 +53,9 @@ export function setupScrollReveals() {
   if (prefersReducedMotion()) return;
 
   const sections = document.querySelectorAll('.category-section');
-  const footer = document.querySelector('.site-footer');
 
   if (!window.IntersectionObserver) {
     sections.forEach(s => s.classList.add('revealed'));
-    if (footer) footer.classList.add('revealed');
     document.querySelectorAll('dex-card, .card').forEach(c => {
       c.classList.add('card-visible', 'card-ready');
     });
@@ -92,9 +90,4 @@ export function setupScrollReveals() {
     sectionCardsMap.set(s, Array.from(s.querySelectorAll('dex-card, .card')));
     observer.observe(s);
   });
-  
-  if (footer) {
-    sectionCardsMap.set(footer, []);
-    observer.observe(footer);
-  }
 }

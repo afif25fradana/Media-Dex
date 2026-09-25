@@ -37,11 +37,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Deep-link arrival: land on the section referenced by the URL hash.
     const initialHash = window.location.hash;
     if (initialHash && initialHash !== '#') {
-      const initialTarget = document.querySelector(initialHash);
-      if (initialTarget) {
-        requestAnimationFrame(() => {
-          initialTarget.scrollIntoView({ behavior: 'instant' });
-        });
+      try {
+        const initialTarget = document.querySelector(initialHash);
+        if (initialTarget) {
+          requestAnimationFrame(() => {
+            initialTarget.scrollIntoView({ behavior: 'instant' });
+          });
+        }
+      } catch {
+        // Invalid selector in hash; ignore without breaking application boot.
       }
     }
 

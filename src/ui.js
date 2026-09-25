@@ -76,7 +76,7 @@ export function h(tag, props, ...children) {
 
 export function initTheme() {
   let saved = null;
-  try { saved = localStorage.getItem('dex-theme'); } catch (e) { }
+  try { saved = localStorage.getItem('dex-theme'); } catch { }
   let theme = saved ? saved : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   document.documentElement.setAttribute('data-theme', theme);
   applyThemeMeta(theme);
@@ -93,7 +93,7 @@ export function toggleTheme() {
 
   const applyAndSave = () => {
     document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('dex-theme', next); } catch (e) { }
+    try { localStorage.setItem('dex-theme', next); } catch { }
     applyThemeMeta(next);
   };
 
