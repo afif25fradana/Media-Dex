@@ -14,6 +14,7 @@ export function dismissLoading(onDone) {
     loader.style.display = 'none';
     loader.setAttribute('aria-hidden', 'true');
     document.querySelectorAll('dex-card, .card').forEach(card => {
+      card.classList.remove('card-will-animate');
       card.classList.add('card-ready');
     });
     if (onDone) onDone();
@@ -57,6 +58,7 @@ export function setupScrollReveals() {
   if (!window.IntersectionObserver) {
     sections.forEach(s => s.classList.add('revealed'));
     document.querySelectorAll('dex-card, .card').forEach(c => {
+      c.classList.remove('card-will-animate');
       c.classList.add('card-visible', 'card-ready');
     });
     return;
@@ -76,7 +78,10 @@ export function setupScrollReveals() {
       cards.forEach(card => card.classList.add('card-visible'));
 
       setTimeout(() => {
-        cards.forEach(card => card.classList.add('card-ready'));
+        cards.forEach(card => {
+          card.classList.remove('card-will-animate');
+          card.classList.add('card-ready');
+        });
       }, TIMING.SCROLL_READY_DELAY);
 
       observer.unobserve(el);
