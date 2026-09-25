@@ -400,7 +400,7 @@ export function renderRecentlyAdded(categories) {
         h('span', { className: 'section-eyebrow' }, 'RECENT ENTRIES'),
         h('h2', { className: 'recent-heading' }, 'RECENTLY ADDED')
       ),
-      h('a', { href: '#categories-container', className: 'view-all-link', style: 'color: var(--color-text);' },
+      h('a', { href: '#categories-container', className: 'view-all-link' },
         'VIEW ALL',
         h('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', innerHTML: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>' })
       )

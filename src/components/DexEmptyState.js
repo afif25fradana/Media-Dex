@@ -88,6 +88,11 @@ template.innerHTML = `
     .cta-button:active {
       transform: translateY(1px);
     }
+
+    .cta-button:focus-visible {
+      outline: 4px solid var(--red, #D80000);
+      outline-offset: 4px;
+    }
   </style>
 
   <div class="icon-container"></div>

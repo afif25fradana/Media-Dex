@@ -483,7 +483,7 @@ body::after {
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(240, 236, 226, 0.75);
 }
 
 .mobile-menu-cat {
@@ -1016,7 +1016,7 @@ body:has(#mobile-menu.menu-open) {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--white);
+  color: var(--color-text);
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -1029,8 +1029,11 @@ body:has(#mobile-menu.menu-open) {
   color: var(--red-text);
 }
 
-/* The explore section is always void, so its hover needs the bright red that
-   stays ≥4.5:1 on dark regardless of theme. */
+/* The explore section is always void, so it needs white base text and bright red on hover (≥4.5:1 on dark). */
+.explore-section .view-all-link {
+  color: var(--white);
+}
+
 .explore-section .view-all-link:hover {
   color: var(--red-on-dark);
 }
@@ -1323,7 +1326,7 @@ dex-empty-state {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 4rem 2rem;
   content-visibility: auto;
@@ -1995,6 +1998,16 @@ dex-empty-state {
   outline-offset: 4px;
 }
 
+.btn-primary:focus-visible,
+.navbar-menu-btn:focus-visible,
+.navbar-menu-desktop:focus-visible,
+.skip-link:focus-visible,
+.error-retry:focus-visible {
+  outline: 2px solid #FFFFFF;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #000000;
+}
+
 /* ---- Dex search (catalog lookup) ---- */
 
 .dex-search {
@@ -2191,7 +2204,7 @@ dex-empty-state {
 }
 
 .dex-modal-cover {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   border-bottom: 3px solid #000;
   background: var(--black);
