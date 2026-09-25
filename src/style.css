@@ -1234,6 +1234,7 @@ body:has(#mobile-menu.menu-open) {
   position: relative;
   overflow: hidden;
   contain: layout style;
+  transition: clip-path 300ms var(--ease-snap);
 }
 
 .section-banner::before {
@@ -1663,11 +1664,6 @@ dex-empty-state {
 
 .panel-enter--right.revealed {
   animation: slashInRight var(--dur-entry) var(--ease-snap) forwards;
-}
-
-/* Section banner wipe */
-.section-banner {
-  transition: clip-path 300ms var(--ease-snap);
 }
 
 .category-section.revealed .section-banner {
