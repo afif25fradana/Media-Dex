@@ -41,6 +41,22 @@
   --shadow-card: 6px 6px 0 #000, -4px -4px 0 var(--red);
   --shadow-card-hover: 10px 10px 0 #000, -6px -6px 0 var(--red);
   --shadow-card-press: 2px 2px 0 #000, -2px -2px 0 var(--red);
+
+  /* Spacing — exact scale from DESIGN.md */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-section: 4rem;
+
+  /* Aliases matching DESIGN.md spacing: key */
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+  --spacing-section: var(--space-section);
 }
 
 [data-theme="dark"] {
