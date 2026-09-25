@@ -147,8 +147,12 @@ export function initEvents(actions) {
   window.addEventListener('popstate', () => {
     const hash = window.location.hash;
     if (hash && hash !== '#') {
-      const target = document.querySelector(hash);
-      if (target) target.scrollIntoView({ behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
+      try {
+        const target = document.querySelector(hash);
+        if (target) target.scrollIntoView({ behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
+      } catch {
+        // Invalid selector in hash; ignore without breaking navigation.
+      }
     } else {
       window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
     }
