@@ -48,6 +48,13 @@ export function openDetailModal(item) {
     </div>
   `;
 
+  const inertElements = [
+    document.getElementById('app'),
+    document.querySelector('.site-header'),
+    document.querySelector('.skip-link')
+  ].filter(Boolean);
+  inertElements.forEach(el => el.setAttribute('inert', ''));
+
   document.body.appendChild(overlay);
   document.body.style.overflow = 'hidden';
   activeModal = overlay;
@@ -55,6 +62,7 @@ export function openDetailModal(item) {
   const close = () => {
     document.body.style.overflow = '';
     document.removeEventListener('keydown', onKeydown);
+    inertElements.forEach(el => el.removeAttribute('inert'));
     overlay.remove();
     activeModal = null;
     if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
