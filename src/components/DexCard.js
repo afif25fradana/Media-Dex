@@ -100,6 +100,9 @@ template.innerHTML = `
       .card:hover, .card:active {
         transform: rotate(var(--rotation, 0deg)) translateZ(0) !important;
       }
+      .skeleton {
+        animation: none !important;
+      }
     }
 
     .card-cover {
