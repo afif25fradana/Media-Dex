@@ -386,8 +386,8 @@ export function renderRecentlyAdded(categories) {
       ),
       h('div', { className: 'recent-card-body' },
         h('span', { className: 'recent-card-title' }, item.title || 'Unknown'),
-        ' ',
-        h('span', { className: 'recent-card-meta' }, `${item.subtitle ? item.subtitle + ' · ' : ''}${dateStr}`)
+        item.subtitle ? h('span', { className: 'recent-card-sub' }, item.subtitle) : null,
+        dateStr ? h('span', { className: 'recent-card-date' }, dateStr) : null
       )
     );
     card.itemData = item;

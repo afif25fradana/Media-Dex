@@ -10,8 +10,7 @@ template.innerHTML = `
       justify-content: center;
       padding: 4rem 2rem;
       background: var(--color-surface-dark, #1A1A20);
-      border: 3px solid var(--color-border-dark, #3A3A42);
-      border-radius: 4px;
+      border: 3px solid #000;
       text-align: center;
       position: relative;
       contain: layout style;
@@ -54,6 +53,7 @@ template.innerHTML = `
     .message {
       font-family: var(--font-display, 'Anton', sans-serif);
       font-size: 1.5rem;
+      line-height: 1.05;
       color: var(--color-text-on-dark, #F0ECE2);
       text-transform: uppercase;
       letter-spacing: 0.03em;

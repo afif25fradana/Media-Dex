@@ -198,7 +198,7 @@ template.innerHTML = `
       font-family: var(--font-messy, 'Caveat', cursive);
       font-size: 0.85rem;
       font-weight: 700;
-      color: var(--color-text-muted-on-dark, rgba(240, 236, 226, 0.55));
+      color: var(--color-text-muted-on-dark, rgba(240, 236, 226, 0.75));
       margin: 0.2rem 0 0 0;
       line-height: 1.3;
       letter-spacing: 0.01em;

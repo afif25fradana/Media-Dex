@@ -17,7 +17,7 @@
   --color-text: #0C0C0C;
   --color-text-muted: rgba(12, 12, 12, 0.7);
   --color-text-on-dark: #F0ECE2;
-  --color-text-muted-on-dark: rgba(240, 236, 226, 0.55);
+  --color-text-muted-on-dark: rgba(240, 236, 226, 0.75);
   --placeholder-deep: #1a1a2e;
   --skeleton-base: #333;
   --skeleton-shine: #444;
@@ -212,7 +212,7 @@ body::after {
 
 .site-navbar.navbar-scrolled {
   background: var(--navbar-bg);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 3px 0 #000;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -305,6 +305,37 @@ body::after {
   padding: 0.25rem;
   min-width: 44px;
   min-height: 44px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-snap);
+}
+
+.theme-toggle:hover .theme-toggle-track {
+  box-shadow: 0 0 0 2px var(--red);
+}
+
+.theme-toggle:hover .theme-toggle-icon {
+  color: var(--red);
+}
+
+@media (min-width: 1025px) {
+  .site-navbar:not(.navbar-scrolled) .theme-toggle:hover .theme-toggle-icon {
+    color: var(--red-bright);
+  }
+}
+
+[data-theme="dark"] .theme-toggle:hover .theme-toggle-icon {
+  color: var(--red-bright);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 4px;
+}
+
+.theme-toggle:active {
+  transform: scale(0.92);
 }
 
 .theme-toggle-icon {
@@ -423,11 +454,29 @@ body::after {
   top: 1.5rem;
   right: 1.5rem;
   color: var(--white);
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color var(--dur-fast) ease, transform var(--dur-fast) var(--ease-snap);
+}
+
+.mobile-menu-close:hover {
+  color: var(--red-bright);
+  transform: rotate(9deg) scale(1.1);
+}
+
+.mobile-menu-close:active {
+  transform: rotate(9deg) scale(0.95);
+}
+
+.mobile-menu-close:focus-visible {
+  outline: 2px solid var(--red-bright);
+  outline-offset: 4px;
 }
 
 .mobile-menu-close svg {
@@ -1005,6 +1054,7 @@ body:has(#mobile-menu.menu-open) {
 .explore-heading {
   font-family: var(--font-display);
   font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
   color: var(--white);
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -1266,6 +1316,7 @@ body:has(#mobile-menu.menu-open) {
 .section-title {
   font-family: var(--font-display);
   font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1.05;
   color: var(--white);
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -1358,6 +1409,7 @@ dex-empty-state {
 .recent-heading {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 3vw, 2.2rem);
+  line-height: 1.05;
   text-transform: uppercase;
   color: var(--color-text);
 }
@@ -1373,6 +1425,7 @@ dex-empty-state {
   position: relative;
   background: var(--color-surface);
   border: 2px solid var(--color-border);
+  box-shadow: 3px 3px 0 #000, -2px -2px 0 var(--red);
   overflow: hidden;
   transition: transform var(--dur-fast) var(--ease-snap), box-shadow var(--dur-fast) var(--ease-snap);
   text-align: left;
@@ -1380,7 +1433,12 @@ dex-empty-state {
 
 .recent-card:hover {
   transform: translateY(-4px);
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: 6px 6px 0 #000, -3px -3px 0 var(--red);
+}
+
+.recent-card:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 2px 2px 0 #000, -1px -1px 0 var(--red);
 }
 
 .recent-card-image {
@@ -1455,6 +1513,29 @@ dex-empty-state {
   text-overflow: ellipsis;
 }
 
+.recent-card-sub {
+  display: block;
+  font-family: var(--font-messy);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-card-date {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-top: 0.15rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 /* Right column: Dex Overview */
 .overview-column {
   position: relative;
@@ -1473,6 +1554,7 @@ dex-empty-state {
 .overview-heading {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 3vw, 2.2rem);
+  line-height: 1.05;
   text-transform: uppercase;
   color: var(--white);
 }
@@ -1491,6 +1573,16 @@ dex-empty-state {
   padding: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
+}
+
+.overview-stat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--red);
 }
 
 .overview-stat-icon {
@@ -2097,7 +2189,7 @@ dex-empty-state {
   align-items: center;
   text-align: center;
   gap: 0.5rem;
-  border: 3px solid var(--color-border-dark);
+  border: 3px solid #000;
   background: var(--color-surface-dark);
 }
 
@@ -2267,11 +2359,13 @@ dex-empty-state {
 }
 
 .dex-modal-sub {
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  color: rgba(240, 236, 226, 0.78);
-  margin-top: 0.5rem;
-  line-height: 1.5;
+  font-family: var(--font-messy, 'Caveat', cursive);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-muted-on-dark, rgba(240, 236, 226, 0.75));
+  margin-top: 0.35rem;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
 }
 
 .dex-modal-meta {
