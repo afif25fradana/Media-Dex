@@ -348,6 +348,15 @@ body::after {
   background: #3A3A42;
 }
 
+/* On desktop (>1024px) at scrollY=0, .site-navbar is transparent over .hero-right (black).
+   Use cream icon color so it maintains 16.58:1 contrast over the black background. */
+@media (min-width: 1025px) {
+  .site-navbar:not(.navbar-scrolled) .theme-toggle {
+    color: var(--cream);
+  }
+}
+
+
 /* Hamburger / Menu button */
 .navbar-menu-btn,
 .navbar-menu-desktop {
