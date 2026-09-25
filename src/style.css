@@ -1234,6 +1234,7 @@ body:has(#mobile-menu.menu-open) {
   position: relative;
   overflow: hidden;
   contain: layout style;
+  clip-path: inset(0 100% 0 0);
   transition: clip-path 300ms var(--ease-snap);
 }
 
