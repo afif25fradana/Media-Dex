@@ -952,6 +952,7 @@ body:has(#mobile-menu.menu-open) {
   overflow: hidden;
   content-visibility: auto;
   contain-intrinsic-size: auto 560px;
+  min-height: 560px;
 }
 
 /* Halftone texture on explore bg */
@@ -1527,6 +1528,7 @@ dex-empty-state {
   padding: 1.25rem 2rem;
   margin-top: 0;
   border-top: 3px solid #000;
+  min-height: 100px;
 }
 
 .footer-inner {
@@ -1689,7 +1691,7 @@ dex-empty-state {
 @media (max-width: 1024px) {
   .hero-section {
     grid-template-columns: 1fr;
-    min-height: auto;
+    min-height: 100vh;
   }
 
   .hero-left {
