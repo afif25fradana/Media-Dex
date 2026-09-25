@@ -49,14 +49,6 @@
   --space-lg: 1.5rem;
   --space-xl: 2rem;
   --space-section: 4rem;
-
-  /* Aliases matching DESIGN.md spacing: key */
-  --spacing-xs: var(--space-xs);
-  --spacing-sm: var(--space-sm);
-  --spacing-md: var(--space-md);
-  --spacing-lg: var(--space-lg);
-  --spacing-xl: var(--space-xl);
-  --spacing-section: var(--space-section);
 }
 
 [data-theme="dark"] {
