@@ -378,7 +378,6 @@ export function renderRecentlyAdded(categories) {
       imageHTML = h('div', { className: 'recent-card-image-placeholder', 'aria-hidden': 'true' }, h('span', {}, (item.title || '?').charAt(0)));
     }
 
-    // ACCESSIBILITY: Changed to semantic <button> instead of article
     const card = h('button', { type: 'button', className: 'recent-card' },
       h('div', { className: 'recent-card-image' },
         imageHTML,

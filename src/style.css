@@ -42,7 +42,7 @@
   --shadow-card-hover: 10px 10px 0 #000, -6px -6px 0 var(--red);
   --shadow-card-press: 2px 2px 0 #000, -2px -2px 0 var(--red);
 
-  /* Spacing — exact scale from DESIGN.md */
+  /* Spacing scale */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;
