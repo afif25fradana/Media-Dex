@@ -479,7 +479,7 @@ function attachSearch(bar, container) {
         if (show) visible++;
       });
 
-      const hasContent = visible > 0;
+      const hasContent = visible > 0 || (!q && Boolean(section.querySelector('dex-empty-state')));
       section.style.display = hasContent ? '' : 'none';
       if (divider) divider.style.display = hasContent ? '' : 'none';
       total += visible;

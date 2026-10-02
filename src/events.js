@@ -66,7 +66,7 @@ export function initEvents(actions) {
           }
 
           // Move focus to the destination so keyboard/SR users land where they navigated.
-          if (anchorLink.matches('.mobile-menu-link, .mobile-menu-cat')) {
+          if (anchorLink.matches('.skip-link, .mobile-menu-link, .mobile-menu-cat')) {
             target.setAttribute('tabindex', '-1');
             target.focus({ preventScroll: true });
           }
