@@ -133,7 +133,7 @@ export function initEvents(actions) {
     const isTyping = target && (target.matches('input, textarea, select') || target.isContentEditable);
     const isSlash = e.key === '/' && !isTyping;
     const isCmdK = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k';
-    if ((isSlash || isCmdK) && !(menu && menu.classList.contains('menu-open'))) {
+    if ((isSlash || isCmdK) && !(menu && menu.classList.contains('menu-open')) && !document.querySelector('.dex-modal-overlay')) {
       const input = document.querySelector('.dex-search-input');
       if (input) {
         e.preventDefault();

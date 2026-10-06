@@ -6,7 +6,7 @@ function formatDate(dateAdded) {
   if (!dateAdded) return '';
   const d = new Date(dateAdded);
   if (Number.isNaN(d.getTime())) return '';
-  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 }
 
 export function openDetailModal(item) {
@@ -17,7 +17,6 @@ export function openDetailModal(item) {
   const subtitle = item.subtitle || '';
   const category = item.categoryTitle || '';
   const dateStr = formatDate(item.dateAdded);
-  const tagLabel = (category || '').split(' ')[0];
 
   const overlay = document.createElement('div');
   overlay.className = 'dex-modal-overlay';
@@ -42,7 +41,7 @@ export function openDetailModal(item) {
         ${subtitle ? `<p class="dex-modal-sub">${esc(subtitle)}</p>` : ''}
         <dl class="dex-modal-meta">
           ${dateStr ? `<div><dt>Added</dt><dd>${esc(dateStr)}</dd></div>` : ''}
-          ${tagLabel ? `<div><dt>Category</dt><dd>${esc(tagLabel)}</dd></div>` : ''}
+          ${category ? `<div><dt>Category</dt><dd>${esc(category)}</dd></div>` : ''}
         </dl>
       </div>
     </div>

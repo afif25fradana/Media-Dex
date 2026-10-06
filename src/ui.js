@@ -38,12 +38,13 @@ export const NAV_LINKS = [
   { label: 'Home', href: '#hero-section' },
   { label: 'Collection', href: '#explore-categories' },
   { label: 'Recently Added', href: '#recent-overview' },
-  { label: 'About', href: '#site-footer' }
+  { label: 'About', href: '#dex-overview' }
 ];
 export const MAX_CATEGORY_CARDS = 6;
 
 
 export function esc(str) {
+  if (str == null) return '';
   const el = document.createElement('span');
   el.textContent = str;
   return el.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#039;');
@@ -176,7 +177,7 @@ export function renderHero(profile, socials) {
   hero.innerHTML = `
     <div class="hero-left">
       <div class="hero-social-rail">${socialRailHTML}</div>
-      <div class="hero-eyebrow">WELCOME</div>
+      <div class="hero-eyebrow">PERSONAL ARCHIVE</div>
       <h1 class="hero-headline">WELCOME TO<br>MY <span class="hero-headline-accent">PERSONAL</span> DEX</h1>
       <p class="hero-bio">${esc(profile?.tagline || '')}</p>
       <div class="hero-cta-row">
@@ -353,7 +354,7 @@ export function renderRecentlyAdded(categories) {
   const recentItems = (() => {
     const allItems = [];
     categories.forEach(cat => {
-      cat.items.forEach(item => {
+      (cat.items || []).forEach(item => {
         allItems.push({ ...item, categoryTitle: cat.title, categoryId: cat.id });
       });
     });
@@ -367,7 +368,7 @@ export function renderRecentlyAdded(categories) {
   const recentCardsRow = h('div', { className: 'recent-cards-row' });
   recentItems.forEach(item => {
     const dateStr = item.dateAdded
-      ? new Date(item.dateAdded).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      ? new Date(item.dateAdded).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
       : '';
     const tagLabel = (item.categoryTitle || 'Unknown').split(' ')[0];
 

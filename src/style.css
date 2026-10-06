@@ -921,7 +921,7 @@ body:has(#mobile-menu.menu-open) {
 .hero-scroll-arrow {
   width: 16px;
   height: 16px;
-  animation: scrollFloat 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  animation: scrollFloat 2.2s cubic-bezier(0.16, 1, 0.3, 1) 2 forwards;
 }
 
 @keyframes scrollFloat {
@@ -953,8 +953,10 @@ body:has(#mobile-menu.menu-open) {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   color: var(--black);
   opacity: 0.5;
   transition: opacity var(--dur-fast) ease, color var(--dur-fast) ease;
@@ -2217,8 +2219,10 @@ dex-empty-state {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   color: var(--color-text-on-dark);
   flex: none;
   transition: color var(--dur-fast) ease, transform var(--dur-fast) var(--ease-snap);
