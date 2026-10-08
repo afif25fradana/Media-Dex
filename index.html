@@ -57,6 +57,11 @@
     });
   </script>
 
+  <div class="bg-canvas-container" aria-hidden="true">
+    <canvas id="bg-halftone-canvas" class="bg-halftone-canvas"></canvas>
+    <div class="bg-canvas-noise"></div>
+  </div>
+
   <header class="site-header">
     <nav id="site-navbar" class="site-navbar" aria-label="Main navigation">
     </nav>
@@ -70,6 +75,10 @@
     <section id="hero-section" class="hero-section" aria-label="Welcome hero">
     </section>
 
+    <section id="lastfm-section" class="lastfm-section" aria-label="Live audio broadcast and monthly telemetry">
+      <!-- Rendered by JS -->
+    </section>
+
     <section id="explore-categories" class="explore-section" aria-label="Explore categories">
     </section>
 
@@ -77,10 +86,6 @@
     </div>
 
     <section id="recent-overview" class="recent-overview-section" aria-label="Recent entries and statistics">
-    </section>
-
-    <section id="lastfm-section" class="lastfm-section" aria-label="Live audio broadcast">
-      <!-- Rendered by JS -->
     </section>
 
     <footer id="site-footer" class="site-footer">

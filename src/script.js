@@ -14,9 +14,11 @@ import {
 } from './ui.js';
 import { initLastFm } from './lastfm.js';
 import { dismissLoading, triggerPageEntrance, setupScrollReveals } from './animations.js';
+import { initHalftoneBackground } from './halftoneBg.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   initTheme();
+  initHalftoneBackground();
 
   const fetchWithTimeout = () => DataStore.fetch(AbortSignal.timeout(10000));
 
@@ -26,10 +28,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderNavbar(data.profile);
     renderMobileMenu(data.categories);
     renderHero(data.profile, data.socials);
+    renderLastFmSection(data.profile, data.lastfm);
     renderExploreCategories(data.categories);
     renderCategories(data.categories);
     renderRecentlyAdded(data.categories, data.profile);
-    renderLastFmSection(data.profile, data.lastfm);
     renderFooter(data.profile, data.socials);
 
     window.__dexBooted = true;
