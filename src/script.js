@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderHero(data.profile, data.socials);
     renderExploreCategories(data.categories);
     renderCategories(data.categories);
-    renderRecentlyAdded(data.categories);
+    renderRecentlyAdded(data.categories, data.profile);
     renderFooter(data.profile, data.socials);
 
     window.__dexBooted = true;

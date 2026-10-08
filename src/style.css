@@ -1,6 +1,5 @@
 
 :root {
-  /* Brand colors — preserved from original */
   /* NOTE: If you change --red, manually sync the fallback values in DexCard.js & DexEmptyState.js */
   --red: #D80000;
   --red-dark: #CC0000;
@@ -10,7 +9,6 @@
   --cream: #F0ECE2;
   --white: #FFFFFF;
 
-  /* Semantic tokens — light theme */
   --color-bg: #F0ECE2;
   --color-surface: #FFFFFF;
   --color-surface-dark: #1A1A20;
@@ -26,23 +24,20 @@
   --navbar-bg: rgba(240, 236, 226, 0.95);
   --navbar-bg-top: transparent;
 
-  /* Typography */
   --font-display: 'Anton', 'Impact', sans-serif;
   --font-body: 'Schibsted Grotesk', 'Segoe UI', Arial, sans-serif;
-  --font-messy: 'Caveat', cursive;
+  --font-messy: 'Caveat', 'Segoe Print', 'Bradley Hand', cursive;
   --font-mono: 'JetBrains Mono', 'Consolas', monospace;
 
-  /* Easing — preserved P5 sharp/punch feel */
+  /* Easing: preserved P5 sharp/punch feel */
   --ease-snap: cubic-bezier(0.1, 0.9, 0.2, 1);
   --dur-fast: 150ms;
   --dur-entry: 400ms;
 
-  /* Shadows */
   --shadow-card: 6px 6px 0 #000, -4px -4px 0 var(--red);
   --shadow-card-hover: 10px 10px 0 #000, -6px -6px 0 var(--red);
   --shadow-card-press: 2px 2px 0 #000, -2px -2px 0 var(--red);
 
-  /* Spacing scale */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
   --space-md: 1rem;
@@ -124,9 +119,7 @@ a {
   color: var(--white);
 }
 
-/* Film-grain texture — a modern analogue touch over the game chrome.
-   No mix-blend-mode: a full-viewport blend layer forces a page-wide re-blend
-   on every scroll frame; plain low-opacity compositing is cheap and cached. */
+/* Film-grain overlay: omit mix-blend-mode to avoid scroll frame re-compositing. */
 body::after {
   content: '';
   position: fixed;
@@ -304,7 +297,6 @@ body::after {
   gap: 1rem;
 }
 
-/* Theme toggle switch */
 .theme-toggle {
   display: flex;
   align-items: center;
@@ -397,7 +389,6 @@ body::after {
 }
 
 
-/* Hamburger / Menu button */
 .navbar-menu-btn,
 .navbar-menu-desktop {
   align-items: center;
@@ -419,7 +410,7 @@ body::after {
   display: none;
 }
 
-/* Desktop MENU button opens the full-screen system menu — its category
+/* Desktop MENU button opens the full-screen system menu; its category
    quick-jump chips are a job the section-level nav links can't do. */
 .navbar-menu-desktop {
   display: flex;
@@ -599,12 +590,7 @@ body:has(#mobile-menu.menu-open) {
 .hero-left {
   position: relative;
   background-color: var(--cream);
-  /* Crumpled monochrome texture over the cream ground. Multiply-blended (see
-     background-blend-mode) so dark creases darken the cream instead of sitting
-     as a grey wash on top; the top white layer dilutes it to ~25% strength so
-     it stays a subtle foil. Pure background-layer blending = painted once, no
-     page-level re-composite (see the grain-layer note for why we avoid
-     mix-blend-mode on page-wide/fixed layers). */
+  /* Multiply-blended background texture with white tint layer to avoid page-level re-compositing. */
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)),
     url('../Asset/monochrome-overlay-background.webp');
@@ -738,14 +724,12 @@ body:has(#mobile-menu.menu-open) {
   height: 16px;
 }
 
-/* Hero right panel */
 .hero-right {
   position: relative;
   background: var(--black);
   overflow: hidden;
 }
 
-/* Red diagonal accent stripe in the right panel */
 .hero-right::before {
   content: '';
   position: absolute;
@@ -758,7 +742,6 @@ body:has(#mobile-menu.menu-open) {
   z-index: 2;
 }
 
-/* Halftone texture overlay */
 .hero-right::after {
   content: '';
   position: absolute;
@@ -786,7 +769,6 @@ body:has(#mobile-menu.menu-open) {
   transform: scale(1.35); /* Zooms in by 35% to crop out wide weapons/effects */
 }
 
-/* Placeholder when no hero image provided */
 .hero-illustration-placeholder {
   width: 100%;
   height: 100%;
@@ -800,13 +782,11 @@ body:has(#mobile-menu.menu-open) {
   content: '';
   width: 60%;
   height: 60%;
-  /* Decorative geometric triangle accent */
   background:
     linear-gradient(135deg, transparent 40%, rgba(255, 0, 0, 0.15) 40%, rgba(255, 0, 0, 0.15) 42%, transparent 42%),
     linear-gradient(225deg, transparent 30%, rgba(255, 255, 255, 0.03) 30%, rgba(255, 255, 255, 0.03) 32%, transparent 32%);
 }
 
-/* Decorative large faded number */
 .hero-deco-number {
   position: absolute;
   right: 2rem;
@@ -822,7 +802,6 @@ body:has(#mobile-menu.menu-open) {
   letter-spacing: -0.04em;
 }
 
-/* ID Card overlay */
 .hero-id-card {
   position: absolute;
   bottom: 15%;
@@ -896,7 +875,6 @@ body:has(#mobile-menu.menu-open) {
   opacity: 0.6;
 }
 
-/* Scroll down indicator */
 .hero-scroll-down {
   position: absolute;
   right: 1.5rem;
@@ -937,7 +915,6 @@ body:has(#mobile-menu.menu-open) {
   }
 }
 
-/* Social rail on the left edge */
 .hero-social-rail {
   position: absolute;
   left: 1.5rem;
@@ -979,8 +956,7 @@ body:has(#mobile-menu.menu-open) {
   margin: 0 auto;
 }
 
-/* Hero entrance — one authored moment after boot. Progressive enhancement:
-   without the class nothing is hidden and nothing animates. */
+/* Hero entrance keyframes: progressive enhancement via class toggle. */
 #hero-section.hero-entrance .hero-social-rail { animation: heroFade 480ms var(--ease-snap) 40ms both; }
 #hero-section.hero-entrance .hero-eyebrow { animation: heroRise 520ms var(--ease-snap) 80ms both; }
 #hero-section.hero-entrance .hero-headline { animation: heroRise 520ms var(--ease-snap) 160ms both; }
@@ -1016,7 +992,6 @@ body:has(#mobile-menu.menu-open) {
   min-height: 560px;
 }
 
-/* Halftone texture on explore bg */
 .explore-section::before {
   content: '';
   position: absolute;
@@ -1110,7 +1085,6 @@ body:has(#mobile-menu.menu-open) {
   transform: translateX(4px);
 }
 
-/* Explore category cards grid */
 .explore-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -1219,7 +1193,6 @@ body:has(#mobile-menu.menu-open) {
   transform: rotate(12deg) scale(1.06);
 }
 
-/* "More / Coming Soon" card variant */
 .explore-card--more {
   border: 2px dashed rgba(240, 236, 226, 0.3);
   background: rgba(240, 236, 226, 0.05);
@@ -1400,7 +1373,6 @@ dex-empty-state {
 
 
 
-/* Left column: Recently Added */
 .recent-column {
   padding-right: 2rem;
   position: relative;
@@ -1551,7 +1523,6 @@ dex-empty-state {
   text-transform: uppercase;
 }
 
-/* Right column: Dex Overview */
 .overview-column {
   position: relative;
   z-index: 2;
@@ -1560,10 +1531,12 @@ dex-empty-state {
   border: 3px solid #000;
   box-shadow: 6px 6px 0 #000;
   transform: skew(-1deg, 0.5deg);
+  display: flex;
+  flex-direction: column;
 }
 
 .overview-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .overview-heading {
@@ -1578,15 +1551,17 @@ dex-empty-state {
 .overview-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 1rem;
+  flex: 1;
 }
 
 .overview-stat {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 1rem;
+  padding: 1.25rem 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
 }
@@ -1615,11 +1590,11 @@ dex-empty-state {
 
 .overview-stat-number {
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 6vw, 2.5rem);
+  font-size: clamp(1.3rem, 4vw, 2.2rem);
   text-transform: uppercase;
-  word-break: break-word;
+  white-space: nowrap;
   color: var(--white);
-  line-height: 1;
+  line-height: 1.1;
   margin-bottom: 0.3rem;
 }
 
@@ -1852,7 +1827,6 @@ dex-empty-state {
 
 @media (max-width: 768px) {
 
-  /* Navbar: hide center links, show hamburger */
   .navbar-center {
     display: none;
   }
@@ -1869,7 +1843,6 @@ dex-empty-state {
     padding: 0 1rem;
   }
 
-  /* Hero */
   .hero-left {
     padding: 6rem 1.5rem 3rem;
   }
@@ -1888,7 +1861,6 @@ dex-empty-state {
     font-size: clamp(5rem, 20vw, 8rem);
   }
 
-  /* Explore grid */
   .explore-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
@@ -1912,7 +1884,6 @@ dex-empty-state {
     gap: 0.8rem;
   }
 
-  /* Category sections */
   .category-section {
     padding: 1.5rem 1rem 2rem;
   }
@@ -1927,7 +1898,6 @@ dex-empty-state {
   }
 
 
-  /* Footer */
   .footer-inner {
     gap: 1rem;
     text-align: center;
@@ -2116,8 +2086,6 @@ dex-empty-state {
   box-shadow: 0 0 0 5px #000000;
 }
 
-/* ---- Dex search (catalog lookup) ---- */
-
 .dex-search {
   max-width: 1200px;
   margin: 0 auto 1.5rem;
@@ -2263,8 +2231,6 @@ dex-empty-state {
   font-size: 0.85rem;
   color: rgba(240, 236, 226, 0.6);
 }
-
-/* ---- Detail modal ---- */
 
 .dex-modal-overlay {
   position: fixed;
@@ -2417,7 +2383,7 @@ dex-empty-state {
 }
 
 .dex-modal-sub {
-  font-family: var(--font-messy, 'Caveat', cursive);
+  font-family: var(--font-messy, 'Caveat', 'Segoe Print', 'Bradley Hand', cursive);
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--color-text-muted-on-dark, rgba(240, 236, 226, 0.75));
@@ -2449,8 +2415,6 @@ dex-empty-state {
   font-size: 0.8rem;
   color: rgba(240, 236, 226, 0.85);
 }
-
-/* ---- Error screen (data fetch failure) ---- */
 
 .loading-error {
   color: var(--red-on-dark);

@@ -195,14 +195,13 @@ template.innerHTML = `
     }
 
     .card-subtitle {
-      font-family: var(--font-messy, 'Caveat', cursive);
+      font-family: var(--font-messy, 'Caveat', 'Segoe Print', 'Bradley Hand', cursive);
       font-size: 0.85rem;
       font-weight: 700;
       color: var(--color-text-muted-on-dark, rgba(240, 236, 226, 0.75));
       margin: 0.2rem 0 0 0;
       line-height: 1.3;
       letter-spacing: 0.01em;
-      /* Max 2 lines */
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;

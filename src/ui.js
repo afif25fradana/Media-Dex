@@ -115,7 +115,7 @@ export function renderNavbar(profile) {
 
   navbar.innerHTML = `
     <div class="navbar-left">
-      <a href="#hero-section" class="navbar-logo" aria-label="${firstName}DEX — Home">
+      <a href="#hero-section" class="navbar-logo" aria-label="${firstName}DEX: Home">
         ${LOGO_SVG}
         <span class="navbar-wordmark">${firstName}<span class="navbar-wordmark-accent">DEX</span></span>
       </a>
@@ -135,11 +135,11 @@ export function renderNavbar(profile) {
           <span class="theme-toggle-thumb"></span>
         </span>
       </button>
-      <button class="navbar-menu-desktop" id="navbar-menu-desktop-btn" aria-label="MENU — Open navigation menu" aria-expanded="false">
+      <button class="navbar-menu-desktop" id="navbar-menu-desktop-btn" aria-label="MENU: Open navigation menu" aria-expanded="false">
         MENU
         ${MENU_ICON_SVG}
       </button>
-      <button class="navbar-menu-btn" id="navbar-menu-btn" aria-label="MENU — Open mobile navigation menu" aria-expanded="false">
+      <button class="navbar-menu-btn" id="navbar-menu-btn" aria-label="MENU: Open mobile navigation menu" aria-expanded="false">
         MENU
         ${MENU_ICON_SVG}
       </button>
@@ -181,11 +181,11 @@ export function renderHero(profile, socials) {
       <h1 class="hero-headline">WELCOME TO<br>MY <span class="hero-headline-accent">PERSONAL</span> DEX</h1>
       <p class="hero-bio">${esc(profile?.tagline || '')}</p>
       <div class="hero-cta-row">
-        <button class="btn-primary" data-scroll-to="#explore-categories" aria-label="EXPLORE DEX — Browse collection">
+        <button class="btn-primary" data-scroll-to="#explore-categories" aria-label="EXPLORE DEX: Browse collection">
           EXPLORE DEX
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
-        <button class="btn-secondary" data-scroll-to="#dex-overview" aria-label="ABOUT ME — Learn more about me">
+        <button class="btn-secondary" data-scroll-to="#dex-overview" aria-label="ABOUT ME: Learn more about me">
           ABOUT ME
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </button>
@@ -227,7 +227,7 @@ export function renderFooter(profile, socials) {
       </div>
       <div class="footer-bottom">
         ${socialsHTML ? `<div class="footer-socials">${socialsHTML}</div>` : ''}
-        <span class="footer-right">BUILT WITH <span class="footer-heart">♥</span> AND PASSION</span>
+        <span class="footer-right">PERSONAL MEDIA ARCHIVE</span>
       </div>
     </div>
   `;
@@ -347,7 +347,7 @@ export function renderExploreCategories(categories) {
   section.replaceChildren(fragment);
 }
 
-export function renderRecentlyAdded(categories) {
+export function renderRecentlyAdded(categories, profile) {
   const section = document.getElementById('recent-overview');
   const fragment = document.createDocumentFragment();
 
@@ -409,13 +409,20 @@ export function renderRecentlyAdded(categories) {
   );
 
   fragment.appendChild(recentColumn);
-  fragment.appendChild(buildDexOverview(categories));
+  fragment.appendChild(buildDexOverview(categories, profile));
   section.replaceChildren(fragment);
 }
 
-function buildDexOverview(categories) {
+function buildDexOverview(categories, profile) {
   const totalEntries = categories.reduce((sum, cat) => sum + (cat.items || []).length, 0);
   const categoryCount = categories.length;
+
+  const allItems = categories.flatMap(cat => cat.items || []);
+  const sorted = allItems.slice().sort((a, b) => new Date(b.dateAdded || 0) - new Date(a.dateAdded || 0));
+  const latestDateStr = sorted[0]?.dateAdded
+    ? new Date(sorted[0].dateAdded).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }).toUpperCase()
+    : 'AUG 2026';
+  const curatorLocation = (profile?.location || 'SOLO, ID').toUpperCase();
 
   return h('div', { className: 'overview-column', id: 'dex-overview' },
     h('div', { className: 'overview-header' },
@@ -423,10 +430,26 @@ function buildDexOverview(categories) {
       h('h2', { className: 'overview-heading' }, 'DEX OVERVIEW')
     ),
     h('div', { className: 'overview-grid' },
-      h('div', { className: 'overview-stat' }, h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' }), h('span', { className: 'overview-stat-number' }, totalEntries), h('span', { className: 'overview-stat-label' }, 'Total Entries')),
-      h('div', { className: 'overview-stat' }, h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>' }), h('span', { className: 'overview-stat-number' }, categoryCount), h('span', { className: 'overview-stat-label' }, 'Categories')),
-      h('div', { className: 'overview-stat' }, h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>' }), h('span', { className: 'overview-stat-number' }, 'Sometimes'), h('span', { className: 'overview-stat-label' }, 'Updates')),
-      h('div', { className: 'overview-stat' }, h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' }), h('span', { className: 'overview-stat-number' }, '100%'), h('span', { className: 'overview-stat-label' }, 'Personal'))
+      h('div', { className: 'overview-stat' },
+        h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' }),
+        h('span', { className: 'overview-stat-number' }, totalEntries),
+        h('span', { className: 'overview-stat-label' }, 'TOTAL ENTRIES')
+      ),
+      h('div', { className: 'overview-stat' },
+        h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>' }),
+        h('span', { className: 'overview-stat-number' }, categoryCount),
+        h('span', { className: 'overview-stat-label' }, 'CATEGORIES')
+      ),
+      h('div', { className: 'overview-stat' },
+        h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' }),
+        h('span', { className: 'overview-stat-number' }, latestDateStr),
+        h('span', { className: 'overview-stat-label' }, 'LATEST ADDED')
+      ),
+      h('div', { className: 'overview-stat' },
+        h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' }),
+        h('span', { className: 'overview-stat-number' }, curatorLocation),
+        h('span', { className: 'overview-stat-label' }, 'CURATOR BASE')
+      )
     )
   );
 }
