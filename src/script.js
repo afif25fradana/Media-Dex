@@ -1,8 +1,6 @@
 import { DataStore } from './store.js';
 import { initEvents } from './events.js';
 import { 
-  initTheme, 
-  toggleTheme, 
   renderNavbar, 
   renderMobileMenu, 
   renderHero, 
@@ -17,7 +15,7 @@ import { dismissLoading, triggerPageEntrance, setupScrollReveals } from './anima
 import { initHalftoneBackground } from './halftoneBg.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  initTheme();
+  try { localStorage.removeItem('dex-theme'); } catch { }
   initHalftoneBackground();
 
   const fetchWithTimeout = () => DataStore.fetch(AbortSignal.timeout(10000));
@@ -81,7 +79,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     initEvents({
-      toggleTheme,
       openMenu,
       closeMenu
     });

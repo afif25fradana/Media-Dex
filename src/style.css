@@ -1,28 +1,30 @@
 
 :root {
+  color-scheme: dark;
+
   /* NOTE: If you change --red, manually sync the fallback values in DexCard.js & DexEmptyState.js */
   --red: #D80000;
   --red-dark: #CC0000;
-  --red-text: #CC0000;
+  --red-text: #FF3333;
   --red-on-dark: #FF3333;
   --black: #0C0C0C;
   --cream: #F0ECE2;
   --white: #FFFFFF;
 
-  --color-bg: #F0ECE2;
-  --color-surface: #FFFFFF;
+  --color-bg: #070707;
+  --color-surface: #1A1A20;
   --color-surface-dark: #1A1A20;
-  --color-text: #0C0C0C;
-  --color-text-muted: rgba(12, 12, 12, 0.7);
+  --color-text: #F0ECE2;
+  --color-text-muted: rgba(240, 236, 226, 0.7);
   --color-text-on-dark: #F0ECE2;
   --color-text-muted-on-dark: rgba(240, 236, 226, 0.75);
   --placeholder-deep: #1a1a2e;
   --skeleton-base: #333;
   --skeleton-shine: #444;
-  --color-border: #D4D0C8;
+  --color-border: #3A3A42;
   --color-border-dark: #3A3A42;
-  --navbar-bg: rgba(240, 236, 226, 0.95);
-  --navbar-bg-top: transparent;
+  --navbar-bg: rgba(7, 7, 7, 0.95);
+  --navbar-bg-top: rgba(7, 7, 7, 0.95);
 
   --font-display: 'Anton', 'Impact', sans-serif;
   --font-body: 'Schibsted Grotesk', 'Segoe UI', Arial, sans-serif;
@@ -44,17 +46,6 @@
   --space-lg: 1.5rem;
   --space-xl: 2rem;
   --space-section: 4rem;
-}
-
-[data-theme="dark"] {
-  --color-bg: #070707;
-  --red-text: #FF3333;
-  --color-surface: #1A1A20;
-  --color-text: #F0ECE2;
-  --color-text-muted: rgba(240, 236, 226, 0.7);
-  --color-border: #3A3A42;
-  --navbar-bg: rgba(7, 7, 7, 0.95);
-  --navbar-bg-top: rgba(7, 7, 7, 0.95);
 }
 
 *,
@@ -100,12 +91,6 @@ body::-webkit-scrollbar {
   pointer-events: none;
   background-color: #070707;
   overflow: hidden;
-  transition: opacity var(--dur-entry) ease, visibility var(--dur-entry) ease;
-}
-
-[data-theme="light"] .bg-canvas-container {
-  opacity: 0;
-  visibility: hidden;
 }
 
 .bg-halftone-canvas {
@@ -143,7 +128,6 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 img {
@@ -337,97 +321,6 @@ body::after {
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-.theme-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  color: var(--color-text);
-  padding: 0.25rem;
-  min-width: 44px;
-  min-height: 44px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: transform var(--dur-fast) var(--ease-snap);
-}
-
-.theme-toggle:hover .theme-toggle-track {
-  box-shadow: 0 0 0 2px var(--red);
-}
-
-.theme-toggle:hover .theme-toggle-icon {
-  color: var(--red);
-}
-
-@media (min-width: 1025px) {
-  .site-navbar:not(.navbar-scrolled) .theme-toggle:hover .theme-toggle-icon {
-    color: var(--red-on-dark);
-  }
-}
-
-[data-theme="dark"] .theme-toggle:hover .theme-toggle-icon {
-  color: var(--red-on-dark);
-}
-
-.theme-toggle:focus-visible {
-  outline: 2px solid var(--red);
-  outline-offset: 4px;
-}
-
-.theme-toggle:active {
-  transform: scale(0.92);
-}
-
-.theme-toggle-icon {
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.theme-toggle-icon svg {
-  width: 16px;
-  height: 16px;
-}
-
-.theme-toggle-track {
-  width: 40px;
-  height: 22px;
-  background: var(--color-border);
-  border-radius: 11px;
-  position: relative;
-  transition: background var(--dur-fast) ease;
-}
-
-.theme-toggle-thumb {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 16px;
-  height: 16px;
-  background: var(--red);
-  border-radius: 50%;
-  transition: transform var(--dur-fast) var(--ease-snap);
-}
-
-[data-theme="dark"] .theme-toggle-thumb {
-  transform: translateX(18px);
-}
-
-[data-theme="dark"] .theme-toggle-track {
-  background: #3A3A42;
-}
-
-/* On desktop (>1024px) at scrollY=0, .site-navbar is transparent over .hero-right (black).
-   Use cream icon color so it maintains 16.58:1 contrast over the black background. */
-@media (min-width: 1025px) {
-  .site-navbar:not(.navbar-scrolled) .theme-toggle {
-    color: var(--cream);
-  }
 }
 
 

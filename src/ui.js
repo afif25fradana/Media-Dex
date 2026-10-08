@@ -77,38 +77,6 @@ export function h(tag, props, ...children) {
   return el;
 }
 
-export function initTheme() {
-  let saved = null;
-  try { saved = localStorage.getItem('dex-theme'); } catch { }
-  let theme = saved ? saved : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  document.documentElement.setAttribute('data-theme', theme);
-  applyThemeMeta(theme);
-}
-
-function applyThemeMeta(theme) {
-  const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute('content', theme === 'dark' ? '#070707' : '#F0ECE2');
-}
-
-export function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-
-  const applyAndSave = () => {
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('dex-theme', next); } catch { }
-    applyThemeMeta(next);
-  };
-
-  if (!document.startViewTransition || prefersReducedMotion()) {
-    applyAndSave();
-    return;
-  }
-  document.startViewTransition(() => {
-    applyAndSave();
-  });
-}
-
 // Safe to use innerHTML here (inputs are strictly controlled and escaped).
 export function renderNavbar(profile) {
   const navbar = document.getElementById('site-navbar');
@@ -128,14 +96,6 @@ export function renderNavbar(profile) {
       `).join('')}
     </div>
     <div class="navbar-right">
-      <button class="theme-toggle" aria-label="Toggle dark/light theme" id="theme-toggle-btn">
-        <span class="theme-toggle-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        </span>
-        <span class="theme-toggle-track">
-          <span class="theme-toggle-thumb"></span>
-        </span>
-      </button>
       <button class="navbar-menu-desktop" id="navbar-menu-desktop-btn" aria-label="MENU: Open navigation menu" aria-expanded="false">
         MENU
         ${MENU_ICON_SVG}

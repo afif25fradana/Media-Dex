@@ -328,25 +328,10 @@ export function initHalftoneBackground() {
     if (document.hidden) {
       stop();
     } else {
-      const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-      if (isDark) start();
-    }
-  });
-
-  // Observe theme switches (suspend in light mode, run in dark mode)
-  const themeObserver = new MutationObserver(() => {
-    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-    if (isDark) {
       start();
-    } else {
-      stop();
     }
   });
-  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   resize();
-  const initialDark = document.documentElement.getAttribute('data-theme') !== 'light';
-  if (initialDark) {
-    start();
-  }
+  start();
 }

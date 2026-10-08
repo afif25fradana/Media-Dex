@@ -35,12 +35,6 @@ export function initEvents(actions) {
   }
 
   document.addEventListener('click', (e) => {
-    const themeBtn = e.target.closest('#theme-toggle-btn');
-    if (themeBtn && actions.toggleTheme) {
-      actions.toggleTheme();
-      return;
-    }
-
     const openMenuBtn = e.target.closest('#navbar-menu-btn, #navbar-menu-desktop-btn');
     if (openMenuBtn && actions.openMenu) {
       actions.openMenu();
