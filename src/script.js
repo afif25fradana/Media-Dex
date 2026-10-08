@@ -9,8 +9,10 @@ import {
   renderExploreCategories, 
   renderCategories, 
   renderRecentlyAdded, 
+  renderLastFmSection,
   renderFooter 
 } from './ui.js';
+import { initLastFm } from './lastfm.js';
 import { dismissLoading, triggerPageEntrance, setupScrollReveals } from './animations.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -27,6 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderExploreCategories(data.categories);
     renderCategories(data.categories);
     renderRecentlyAdded(data.categories, data.profile);
+    renderLastFmSection(data.profile, data.lastfm);
     renderFooter(data.profile, data.socials);
 
     window.__dexBooted = true;
@@ -84,6 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     dismissLoading(() => {
       triggerPageEntrance();
       setupScrollReveals();
+      initLastFm(data.lastfm);
     });
 
   } catch (error) {

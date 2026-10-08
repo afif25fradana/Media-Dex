@@ -1607,6 +1607,265 @@ dex-empty-state {
   color: rgba(255, 255, 255, 0.75);
 }
 
+/* ===== LAST.FM VINYL PLAYER DEDICATED SECTION ===== */
+.lastfm-section {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  align-items: center;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 540px;
+}
+
+.lastfm-stage-container {
+  perspective: 1400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.lastfm-stage {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  transform: rotateX(26deg) rotateZ(-2deg) rotateY(3deg);
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+  cursor: pointer;
+  outline: 1px solid transparent;
+  backface-visibility: hidden;
+}
+
+.lastfm-stage:hover {
+  transform: rotateX(18deg) rotateZ(-1deg) rotateY(1deg) translateY(-6px);
+}
+
+.lastfm-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #000;
+  transform: translateZ(-20px);
+  box-shadow: 6px 14px 0 #000;
+  border-radius: 8px;
+  outline: 1px solid transparent;
+  backface-visibility: hidden;
+  z-index: 0;
+}
+
+.lastfm-monitor-card {
+  position: relative;
+  background: var(--color-surface-dark);
+  padding: 2.5rem;
+  border: 3px solid #000;
+  box-shadow: 6px 6px 0 #000, -4px -4px 0 var(--red);
+  transform: skew(1deg, -0.5deg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.vinyl-svg {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.6));
+}
+
+.vinyl-disc {
+  transform-origin: 150px 160px;
+}
+
+.vinyl-disc.is-playing {
+  animation: vinylSpin 3s linear infinite;
+  transform-origin: 150px 160px;
+}
+
+@keyframes vinylSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vinyl-tonearm {
+  transition: transform 0.8s var(--ease-snap);
+  transform-origin: 276px 48px;
+  transform: rotate(-3deg);
+}
+
+.vinyl-tonearm.is-playing {
+  transform: rotate(14deg);
+}
+
+.lastfm-monitor-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--red-on-dark);
+  margin-bottom: 0.5rem;
+}
+
+.lastfm-monitor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.75rem;
+}
+
+.lastfm-monitor-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+
+.lastfm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.75rem;
+  background: #000;
+  color: rgba(240, 236, 226, 0.6);
+  border: 1px solid #333;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.lastfm-badge.badge-live {
+  background: var(--red);
+  color: var(--white);
+  border-color: #000;
+  box-shadow: 3px 3px 0 #000;
+  animation: livePulse 2s infinite ease-in-out;
+}
+
+@keyframes livePulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.lastfm-track-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 0.75rem;
+  word-break: break-word;
+}
+
+.lastfm-track-meta {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(240, 236, 226, 0.75);
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  margin-bottom: 1.75rem;
+}
+
+.lastfm-monitor-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.lastfm-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 22px;
+}
+
+.lastfm-eq span {
+  width: 4px;
+  height: 4px;
+  background: var(--red);
+  border-radius: 1px;
+  transition: height 0.2s ease;
+}
+
+.lastfm-eq.is-active span {
+  animation: eqBounce 0.7s ease-in-out infinite;
+}
+
+.lastfm-eq.is-active span:nth-child(1) { height: 8px; animation-delay: 0s; }
+.lastfm-eq.is-active span:nth-child(2) { height: 20px; animation-delay: 0.15s; }
+.lastfm-eq.is-active span:nth-child(3) { height: 12px; animation-delay: 0.3s; }
+.lastfm-eq.is-active span:nth-child(4) { height: 18px; animation-delay: 0.08s; }
+
+@keyframes eqBounce {
+  0%, 100% {
+    transform: scaleY(0.25);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+.lastfm-btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (max-width: 900px) {
+  .lastfm-section {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 3rem 1.5rem;
+  }
+
+  .lastfm-monitor-card {
+    transform: none;
+    padding: 1.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lastfm-stage,
+  .lastfm-stage:hover {
+    transition: none;
+    transform: rotateX(20deg);
+  }
+  .vinyl-disc.is-playing {
+    animation: none;
+  }
+  .lastfm-badge.badge-live {
+    animation: none;
+  }
+  .lastfm-eq.is-active span {
+    animation: none;
+  }
+  .vinyl-tonearm {
+    transition: none;
+  }
+}
 
 .site-footer {
   position: relative;

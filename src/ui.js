@@ -454,6 +454,144 @@ function buildDexOverview(categories, profile) {
   );
 }
 
+export function renderLastFmSection(profile, lastfmConfig) {
+  const section = document.getElementById('lastfm-section');
+  if (!section) return;
+
+  const username = lastfmConfig?.username || 'oxanara';
+
+  section.innerHTML = `
+    <div class="lastfm-stage-container">
+      <div class="lastfm-stage">
+        <svg class="vinyl-svg" viewBox="0 0 320 320" shape-rendering="geometricPrecision" role="img" aria-label="Persona 5 Hi-Fi Vinyl Turntable">
+        <defs>
+          <radialGradient id="lastfmVinylFace" cx="36%" cy="30%" r="72%">
+            <stop offset="0%" stop-color="#24242A"/>
+            <stop offset="60%" stop-color="#121214"/>
+            <stop offset="100%" stop-color="#050505"/>
+          </radialGradient>
+          <radialGradient id="lastfmRecordSheen" cx="35%" cy="28%" r="65%">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.12"/>
+            <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.02"/>
+            <stop offset="100%" stop-color="#000000" stop-opacity="0.3"/>
+          </radialGradient>
+          <linearGradient id="lastfmPlinthGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#202026"/>
+            <stop offset="100%" stop-color="#0A0A0C"/>
+          </linearGradient>
+          <linearGradient id="lastfmMetalShine" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E8E8E8"/>
+            <stop offset="50%" stop-color="#999999"/>
+            <stop offset="100%" stop-color="#555555"/>
+          </linearGradient>
+          <clipPath id="lastfmLabelClip">
+            <circle cx="150" cy="160" r="46"/>
+          </clipPath>
+          <clipPath id="lastfmPlinthClip">
+            <rect x="8" y="8" width="304" height="304" rx="8"/>
+          </clipPath>
+        </defs>
+
+        <rect x="12" y="16" width="300" height="300" rx="8" fill="#000000" opacity="0.8"/>
+        <rect x="8" y="8" width="304" height="304" rx="8" fill="url(#lastfmPlinthGrad)"/>
+        <rect x="10" y="10" width="300" height="300" rx="6" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+
+        <g clip-path="url(#lastfmPlinthClip)">
+          <polygon points="8,8 70,8 8,70" fill="#D80000"/>
+          <polygon points="76,8 90,8 8,90 8,76" fill="#000000" opacity="0.6"/>
+          <line x1="8" y1="18" x2="294" y2="18" stroke="#D80000" stroke-width="1.5" stroke-dasharray="12 6" opacity="0.4"/>
+        </g>
+
+        <rect x="8" y="8" width="304" height="304" rx="8" fill="none" stroke="#D80000" stroke-width="2.5"/>
+
+        <circle cx="150" cy="160" r="126" fill="#08080A" stroke="#222222" stroke-width="2"/>
+        <circle cx="150" cy="160" r="122" fill="#D80000"/>
+        <circle cx="150" cy="160" r="118" fill="none" stroke="#000000" stroke-width="2" opacity="0.4"/>
+        <circle cx="150" cy="160" r="70" fill="none" stroke="#CC0000" stroke-width="1" stroke-dasharray="4 4" opacity="0.6"/>
+
+        <g id="lastfmRecordGroup" class="vinyl-disc">
+          <circle cx="150" cy="160" r="115" fill="url(#lastfmVinylFace)"/>
+          <circle cx="150" cy="160" r="115" fill="url(#lastfmRecordSheen)"/>
+
+          <circle cx="150" cy="160" r="110" fill="none" stroke="#000000" stroke-width="0.8" opacity="0.6"/>
+          <circle cx="150" cy="160" r="105" fill="none" stroke="#2A2A30" stroke-width="0.6" opacity="0.4"/>
+          <circle cx="150" cy="160" r="100" fill="none" stroke="#000000" stroke-width="0.8" opacity="0.6"/>
+          <circle cx="150" cy="160" r="95" fill="none" stroke="#2A2A30" stroke-width="0.6" opacity="0.4"/>
+          <circle cx="150" cy="160" r="90" fill="none" stroke="#000000" stroke-width="0.8" opacity="0.6"/>
+          <circle cx="150" cy="160" r="85" fill="none" stroke="#2A2A30" stroke-width="0.6" opacity="0.4"/>
+          <circle cx="150" cy="160" r="80" fill="none" stroke="#000000" stroke-width="0.8" opacity="0.6"/>
+          <circle cx="150" cy="160" r="75" fill="none" stroke="#2A2A30" stroke-width="0.6" opacity="0.4"/>
+          <circle cx="150" cy="160" r="65" fill="none" stroke="#000000" stroke-width="0.8" opacity="0.6"/>
+          <circle cx="150" cy="160" r="56" fill="none" stroke="#2A2A30" stroke-width="0.6" opacity="0.4"/>
+
+          <path d="M150,160 m-104,0 a104,104 0 0 1 52,-90" fill="none" stroke="#D80000" stroke-width="6" opacity="0.2" stroke-linecap="round"/>
+          <path d="M150,160 m104,0 a104,104 0 0 1 -52,90" fill="none" stroke="#FFFFFF" stroke-width="4" opacity="0.08" stroke-linecap="round"/>
+
+          <circle cx="150" cy="160" r="48" fill="#0C0C0C" stroke="#D80000" stroke-width="2"/>
+          <circle cx="150" cy="160" r="46" fill="#1A1A20"/>
+          <text x="150" y="148" text-anchor="middle" font-family="'Anton', Impact, sans-serif" font-size="10" fill="#D80000" letter-spacing="1">MEDIA-DEX</text>
+          <text x="150" y="172" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace" font-size="6" fill="#FFFFFF" opacity="0.6">P5 HI-FI</text>
+
+          <image id="lastfmVinylArt" x="104" y="114" width="92" height="92" clip-path="url(#lastfmLabelClip)" preserveAspectRatio="xMidYMid slice" href=""/>
+
+          <circle cx="150" cy="160" r="46" fill="none" stroke="#000000" stroke-width="2" opacity="0.6"/>
+          <circle cx="150" cy="160" r="6" fill="#0C0C0C" stroke="#D80000" stroke-width="1"/>
+          <circle cx="150" cy="160" r="2.5" fill="url(#lastfmMetalShine)"/>
+        </g>
+
+        <g id="lastfmTonearmGroup">
+          <!-- Arm Rest Post (Right Gutter) -->
+          <rect x="277" y="176" width="8" height="18" rx="2" fill="#141418" stroke="#000000" stroke-width="1.5"/>
+          <rect x="275" y="180" width="12" height="3" rx="1" fill="#D80000"/>
+
+          <!-- Gimbal Base Rings -->
+          <circle cx="276" cy="48" r="16" fill="#000000" opacity="0.6"/>
+          <circle cx="276" cy="48" r="14" fill="#1A1A20" stroke="#000000" stroke-width="2"/>
+          <circle cx="276" cy="48" r="11" fill="none" stroke="#D80000" stroke-width="1.5"/>
+
+          <!-- Rotating Tonearm Assembly -->
+          <g id="lastfmTonearm" class="vinyl-tonearm" filter="drop-shadow(3px 8px 4px rgba(0,0,0,0.85))">
+            <line x1="276" y1="48" x2="276" y2="190" stroke="#EAEAEA" stroke-width="4.5" stroke-linecap="round"/>
+            <line x1="274.8" y1="50" x2="274.8" y2="186" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
+            <rect x="268" y="184" width="16" height="20" rx="3" fill="#D80000" stroke="#000000" stroke-width="1.5"/>
+            <rect x="271" y="188" width="10" height="7" rx="1" fill="#0C0C0C"/>
+            <circle cx="276" cy="191" r="2" fill="#D80000"/>
+            <polygon points="273,204 279,204 276,212" fill="#FFFFFF"/>
+          </g>
+
+          <!-- Gimbal Center Bearing Cap (Locks Arm Visually at 276, 48) -->
+          <circle cx="276" cy="48" r="6" fill="#0C0C0C" stroke="#000000" stroke-width="1"/>
+          <circle cx="276" cy="48" r="4" fill="#D80000"/>
+          <circle cx="276" cy="48" r="1.5" fill="#FFFFFF"/>
+        </g>
+
+        <circle id="lastfmPowerLed" cx="290" cy="292" r="3.5" fill="#D80000" stroke="#000000" stroke-width="1"/>
+        <text x="24" y="296" font-size="8" font-family="'JetBrains Mono', Consolas, monospace" font-weight="700" fill="#D80000" letter-spacing="1">33⅓ RPM // PHANTOM AUDIO</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="lastfm-monitor-card">
+      <div class="lastfm-monitor-eyebrow">// BROADCAST FREQUENCY</div>
+      <div class="lastfm-monitor-header">
+        <h2 class="lastfm-monitor-heading">ON AIR</h2>
+        <span id="lastfmStatusBadge" class="lastfm-badge">STANDBY</span>
+      </div>
+      <h3 id="lastfmTrackTitle" class="lastfm-track-title">SCANNING FREQUENCY…</h3>
+      <div id="lastfmTrackMeta" class="lastfm-track-meta">
+        <div>ARTIST // <span id="lastfmTrackArtist">—</span></div>
+        <div>ALBUM // <span id="lastfmTrackAlbum">—</span></div>
+      </div>
+      <div class="lastfm-monitor-footer">
+        <div class="lastfm-eq" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <a id="lastfmProfileLink" href="https://www.last.fm/user/${esc(username)}" target="_blank" rel="noopener noreferrer" class="btn-primary lastfm-btn">OPEN LAST.FM ↗</a>
+      </div>
+    </div>
+  `;
+}
+
 const SEARCH_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>';
 
 function buildSearchBar() {
