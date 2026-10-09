@@ -8,19 +8,22 @@
   <meta property="og:title" content="PERSONAL DEX: My Media Collection">
   <meta property="og:description" content="A Persona 5-inspired personal catalog of personal taste in music, movies, TV, and games.">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="Asset/Profile/Wisadel_Skin.webp">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="PERSONAL DEX: My Media Collection">
   <meta name="twitter:description" content="A Persona 5-inspired personal catalog of personal taste in music, movies, TV, and games.">
+  <meta name="twitter:image" content="Asset/Profile/Wisadel_Skin.webp">
   <meta name="theme-color" content="#070707">
   <meta name="color-scheme" content="dark">
 
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" sizes="any">
+  <link rel="modulepreload" href="src/script.js">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@400;700&family=JetBrains+Mono:wght@400;500;700&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="src/style.css">
-  <link rel="preload" href="Asset/monochrome-overlay-background.webp" as="image" fetchpriority="high">
-  <link rel="preload" href="Asset/Profile/Wisadel_Skin.webp" as="image">
+  <link rel="preload" href="Asset/Profile/Wisadel_Skin.webp" as="image" type="image/webp" fetchpriority="high">
+  <link rel="preload" href="Asset/monochrome-overlay-background.webp" as="image" type="image/webp">
 </head>
 <body>
   <a href="#app" class="skip-link">Skip to content</a>
@@ -44,7 +47,7 @@
     // broken module, partial outage), replace the LOADING screen with a recovery
     // message instead of leaving a permanent black screen.
     window.addEventListener('DOMContentLoaded', function () {
-      setTimeout(function () {
+      window.__dexWatchdogTimer = setTimeout(function () {
         if (window.__dexBooted) return;
         var loader = document.getElementById('loading-screen');
         if (!loader) return;
@@ -52,8 +55,14 @@
           '<div class="loading-error">' +
             '<h2 class="loading-error-title">System Error</h2>' +
             '<p class="loading-error-msg">The dex could not be loaded. Check your connection and try again.</p>' +
-            '<button class="error-retry" onclick="window.location.reload()">RETRY CONNECTION</button>' +
+            '<button class="error-retry" id="watchdog-retry-btn">RETRY CONNECTION</button>' +
           '</div>';
+        var retryBtn = document.getElementById('watchdog-retry-btn');
+        if (retryBtn) {
+          retryBtn.addEventListener('click', function () {
+            window.location.reload();
+          });
+        }
       }, 12000);
     });
   </script>

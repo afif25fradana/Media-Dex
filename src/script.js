@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderFooter(data.profile, data.socials);
 
     window.__dexBooted = true;
+    if (window.__dexWatchdogTimer) {
+      clearTimeout(window.__dexWatchdogTimer);
+      window.__dexWatchdogTimer = null;
+    }
 
     setupNavbarScroll();
     setupScrollSpy();
@@ -55,11 +59,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const menu = document.getElementById('mobile-menu');
     const menuTriggers = document.querySelectorAll('#navbar-menu-btn, #navbar-menu-desktop-btn');
     const closeBtn = document.getElementById('mobile-menu-close');
+    const appEl = document.getElementById('app');
+    const headerEl = document.querySelector('.site-header');
 
     let lastFocusedEl = null;
 
     function openMenu() {
       lastFocusedEl = document.activeElement;
+      if (appEl) appEl.inert = true;
+      if (headerEl) headerEl.inert = true;
       menu.removeAttribute('inert');
       menu.classList.add('menu-open');
       menu.setAttribute('aria-hidden', 'false');
@@ -71,6 +79,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       menu.classList.remove('menu-open');
       menu.setAttribute('aria-hidden', 'true');
       menu.setAttribute('inert', '');
+      if (appEl) appEl.inert = false;
+      if (headerEl) headerEl.inert = false;
       menuTriggers.forEach(btn => btn.setAttribute('aria-expanded', 'false'));
       const fallbackTarget = document.getElementById('navbar-menu-btn');
       const target = lastFocusedEl && lastFocusedEl.isConnected ? lastFocusedEl : fallbackTarget;
@@ -92,6 +102,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (error) {
     console.error('Failed to load dex data:', error);
     window.__dexBooted = true;
+    if (window.__dexWatchdogTimer) {
+      clearTimeout(window.__dexWatchdogTimer);
+      window.__dexWatchdogTimer = null;
+    }
     const loader = document.getElementById('loading-screen');
     if (loader) {
       loader.innerHTML = `

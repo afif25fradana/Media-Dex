@@ -18,11 +18,9 @@ export function openDetailModal(item) {
   const category = item.categoryTitle || '';
   const dateStr = formatDate(item.dateAdded);
 
-  const overlay = document.createElement('div');
-  overlay.className = 'dex-modal-overlay';
-  overlay.setAttribute('role', 'dialog');
-  overlay.setAttribute('aria-modal', 'true');
-  overlay.setAttribute('aria-labelledby', 'dex-modal-title');
+  const dialog = document.createElement('dialog');
+  dialog.className = 'dex-modal-dialog';
+  dialog.setAttribute('aria-labelledby', 'dex-modal-title');
 
   let coverHTML;
   if (item.image) {
@@ -31,8 +29,8 @@ export function openDetailModal(item) {
     coverHTML = `<div class="dex-modal-cover dex-modal-cover--empty"><span class="dex-modal-letter">${esc((title.charAt(0) || '?').toUpperCase())}</span></div>`;
   }
 
-  overlay.innerHTML = `
-    <div class="dex-modal" role="document" tabindex="-1">
+  dialog.innerHTML = `
+    <div class="dex-modal" tabindex="-1">
       <button class="dex-modal-close" aria-label="Close details">${CLOSE_ICON_SVG}</button>
       ${coverHTML}
       <div class="dex-modal-body">
@@ -47,67 +45,47 @@ export function openDetailModal(item) {
     </div>
   `;
 
-  const inertElements = [
-    document.getElementById('app'),
-    document.querySelector('.site-header'),
-    document.querySelector('.skip-link')
-  ].filter(Boolean);
-  inertElements.forEach(el => el.setAttribute('inert', ''));
+  document.body.appendChild(dialog);
+  const currentScrollY = window.scrollY;
+  dialog.showModal();
+  if (window.scrollY !== currentScrollY) {
+    window.scrollTo({ top: currentScrollY, behavior: 'instant' });
+  }
+  activeModal = dialog;
 
-  document.body.appendChild(overlay);
-  document.body.style.overflow = 'hidden';
-  activeModal = overlay;
-
+  let isClosing = false;
   const close = () => {
-    document.body.style.overflow = '';
-    document.removeEventListener('keydown', onKeydown);
-    inertElements.forEach(el => el.removeAttribute('inert'));
-    overlay.remove();
-    activeModal = null;
-    if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
+    if (isClosing) return;
+    isClosing = true;
+    dialog.classList.remove('is-open');
+
+    const finish = () => {
+      if (dialog.open) {
+        dialog.close();
+      }
+      dialog.remove();
+      activeModal = null;
+      if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus({ preventScroll: true });
+    };
+
+    setTimeout(finish, 150);
   };
 
-  function onKeydown(e) {
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      close();
-      return;
-    }
-    if (e.key === 'Tab') {
-      // Real focusable elements inside the dialog (the close button is the only
-      // interactive control today). The .dex-modal panel itself is focused on
-      // open but excluded from the tabbable list.
-      const focusables = Array.from(overlay.querySelectorAll('button:not([disabled]), a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])'))
-        .filter(el => el.offsetParent !== null || el === document.activeElement);
-      if (focusables.length) {
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        } else if (!focusables.includes(document.activeElement)) {
-          // Focus is on the panel (or the page behind); pull it inside the dialog.
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    }
-  }
-
-  document.addEventListener('keydown', onKeydown);
-
-  const closeBtn = overlay.querySelector('.dex-modal-close');
-  closeBtn.addEventListener('click', close);
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) close();
+  dialog.addEventListener('cancel', (e) => {
+    e.preventDefault();
+    close();
   });
 
+  dialog.addEventListener('click', (e) => {
+    if (!e.target.closest('.dex-modal')) {
+      close();
+    }
+  });
+
+  const closeBtn = dialog.querySelector('.dex-modal-close');
+  if (closeBtn) closeBtn.addEventListener('click', close);
+
   requestAnimationFrame(() => {
-    overlay.classList.add('is-open');
-    const panel = overlay.querySelector('.dex-modal');
-    if (panel) panel.focus();
+    dialog.classList.add('is-open');
   });
 }

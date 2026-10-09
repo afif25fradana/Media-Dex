@@ -101,11 +101,17 @@ export function initHalftoneBackground() {
   let lastTimestamp = performance.now();
   let rafId = null;
 
+  let dpr = 1;
+
   function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
     width = window.innerWidth;
     height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
   // Interactive mouse vortex
@@ -316,10 +322,25 @@ export function initHalftoneBackground() {
     }
   }
 
+  let resizeRaf = null;
   window.addEventListener('resize', () => {
-    resize();
-    if (!isRunning && prefersReducedMotion()) {
+    if (resizeRaf) return;
+    resizeRaf = requestAnimationFrame(() => {
+      resizeRaf = null;
+      resize();
+      if (!isRunning && prefersReducedMotion()) {
+        drawFrame(1.0);
+      }
+    });
+  }, { passive: true });
+
+  const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  motionQuery.addEventListener('change', () => {
+    if (motionQuery.matches) {
+      stop();
       drawFrame(1.0);
+    } else {
+      start();
     }
   });
 
@@ -327,6 +348,10 @@ export function initHalftoneBackground() {
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       stop();
+      if (resizeRaf) {
+        cancelAnimationFrame(resizeRaf);
+        resizeRaf = null;
+      }
     } else {
       start();
     }

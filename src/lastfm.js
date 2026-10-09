@@ -3,8 +3,28 @@
  * Persona 5 styled live broadcast & recent scrobble status + 30-day telemetry
  */
 
+const ESC_MAP = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#039;'
+};
+
+function esc(str) {
+  if (str == null) return '';
+  return String(str).replace(/[&<>"']/g, c => ESC_MAP[c]);
+}
+
+function sanitizeUrl(url) {
+  if (typeof url !== 'string') return '#';
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return '#';
+}
+
 export async function initLastFm(lastfmConfig = {}) {
-  const { username = 'oxanara', apiKey = '' } = lastfmConfig || {};
+  const { username = '', apiKey = '' } = lastfmConfig || {};
 
   const elements = {
     title: document.getElementById('lastfmTrackTitle'),
@@ -31,7 +51,9 @@ export async function initLastFm(lastfmConfig = {}) {
 
   const updateProfileLink = () => {
     if (elements.profileLink) {
-      elements.profileLink.href = `https://www.last.fm/user/${encodeURIComponent(username)}`;
+      elements.profileLink.href = username
+        ? `https://www.last.fm/user/${encodeURIComponent(username)}`
+        : '#';
     }
   };
 
@@ -77,24 +99,32 @@ export async function initLastFm(lastfmConfig = {}) {
     }
     if (elements.vinylArt) {
       elements.vinylArt.setAttribute('href', '');
-      elements.vinylArt.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '');
     }
     updateProfileLink();
   };
 
-  const isConfigured = Boolean(apiKey && apiKey !== 'PASTE_YOUR_API_KEY_HERE' && apiKey.trim() !== '');
+  const isConfigured = Boolean(
+    apiKey && apiKey !== 'PASTE_YOUR_API_KEY_HERE' && apiKey.trim() !== '' &&
+    username && username.trim() !== ''
+  );
 
   if (!isConfigured) {
     setStandby();
     return;
   }
 
+  let hasValidTrack = false;
+  let inFlightTrack = false;
+  let lastFetchTime = 0;
+
   const fetchTrack = async () => {
+    if (inFlightTrack) return;
+    inFlightTrack = true;
     try {
       const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(username)}&api_key=${encodeURIComponent(apiKey)}&format=json&limit=1`;
       const res = await fetch(url, { signal: AbortSignal.timeout(6000) });
       if (!res.ok) {
-        setStandby();
+        if (!hasValidTrack) setStandby();
         return;
       }
 
@@ -104,7 +134,7 @@ export async function initLastFm(lastfmConfig = {}) {
         track = track[0];
       }
       if (!track) {
-        setStandby();
+        if (!hasValidTrack) setStandby();
         return;
       }
 
@@ -143,7 +173,6 @@ export async function initLastFm(lastfmConfig = {}) {
 
       if (elements.vinylArt && coverUrl) {
         elements.vinylArt.setAttribute('href', coverUrl);
-        elements.vinylArt.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', coverUrl);
       }
 
       if (elements.title) {
@@ -163,7 +192,8 @@ export async function initLastFm(lastfmConfig = {}) {
         if (elements.totalScrobblesVal) elements.totalScrobblesVal.textContent = formatted;
       }
 
-      const trackUrl = track.url || `https://www.last.fm/user/${encodeURIComponent(username)}`;
+      const rawTrackUrl = track.url || `https://www.last.fm/user/${encodeURIComponent(username)}`;
+      const trackUrl = sanitizeUrl(rawTrackUrl);
       if (elements.trackLink) {
         elements.trackLink.href = trackUrl;
       }
@@ -191,12 +221,59 @@ export async function initLastFm(lastfmConfig = {}) {
       }
 
       updateProfileLink();
+      hasValidTrack = true;
     } catch {
-      setStandby();
+      if (!hasValidTrack) {
+        setStandby();
+      }
+    } finally {
+      inFlightTrack = false;
+      lastFetchTime = Date.now();
+    }
+  };
+
+  const renderTelemetry = (data) => {
+    if (!data) return;
+    if (elements.monthlyArtistsVal && data.totalUniqueArtists) {
+      elements.monthlyArtistsVal.textContent = Number(data.totalUniqueArtists).toLocaleString('en-US');
+    }
+    if (elements.topArtistsList && Array.isArray(data.artists) && data.artists.length > 0) {
+      elements.topArtistsList.innerHTML = data.artists.slice(0, 5).map((art, idx) => `
+        <div class="lastfm-rank-item">
+          <span class="lastfm-rank-num">#0${idx + 1}</span>
+          <a href="${sanitizeUrl(art.url)}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name">${esc(art.name)}</a>
+          <span class="lastfm-rank-count">${Number(art.playcount || 0).toLocaleString('en-US')} PLAYS</span>
+        </div>
+      `).join('');
+    }
+
+    if (elements.monthlyTracksVal && data.totalUniqueTracks) {
+      elements.monthlyTracksVal.textContent = Number(data.totalUniqueTracks).toLocaleString('en-US');
+    }
+    if (elements.topTracksList && Array.isArray(data.tracks) && data.tracks.length > 0) {
+      elements.topTracksList.innerHTML = data.tracks.slice(0, 5).map((trk, idx) => `
+        <div class="lastfm-rank-item">
+          <span class="lastfm-rank-num">#0${idx + 1}</span>
+          <a href="${sanitizeUrl(trk.url)}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name" title="${esc(trk.name)}">${esc(trk.name)}</a>
+          <span class="lastfm-rank-count">${Number(trk.playcount || 0).toLocaleString('en-US')} PLAYS</span>
+        </div>
+      `).join('');
     }
   };
 
   const fetchMonthlyTelemetry = async () => {
+    const cacheKey = `dex_lastfm_telemetry_${username}`;
+    try {
+      const cached = sessionStorage.getItem(cacheKey);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && typeof parsed.timestamp === 'number' && (Date.now() - parsed.timestamp < 3600000) && parsed.data) {
+          renderTelemetry(parsed.data);
+          return;
+        }
+      }
+    } catch {}
+
     try {
       const base = 'https://ws.audioscrobbler.com/2.0/?format=json&period=1month&limit=5';
       const artistsUrl = `${base}&method=user.gettopartists&user=${encodeURIComponent(username)}&api_key=${encodeURIComponent(apiKey)}`;
@@ -207,41 +284,33 @@ export async function initLastFm(lastfmConfig = {}) {
         fetch(tracksUrl, { signal: AbortSignal.timeout(5000) })
       ]);
 
+      const telemetryData = {
+        artists: [],
+        totalUniqueArtists: null,
+        tracks: [],
+        totalUniqueTracks: null
+      };
+
       if (artistsRes.status === 'fulfilled' && artistsRes.value.ok) {
         const data = await artistsRes.value.json();
-        const artists = data?.topartists?.artist || [];
-        const totalUniqueArtists = data?.topartists?.['@attr']?.total;
-        if (elements.monthlyArtistsVal && totalUniqueArtists) {
-          elements.monthlyArtistsVal.textContent = Number(totalUniqueArtists).toLocaleString('en-US');
-        }
-        if (elements.topArtistsList && Array.isArray(artists) && artists.length > 0) {
-          elements.topArtistsList.innerHTML = artists.slice(0, 5).map((art, idx) => `
-            <div class="lastfm-rank-item">
-              <span class="lastfm-rank-num">#0${idx + 1}</span>
-              <a href="${art.url || '#'}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name">${art.name}</a>
-              <span class="lastfm-rank-count">${Number(art.playcount || 0).toLocaleString('en-US')} PLAYS</span>
-            </div>
-          `).join('');
-        }
+        telemetryData.artists = data?.topartists?.artist || [];
+        telemetryData.totalUniqueArtists = data?.topartists?.['@attr']?.total || null;
       }
 
       if (tracksRes.status === 'fulfilled' && tracksRes.value.ok) {
         const data = await tracksRes.value.json();
-        const tracks = data?.toptracks?.track || [];
-        const totalUniqueTracks = data?.toptracks?.['@attr']?.total;
-        if (elements.monthlyTracksVal && totalUniqueTracks) {
-          elements.monthlyTracksVal.textContent = Number(totalUniqueTracks).toLocaleString('en-US');
-        }
-        if (elements.topTracksList && Array.isArray(tracks) && tracks.length > 0) {
-          elements.topTracksList.innerHTML = tracks.slice(0, 5).map((trk, idx) => `
-            <div class="lastfm-rank-item">
-              <span class="lastfm-rank-num">#0${idx + 1}</span>
-              <a href="${trk.url || '#'}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name" title="${trk.name}">${trk.name}</a>
-              <span class="lastfm-rank-count">${Number(trk.playcount || 0).toLocaleString('en-US')} PLAYS</span>
-            </div>
-          `).join('');
-        }
+        telemetryData.tracks = data?.toptracks?.track || [];
+        telemetryData.totalUniqueTracks = data?.toptracks?.['@attr']?.total || null;
       }
+
+      renderTelemetry(telemetryData);
+
+      try {
+        sessionStorage.setItem(cacheKey, JSON.stringify({
+          timestamp: Date.now(),
+          data: telemetryData
+        }));
+      } catch {}
     } catch {}
   };
 
@@ -267,7 +336,12 @@ export async function initLastFm(lastfmConfig = {}) {
       if (document.visibilityState === 'visible') fetchTrack();
     }, 30000);
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') fetchTrack();
+      if (document.visibilityState === 'visible') {
+        const now = Date.now();
+        if (now - lastFetchTime >= 15000) {
+          fetchTrack();
+        }
+      }
     });
   }
 }

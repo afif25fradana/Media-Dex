@@ -1,6 +1,5 @@
 import './components/DexCard.js';
 import './components/DexEmptyState.js';
-import { prefersReducedMotion } from './motion.js';
 
 export const SOCIAL_ICONS = {
   instagram: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>`,
@@ -44,11 +43,17 @@ export const NAV_LINKS = [
 export const MAX_CATEGORY_CARDS = 6;
 
 
+const ESC_MAP = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#039;'
+};
+
 export function esc(str) {
   if (str == null) return '';
-  const el = document.createElement('span');
-  el.textContent = str;
-  return el.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  return String(str).replace(/[&<>"']/g, c => ESC_MAP[c]);
 }
 
 // Hyperscript-like helper for DOM generation without innerHTML
@@ -212,8 +217,6 @@ export function renderCategories(categories) {
   const container = document.getElementById('categories-container');
   const fragment = document.createDocumentFragment();
 
-  fragment.appendChild(buildSearchBar());
-
   categories.forEach((cat, i) => {
     const dir = ENTRANCE_DIRS[i % 2];
     const items = cat.items || [];
@@ -242,7 +245,6 @@ export function renderCategories(categories) {
   });
 
   container.replaceChildren(fragment);
-  attachSearch(container.querySelector('.dex-search'), container);
 }
 
 export function renderExploreCategories(categories) {
@@ -300,6 +302,19 @@ export function renderExploreCategories(categories) {
   section.replaceChildren(fragment);
 }
 
+const shortDateFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC'
+});
+
+const monthYearFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'UTC'
+});
+
 export function renderRecentlyAdded(categories, profile) {
   const section = document.getElementById('recent-overview');
   const fragment = document.createDocumentFragment();
@@ -311,17 +326,13 @@ export function renderRecentlyAdded(categories, profile) {
         allItems.push({ ...item, categoryTitle: cat.title, categoryId: cat.id });
       });
     });
-    allItems.sort((a, b) => {
-      const dateA = a.dateAdded ? new Date(a.dateAdded) : new Date(0);
-      const dateB = b.dateAdded ? new Date(b.dateAdded) : new Date(0);
-      return dateB - dateA;
-    });
+    allItems.sort((a, b) => (b.dateAdded || '').localeCompare(a.dateAdded || ''));
     return allItems.slice(0, 4);
   })();
   const recentCardsRow = h('div', { className: 'recent-cards-row' });
   recentItems.forEach(item => {
     const dateStr = item.dateAdded
-      ? new Date(item.dateAdded).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
+      ? shortDateFormatter.format(new Date(item.dateAdded))
       : '';
     const tagLabel = (item.categoryTitle || 'Unknown').split(' ')[0];
 
@@ -371,9 +382,9 @@ function buildDexOverview(categories, profile) {
   const categoryCount = categories.length;
 
   const allItems = categories.flatMap(cat => cat.items || []);
-  const sorted = allItems.slice().sort((a, b) => new Date(b.dateAdded || 0) - new Date(a.dateAdded || 0));
+  const sorted = allItems.slice().sort((a, b) => (b.dateAdded || '').localeCompare(a.dateAdded || ''));
   const latestDateStr = sorted[0]?.dateAdded
-    ? new Date(sorted[0].dateAdded).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }).toUpperCase()
+    ? monthYearFormatter.format(new Date(sorted[0].dateAdded)).toUpperCase()
     : 'AUG 2026';
   const curatorLocation = (profile?.location || 'SOLO, ID').toUpperCase();
 
@@ -598,85 +609,4 @@ export function renderLastFmSection(profile, lastfmConfig) {
       </div>
     </div>
   `;
-}
-
-const SEARCH_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>';
-
-function buildSearchBar() {
-  return h('div', { className: 'dex-search', role: 'search' },
-    h('span', { className: 'dex-search-icon', innerHTML: SEARCH_ICON_SVG }),
-    h('span', { className: 'dex-search-prompt', 'aria-hidden': 'true' }, '>'),
-    h('input', {
-      type: 'search',
-      id: 'dex-search-input',
-      className: 'dex-search-input',
-      placeholder: 'Search the dex…',
-      'aria-label': 'Search the dex'
-    }),
-    h('span', { className: 'dex-search-count', 'aria-live': 'polite' }),
-    h('button', { type: 'button', className: 'dex-search-clear', 'aria-label': 'Clear search', innerHTML: CLOSE_ICON_SVG })
-  );
-}
-
-function attachSearch(bar, container) {
-  if (!bar) return;
-  const input = bar.querySelector('.dex-search-input');
-  const clearBtn = bar.querySelector('.dex-search-clear');
-  const countEl = bar.querySelector('.dex-search-count');
-
-  const noResults = h('div', { className: 'dex-no-results', 'aria-live': 'polite' },
-    h('p', { className: 'dex-no-results-code' }, 'NO RESULTS'),
-    h('p', { className: 'dex-no-results-msg' }, 'No entries in the dex match this query.')
-  );
-  container.appendChild(noResults);
-
-  const sections = Array.from(container.querySelectorAll('.category-section'));
-
-  const apply = () => {
-    const q = input.value.trim().toLowerCase();
-    let total = 0;
-
-    sections.forEach(section => {
-      const divider = section.previousElementSibling
-        && section.previousElementSibling.classList.contains('slash-divider')
-        ? section.previousElementSibling : null;
-
-      let visible = 0;
-      section.querySelectorAll('dex-card').forEach(card => {
-        const hay = `${card.getAttribute('title') || ''} ${card.getAttribute('subtitle') || ''}`.toLowerCase();
-        const show = !q || hay.includes(q);
-        card.style.display = show ? '' : 'none';
-        if (show) visible++;
-      });
-
-      const hasContent = visible > 0 || (!q && Boolean(section.querySelector('dex-empty-state')));
-      section.style.display = hasContent ? '' : 'none';
-      if (divider) divider.style.display = hasContent ? '' : 'none';
-      total += visible;
-    });
-
-    countEl.textContent = q ? `${total} RESULT${total === 1 ? '' : 'S'}` : '';
-    clearBtn.style.display = q ? 'flex' : 'none';
-    noResults.style.display = (q && total === 0) ? 'flex' : 'none';
-  };
-
-  let rafId = null;
-  input.addEventListener('input', () => {
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(() => {
-      apply();
-      rafId = null;
-    });
-  });
-
-  clearBtn.addEventListener('click', () => {
-    if (rafId) {
-      cancelAnimationFrame(rafId);
-      rafId = null;
-    }
-    input.value = '';
-    apply();
-    input.focus();
-  });
-  apply();
 }

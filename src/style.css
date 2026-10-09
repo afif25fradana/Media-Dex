@@ -2443,13 +2443,13 @@ dex-empty-state {
 }
 
 .skip-link {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   background: var(--red);
   color: var(--white);
   padding: 8px;
-  z-index: 1000;
+  z-index: 10000;
   font-family: var(--font-body);
   font-weight: bold;
   text-transform: uppercase;
@@ -2476,150 +2476,34 @@ dex-empty-state {
   box-shadow: 0 0 0 5px #000000;
 }
 
-.dex-search {
-  max-width: 1200px;
-  margin: 0 auto 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background: var(--color-surface-dark);
-  border: 3px solid #000;
-  box-shadow: 4px 4px 0 #000;
-  padding: 0.5rem 1.25rem 0.5rem 0.75rem;
-  position: relative;
-  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
-  transition: box-shadow var(--dur-fast) var(--ease-snap);
-}
-
-.dex-search::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 4px;
-  background: var(--red);
-  transform: scaleY(0);
-  transition: transform var(--dur-fast) var(--ease-snap);
-  z-index: 2;
-}
-
-.dex-search:focus-within::before {
-  transform: scaleY(1);
-}
-
-.dex-search:focus-within {
-  box-shadow: 6px 6px 0 #000, -2px 0 0 var(--red);
-}
-
-.dex-search-prompt {
-  background: var(--red);
-  color: var(--white);
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  font-weight: 700;
-  padding: 0.15rem 0.45rem;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
-  user-select: none;
-}
-
-.dex-search-icon {
-  color: var(--red-on-dark);
-  display: flex;
-  flex: none;
-  width: 20px;
-  height: 20px;
-}
-
-.dex-search-icon svg {
-  width: 20px;
-  height: 20px;
-}
-
-.dex-search-input {
-  flex: 1;
-  min-width: 0;
-  appearance: none;
-  background: transparent;
+dialog.dex-modal-dialog {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 0;
+  padding: 1.5rem;
   border: none;
-  outline: none;
-  color: var(--color-text-on-dark);
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
-  padding: 0.35rem 0;
-}
-
-.dex-search-input::placeholder {
-  color: rgba(240, 236, 226, 0.55);
-}
-
-.dex-search-input:focus-visible {
-  outline: 2px solid var(--red-on-dark);
-  outline-offset: 3px;
-}
-
-.dex-search-count {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  color: rgba(240, 236, 226, 0.55);
-  white-space: nowrap;
-  flex: none;
-}
-
-.dex-search-clear {
-  display: none;
+  background: transparent;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
-  color: var(--color-text-on-dark);
-  flex: none;
-  transition: color var(--dur-fast) ease, transform var(--dur-fast) var(--ease-snap);
+  overflow: hidden;
+  z-index: 3000;
+  color: inherit;
+  outline: none;
 }
 
-.dex-search-clear:hover {
-  color: var(--red-on-dark);
-  transform: rotate(90deg);
+dialog.dex-modal-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.82);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 6px 6px;
 }
 
-.dex-search-clear svg {
-  width: 18px;
-  height: 18px;
-}
-
-.dex-no-results {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 2.5rem 1.5rem;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 0.5rem;
-  border: 3px solid #000;
-  background: var(--color-surface-dark);
-}
-
-.dex-no-results-code {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  letter-spacing: 0.05em;
-  color: var(--color-text-on-dark);
-}
-
-.dex-no-results-msg {
-  font-family: var(--font-body);
-  font-size: 0.85rem;
-  color: rgba(240, 236, 226, 0.6);
+body:has(dialog.dex-modal-dialog[open]) {
+  overflow: hidden;
 }
 
 .dex-modal-overlay {
@@ -2661,6 +2545,8 @@ dex-empty-state {
   transition: transform 280ms var(--ease-snap), opacity 280ms var(--ease-snap);
 }
 
+.dex-modal-dialog.is-open .dex-modal,
+.dex-modal.is-open,
 .dex-modal-overlay.is-open .dex-modal {
   transform: skewX(0deg) rotate(0deg) scale(1);
   opacity: 1;
@@ -2866,6 +2752,7 @@ dex-empty-state {
     transform: none !important;
   }
 
+  .dex-modal-dialog.is-open .dex-modal,
   .dex-modal-overlay.is-open .dex-modal {
     transform: none !important;
   }

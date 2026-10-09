@@ -3,36 +3,6 @@ import { prefersReducedMotion } from './motion.js';
 
 export function initEvents(actions) {
   let navScrollTimeout;
-  let isSnapping = false;
-  let snapAnimationId = null;
-
-  function smoothSnapTo(targetY, duration = 420) {
-    if (prefersReducedMotion()) {
-      window.scrollTo({ top: targetY, behavior: 'instant' });
-      return;
-    }
-    if (snapAnimationId) {
-      cancelAnimationFrame(snapAnimationId);
-      snapAnimationId = null;
-    }
-    const startY = window.scrollY;
-    const diff = targetY - startY;
-    if (Math.abs(diff) < 2) return;
-    const startTime = performance.now();
-
-    function step(now) {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 4);
-      window.scrollTo(0, startY + diff * ease);
-      if (progress < 1) {
-        snapAnimationId = requestAnimationFrame(step);
-      } else {
-        snapAnimationId = null;
-      }
-    }
-    snapAnimationId = requestAnimationFrame(step);
-  }
 
   document.addEventListener('click', (e) => {
     const openMenuBtn = e.target.closest('#navbar-menu-btn, #navbar-menu-desktop-btn');
@@ -51,12 +21,14 @@ export function initEvents(actions) {
 
     const card = e.target.closest('dex-card');
     if (card && card.itemData) {
+      e.preventDefault();
       openDetailModal(card.itemData);
       return;
     }
 
     const recentCard = e.target.closest('.recent-card');
     if (recentCard && recentCard.itemData) {
+      e.preventDefault();
       openDetailModal(recentCard.itemData);
       return;
     }
@@ -78,10 +50,9 @@ export function initEvents(actions) {
       e.preventDefault();
       const lastfm = document.getElementById('lastfm-section');
       if (lastfm) {
-        const lastfmTop = Math.round(lastfm.getBoundingClientRect().top + window.scrollY - 64);
-        isSnapping = true;
-        smoothSnapTo(lastfmTop, 420);
-        setTimeout(() => { isSnapping = false; }, 480);
+        lastfm.scrollIntoView({
+          behavior: prefersReducedMotion() ? 'instant' : 'smooth'
+        });
         if (window.location.hash !== '#lastfm-section') {
           history.pushState(null, '', '#lastfm-section');
         }
@@ -167,20 +138,6 @@ export function initEvents(actions) {
         }
       }
     }
-
-    // Focus the dex search from anywhere: "/" or Ctrl/Cmd+K.
-    const target = e.target;
-    const isTyping = target && (target.matches('input, textarea, select') || target.isContentEditable);
-    const isSlash = e.key === '/' && !isTyping;
-    const isCmdK = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k';
-    if ((isSlash || isCmdK) && !(menu && menu.classList.contains('menu-open')) && !document.querySelector('.dex-modal-overlay')) {
-      const input = document.querySelector('.dex-search-input');
-      if (input) {
-        e.preventDefault();
-        input.scrollIntoView({ behavior: prefersReducedMotion() ? 'instant' : 'smooth', block: 'center' });
-        input.focus();
-      }
-    }
   });
 
   // Back/forward: honor the hash history pushed on section navigation.
@@ -197,36 +154,4 @@ export function initEvents(actions) {
       window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
     }
   });
-
-  // Decisive P5 Slide Snap: quick transition between Hero and Last.fm
-  window.addEventListener('wheel', (e) => {
-    if (isSnapping) {
-      e.preventDefault();
-      return;
-    }
-    if (prefersReducedMotion()) return;
-
-    const lastfm = document.getElementById('lastfm-section');
-    if (!lastfm) return;
-
-    const lastfmTop = Math.round(lastfm.getBoundingClientRect().top + window.scrollY - 64);
-
-    // Downward scroll from Hero: snap decisively to Last.fm
-    if (window.scrollY < lastfmTop * 0.4 && e.deltaY > 15) {
-      isSnapping = true;
-      e.preventDefault();
-      smoothSnapTo(lastfmTop, 420);
-      setTimeout(() => { isSnapping = false; }, 480);
-      return;
-    }
-
-    // Upward scroll from top of Last.fm: snap decisively back to Hero
-    if (window.scrollY >= lastfmTop - 20 && window.scrollY <= lastfmTop + 60 && e.deltaY < -20) {
-      isSnapping = true;
-      e.preventDefault();
-      smoothSnapTo(0, 420);
-      setTimeout(() => { isSnapping = false; }, 480);
-      return;
-    }
-  }, { passive: false });
 }
