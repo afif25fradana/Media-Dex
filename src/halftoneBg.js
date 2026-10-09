@@ -71,21 +71,21 @@ export function initHalftoneBackground() {
   const perlin = new PerlinNoise3D(2026);
 
   const params = {
-    speed: 0.10,
+    speed: 0.16,
     gridSpacing: 16,
     freq: 5.10,
     warp: 0.80,
-    dotSize: 3.4,
-    contrast: 3.6
+    dotSize: 3.6,
+    contrast: 2.2
   };
 
   const palette = [
-    '#060606', // Bucket 0: Subtle trough
-    '#050505', // Bucket 1: Faint depression
-    '#040404', // Bucket 2: Mid-tier shadow
-    '#030303', // Bucket 3: Pronounced shadow
-    '#010101', // Bucket 4: Deep depression
-    '#000000'  // Bucket 5: Deepest debossed ridge
+    '#0D0D10', // Bucket 0: Subtle ambient ground dot
+    '#111115', // Bucket 1: Faint contour shoulder
+    '#16161C', // Bucket 2: Low-mid isoline ridge
+    '#1C1C23', // Bucket 3: Mid-tier halftone ridge
+    '#23232C', // Bucket 4: High halftone ridge
+    '#2A2A34'  // Bucket 5: Peak isoline crest
   ];
 
   const BUCKET_COUNT = 6;
@@ -186,10 +186,12 @@ export function initHalftoneBackground() {
     const hasRipples = ripples.length > 0;
     const mouseActive = mouse.active && mouse.x > -1000;
 
+    const scrollOffsetY = (window.scrollY || 0) * 0.35;
+
     for (let y = 0; y < height + spacing; y += spacing) {
       for (let x = 0; x < width + spacing; x += spacing) {
         let evalX = x;
-        let evalY = y;
+        let evalY = y + scrollOffsetY;
 
         if (mouseActive) {
           const mdx = x - mouse.x;
@@ -229,7 +231,7 @@ export function initHalftoneBackground() {
         const ridge = Math.pow(contour, contrast);
         const dotRadius = 0.5 + ridge * maxR;
 
-        if (dotRadius < 0.8) continue;
+        if (dotRadius < 0.6) continue;
 
         let bIdx = 0;
         if (ridge < 0.20) {
