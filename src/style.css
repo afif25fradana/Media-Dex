@@ -532,7 +532,7 @@ body:has(#mobile-menu.menu-open) {
   background-repeat: repeat, no-repeat;
   background-position: center, center;
   background-blend-mode: normal, multiply;
-  padding: 8rem 4rem 4rem 5rem;
+  padding: 5.5rem 4rem 4rem 5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -288,7 +288,6 @@ export function renderExploreCategories(categories) {
 
   const header = h('div', { className: 'explore-header' },
     h('div', { className: 'explore-header-left' },
-      h('span', { className: 'section-eyebrow' }, 'DEX COLLECTION'),
       h('h2', { className: 'explore-heading' }, 'EXPLORE CATEGORIES')
     ),
     h('a', { href: '#categories-container', className: 'view-all-link' },
@@ -361,7 +360,6 @@ export function renderRecentlyAdded(categories, profile) {
   const recentColumn = h('div', { className: 'recent-column' },
     h('div', { className: 'recent-header' },
       h('div', { className: 'recent-header-left' },
-        h('span', { className: 'section-eyebrow' }, 'LATEST UPDATES'),
         h('h2', { className: 'recent-heading' }, 'RECENTLY ADDED')
       ),
       h('a', { href: '#categories-container', className: 'view-all-link' },
@@ -390,7 +388,6 @@ function buildDexOverview(categories, profile) {
 
   return h('div', { className: 'overview-column', id: 'dex-overview' },
     h('div', { className: 'overview-header' },
-      h('span', { className: 'section-eyebrow', style: 'color: var(--red-on-dark);' }, 'AT A GLANCE'),
       h('h2', { className: 'overview-heading' }, 'DEX OVERVIEW')
     ),
     h('div', { className: 'overview-grid' },
