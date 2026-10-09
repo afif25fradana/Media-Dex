@@ -105,7 +105,7 @@ sheet.replaceSync(`
   }
 
   .card-cover {
-    aspect-ratio: 1;
+    aspect-ratio: var(--card-cover-ratio, 2 / 3);
     overflow: hidden;
     border-bottom: 3px solid #000;
     position: relative;

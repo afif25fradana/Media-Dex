@@ -343,7 +343,7 @@ export function renderRecentlyAdded(categories, profile) {
       imageHTML = h('div', { className: 'recent-card-image-placeholder', 'aria-hidden': 'true' }, h('span', {}, (item.title || '?').charAt(0)));
     }
 
-    const card = h('button', { type: 'button', className: 'recent-card' },
+    const card = h('button', { type: 'button', className: 'recent-card', 'data-category': item.categoryId || '' },
       h('div', { className: 'recent-card-image' },
         imageHTML,
         h('span', { className: 'recent-card-tag' }, tagLabel)
@@ -381,7 +381,7 @@ function buildDexOverview(categories, profile) {
   const totalEntries = categories.reduce((sum, cat) => sum + (cat.items || []).length, 0);
   const categoryCount = categories.length;
 
-  const allItems = categories.flatMap(cat => cat.items || []);
+  const allItems = categories.flatMap(cat => (cat.items || []).map(item => ({ ...item, categoryId: cat.id, categoryTitle: cat.title })));
   const sorted = allItems.slice().sort((a, b) => (b.dateAdded || '').localeCompare(a.dateAdded || ''));
   const latestDateStr = sorted[0]?.dateAdded
     ? monthYearFormatter.format(new Date(sorted[0].dateAdded)).toUpperCase()

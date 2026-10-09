@@ -20,6 +20,7 @@ export function openDetailModal(item) {
 
   const dialog = document.createElement('dialog');
   dialog.className = 'dex-modal-dialog';
+  if (item.categoryId) dialog.setAttribute('data-category', item.categoryId);
   dialog.setAttribute('aria-labelledby', 'dex-modal-title');
 
   let coverHTML;

@@ -1190,11 +1190,16 @@ body:has(#mobile-menu.menu-open) {
 }
 
 .category-section {
+  --card-cover-ratio: 2 / 3;
   padding: 2rem 2rem 3rem;
   max-width: 1200px;
   margin: 0 auto;
   content-visibility: auto;
   contain-intrinsic-size: auto 900px;
+}
+
+.category-section[data-category="music"] {
+  --card-cover-ratio: 1 / 1;
 }
 
 .section-header {
@@ -1358,7 +1363,7 @@ dex-empty-state {
 
 .recent-card-image {
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   position: relative;
   background: var(--black);
@@ -2592,7 +2597,8 @@ body:has(dialog.dex-modal-dialog[open]) {
 }
 
 .dex-modal-cover {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 2 / 3;
+  max-height: 480px;
   overflow: hidden;
   border-bottom: 3px solid #000;
   background: var(--black);
@@ -2606,6 +2612,10 @@ body:has(dialog.dex-modal-dialog[open]) {
   background-image: radial-gradient(rgba(0, 0, 0, 0.4) 15%, transparent 16%);
   background-size: 6px 6px;
   pointer-events: none;
+}
+
+.dex-modal-dialog[data-category="music"] .dex-modal-cover {
+  aspect-ratio: 1 / 1;
 }
 
 .dex-modal-cover img {
