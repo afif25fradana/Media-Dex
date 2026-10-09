@@ -2597,11 +2597,14 @@ body:has(dialog.dex-modal-dialog[open]) {
 }
 
 .dex-modal-cover {
-  aspect-ratio: 2 / 3;
-  max-height: 480px;
+  width: 100%;
+  height: clamp(280px, 50vh, 420px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   border-bottom: 3px solid #000;
-  background: var(--black);
+  background: var(--black, #0C0C0C);
   position: relative;
 }
 
@@ -2609,19 +2612,20 @@ body:has(dialog.dex-modal-dialog[open]) {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(0, 0, 0, 0.4) 15%, transparent 16%);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
   background-size: 6px 6px;
   pointer-events: none;
-}
-
-.dex-modal-dialog[data-category="music"] .dex-modal-cover {
-  aspect-ratio: 1 / 1;
+  z-index: 1;
 }
 
 .dex-modal-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
 }
 
 .dex-modal-cover--empty {
