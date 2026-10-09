@@ -4,6 +4,19 @@ A personal catalog of favorite games, manga, manhwa, movies, TV series, and musi
 
 **Live Demo:** [https://afif25fradana.github.io/Media-Dex/](https://afif25fradana.github.io/Media-Dex/)
 
+![Media-Dex Showcase](Asset/showcase.webp)
+
+## Showcase
+
+<p align="center">
+  <img src="Asset/showcase-collection.webp" alt="Media-Dex Collection Grid" width="49%" />
+  <img src="Asset/showcase-modal.webp" alt="Media-Dex Detail Modal" width="49%" />
+</p>
+
+<p align="center">
+  <img src="Asset/showcase-lastfm.webp" alt="Media-Dex Last.fm Turntable and Listening Telemetry" width="100%" />
+</p>
+
 ## Stack
 
 - Plain HTML5, CSS, and Vanilla JavaScript (ES modules)
