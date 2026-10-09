@@ -187,7 +187,6 @@ sheet.replaceSync(`
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: auto;
     margin: 0;
-    /* Text truncation edge case */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

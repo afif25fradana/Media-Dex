@@ -80,7 +80,6 @@ body::-webkit-scrollbar {
   display: none;
 }
 
-/* Persistent Global Halftone Fluid Canvas & Analog Grain Overlay */
 .bg-canvas-container {
   position: fixed;
   top: 0;
@@ -452,7 +451,6 @@ body::after {
   transform: scaleX(1);
 }
 
-/* Category quick-jump chips inside the full-screen menu */
 .mobile-menu-cats {
   display: flex;
   flex-direction: column;
@@ -1131,7 +1129,6 @@ body:has(#mobile-menu.menu-open) {
   filter: none;
 }
 
-/* Non-interactive placeholder: never lift, never show a pointer cursor. */
 .explore-card--more,
 .explore-card--more:hover {
   cursor: default;
@@ -1538,7 +1535,6 @@ dex-empty-state {
   color: rgba(255, 255, 255, 0.75);
 }
 
-/* ===== LAST.FM VINYL PLAYER DEDICATED SECTION ===== */
 .lastfm-section {
   position: relative;
   max-width: 1280px;

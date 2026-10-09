@@ -143,7 +143,7 @@ export function renderHero(profile, socials) {
   hero.innerHTML = `
     <div class="hero-left">
       <div class="hero-social-rail">${socialRailHTML}</div>
-      <div class="hero-eyebrow">PERSONAL ARCHIVE</div>
+      <div class="hero-eyebrow">MEDIA COLLECTION</div>
       <h1 class="hero-headline">WELCOME TO<br>MY <span class="hero-headline-accent">PERSONAL</span> DEX</h1>
       <p class="hero-bio">${esc(profile?.tagline || '')}</p>
       <div class="hero-cta-row">
@@ -151,8 +151,8 @@ export function renderHero(profile, socials) {
           EXPLORE DEX
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
-        <button class="btn-secondary" data-scroll-to="#dex-overview" aria-label="ABOUT ME: Learn more about me">
-          ABOUT ME
+        <button class="btn-secondary" data-scroll-to="#dex-overview" aria-label="OVERVIEW: View collection metrics">
+          OVERVIEW
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </button>
       </div>
@@ -280,8 +280,8 @@ export function renderExploreCategories(categories) {
         h('span', { className: 'explore-card-number' }, moreNum),
         h('span', { className: 'explore-card-icon', innerHTML: CATEGORY_ICONS.more }),
         h('h3', { className: 'explore-card-name' }, 'MORE'),
-        h('span', { className: 'explore-card-count' }, 'Coming Soon'),
-        h('p', { className: 'explore-card-desc' }, 'More categories coming soon.')
+        h('span', { className: 'explore-card-count' }, 'Planned'),
+        h('p', { className: 'explore-card-desc' }, 'New media archives in preparation.')
       )
     );
   }
@@ -361,7 +361,7 @@ export function renderRecentlyAdded(categories, profile) {
   const recentColumn = h('div', { className: 'recent-column' },
     h('div', { className: 'recent-header' },
       h('div', { className: 'recent-header-left' },
-        h('span', { className: 'section-eyebrow' }, 'RECENT ENTRIES'),
+        h('span', { className: 'section-eyebrow' }, 'LATEST UPDATES'),
         h('h2', { className: 'recent-heading' }, 'RECENTLY ADDED')
       ),
       h('a', { href: '#categories-container', className: 'view-all-link' },
@@ -412,7 +412,7 @@ function buildDexOverview(categories, profile) {
       h('div', { className: 'overview-stat' },
         h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' }),
         h('span', { className: 'overview-stat-number' }, curatorLocation),
-        h('span', { className: 'overview-stat-label' }, 'CURATOR BASE')
+        h('span', { className: 'overview-stat-label' }, 'LOCATION')
       )
     )
   );
@@ -552,7 +552,7 @@ export function renderLastFmSection(profile, lastfmConfig) {
           <div id="lastfmTrackMeta" class="lastfm-track-meta">
             <div>ARTIST // <span id="lastfmTrackArtist">STANDBY</span></div>
             <div>ALBUM // <span id="lastfmTrackAlbum">STANDBY</span></div>
-            <div>TIMING // <span id="lastfmTrackTime">STANDBY</span></div>
+            <div>SCROBBLED // <span id="lastfmTrackTime">STANDBY</span></div>
           </div>
           <div class="lastfm-monitor-footer">
             <div class="lastfm-eq" aria-hidden="true">

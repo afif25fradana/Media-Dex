@@ -1,7 +1,7 @@
 {
   "profile": {
     "name": "Fradana",
-    "tagline": "A personal database of the things I love. Games. Manhwa. Anime. Music. And more.",
+    "tagline": "A personal collection of games, manhwa, movies, series, and music.",
     "quote": "Living a life surrounded by stories I love.",
     "location": "Solo, ID",
     "heroImage": "Asset/Profile/Wisadel_Skin.webp"
@@ -32,7 +32,7 @@
       "id": "games",
       "title": "GAMES",
       "accentLabel": "now playing",
-      "description": "Games I’ve played and enjoyed.",
+      "description": "Favorites and recent playthroughs.",
       "icon": "gamepad",
       "items": [
         {
@@ -89,7 +89,7 @@
       "id": "manga-manhwa",
       "title": "MANGA & MANHWA",
       "accentLabel": "reading list",
-      "description": "Manga and manhwa I’ve read and collected.",
+      "description": "Ongoing reads and completed titles.",
       "icon": "book",
       "items": [
         {
@@ -146,7 +146,7 @@
       "id": "movies-tv",
       "title": "MOVIES & SERIES",
       "accentLabel": "watchlist",
-      "description": "Movies and series I’ve watched and loved.",
+      "description": "Standout films and series.",
       "icon": "tv",
       "items": [
         {

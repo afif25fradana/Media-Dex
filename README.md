@@ -1,6 +1,6 @@
 # Media-Dex
 
-A personal catalog of media I love — games, manhwa & manga, movies & TV series, and music. Built for fun and personal archiving, inspired by the UI of *Persona 5*.
+A personal catalog of favorite games, manga, manhwa, movies, TV series, and music. Built for fun and archiving, inspired by the Persona 5 interface.
 
 **Live Demo:** [https://afif25fradana.github.io/Media-Dex/](https://afif25fradana.github.io/Media-Dex/)
 
@@ -8,7 +8,7 @@ A personal catalog of media I love — games, manhwa & manga, movies & TV series
 
 - Plain HTML5, CSS, and Vanilla JavaScript (ES modules)
 - Custom Web Components (`<dex-card>`, `<dex-empty-state>`)
-- No frameworks, build tools, or external dependencies
+- Vanilla web technologies with no npm packages or build step
 
 ## Running Locally
 

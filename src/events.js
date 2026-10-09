@@ -82,7 +82,6 @@ export function initEvents(actions) {
             target.focus({ preventScroll: true });
           }
 
-          // Scroll-spy debounce integration
           if (anchorLink.classList.contains('navbar-link') || anchorLink.matches('.mobile-menu-link, .mobile-menu-cat')) {
             window.isNavScrolling = true;
             clearTimeout(navScrollTimeout);

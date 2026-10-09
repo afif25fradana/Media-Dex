@@ -5,7 +5,6 @@
 
 import { prefersReducedMotion } from './motion.js';
 
-// Fast Deterministic 3D Perlin Noise
 class PerlinNoise3D {
   constructor(seed = 2026) {
     this.p = new Uint8Array(512);
@@ -71,7 +70,6 @@ export function initHalftoneBackground() {
 
   const perlin = new PerlinNoise3D(2026);
 
-  // Exact fine-tuned parameters
   const params = {
     speed: 0.10,
     gridSpacing: 16,
@@ -114,7 +112,6 @@ export function initHalftoneBackground() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  // Interactive mouse vortex
   const mouse = {
     x: -2000,
     y: -2000,
@@ -260,7 +257,6 @@ export function initHalftoneBackground() {
       }
     }
 
-    // Render batched squares
     for (let b = 0; b < BUCKET_COUNT; b++) {
       const count = bucketCounts[b];
       if (count === 0) continue;
