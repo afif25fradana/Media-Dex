@@ -14,7 +14,7 @@ import { initLastFm } from './lastfm.js';
 import { dismissLoading, triggerPageEntrance, setupScrollReveals } from './animations.js';
 import { initHalftoneBackground } from './halftoneBg.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
+const init = async () => {
   try { localStorage.removeItem('dex-theme'); } catch { }
   initHalftoneBackground();
 
@@ -119,7 +119,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (retryBtn) retryBtn.addEventListener('click', () => window.location.reload());
     }
   }
-});
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
 
 function setupNavbarScroll() {
   const navbar = document.getElementById('site-navbar');

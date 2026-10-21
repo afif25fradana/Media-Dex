@@ -11,7 +11,8 @@ export const DataStore = (() => {
 
       if (!inFlightPromise) {
         inFlightPromise = (async () => {
-          const resp = await fetch('data.json', { signal });
+          const dataUrl = new URL('../data.json', import.meta.url).href;
+          const resp = await fetch(dataUrl, { signal });
           if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
           const data = await resp.json();
           if (!data || typeof data !== 'object' || !data.profile || !Array.isArray(data.categories)) {
