@@ -1,3 +1,8 @@
+function encodeAssetPath(path) {
+  if (!path || typeof path !== 'string') return '';
+  return path.split('/').map(encodeURIComponent).join('/');
+}
+
 import { esc, CLOSE_ICON_SVG } from './ui.js';
 
 let activeModal = null;
@@ -22,22 +27,23 @@ export function openDetailModal(item) {
   dialog.className = 'dex-modal-dialog';
   if (item.categoryId) dialog.setAttribute('data-category', item.categoryId);
   dialog.setAttribute('aria-labelledby', 'dex-modal-title');
+  if (subtitle) dialog.setAttribute('aria-describedby', 'dex-modal-sub');
 
   let coverHTML;
   if (item.image) {
-    coverHTML = `<div class="dex-modal-cover"><img src="${esc(encodeURI(item.image))}" alt="Cover for ${esc(title)}"></div>`;
+    coverHTML = `<div class="dex-modal-cover"><img src="${esc(encodeAssetPath(item.image))}" alt="Cover for ${esc(title)}"></div>`;
   } else {
     coverHTML = `<div class="dex-modal-cover dex-modal-cover--empty"><span class="dex-modal-letter">${esc((title.charAt(0) || '?').toUpperCase())}</span></div>`;
   }
 
   dialog.innerHTML = `
-    <div class="dex-modal" tabindex="-1">
+    <div class="dex-modal">
       <button class="dex-modal-close" aria-label="Close details">${CLOSE_ICON_SVG}</button>
       ${coverHTML}
       <div class="dex-modal-body">
         ${category ? `<span class="dex-modal-tag">${esc(category)}</span>` : ''}
         <h2 id="dex-modal-title" class="dex-modal-title">${esc(title)}</h2>
-        ${subtitle ? `<p class="dex-modal-sub">${esc(subtitle)}</p>` : ''}
+        ${subtitle ? `<p id="dex-modal-sub" class="dex-modal-sub">${esc(subtitle)}</p>` : ''}
         <dl class="dex-modal-meta">
           ${dateStr ? `<div><dt>Added</dt><dd>${esc(dateStr)}</dd></div>` : ''}
           ${category ? `<div><dt>Category</dt><dd>${esc(category)}</dd></div>` : ''}
@@ -53,6 +59,8 @@ export function openDetailModal(item) {
     window.scrollTo({ top: currentScrollY, behavior: 'instant' });
   }
   activeModal = dialog;
+  const closeBtn = dialog.querySelector('.dex-modal-close');
+  if (closeBtn) closeBtn.focus();
 
   let isClosing = false;
   const close = () => {
@@ -66,7 +74,14 @@ export function openDetailModal(item) {
       }
       dialog.remove();
       activeModal = null;
-      if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus({ preventScroll: true });
+      if (previouslyFocused) {
+        if (previouslyFocused.shadowRoot) {
+          const inner = previouslyFocused.shadowRoot.querySelector('.card') || previouslyFocused;
+          if (inner && inner.focus) inner.focus({ preventScroll: true });
+        } else if (previouslyFocused.focus) {
+          previouslyFocused.focus({ preventScroll: true });
+        }
+      }
     };
 
     setTimeout(finish, 150);

@@ -110,6 +110,7 @@ export function initHalftoneBackground() {
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    params.gridSpacing = width > 2560 ? 24 : (width > 1600 ? 18 : 16);
   }
 
   const mouse = {

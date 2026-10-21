@@ -1,4 +1,4 @@
-import { CATEGORY_ICONS } from '../ui.js';
+import { CATEGORY_ICONS } from '../icons.js';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(`
@@ -91,6 +91,13 @@ sheet.replaceSync(`
   .cta-button:focus-visible {
     outline: 4px solid var(--red, #D80000);
     outline-offset: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta-button {
+      transition: none !important;
+      transform: none !important;
+    }
   }
 `);
 

@@ -36,7 +36,10 @@ export function initEvents(actions) {
     const trigger = e.target.closest('[data-scroll-to]');
     if (trigger) {
       e.preventDefault();
-      const target = document.querySelector(trigger.getAttribute('data-scroll-to'));
+      let target = null;
+      try {
+        target = document.querySelector(trigger.getAttribute('data-scroll-to'));
+      } catch {}
       if (target) {
         target.scrollIntoView({
           behavior: prefersReducedMotion() ? 'instant' : 'smooth'
@@ -64,7 +67,10 @@ export function initEvents(actions) {
     if (anchorLink) {
       const targetId = anchorLink.getAttribute('href');
       if (targetId && targetId !== '#') {
-        const target = document.querySelector(targetId);
+        let target = null;
+        try {
+          target = document.querySelector(targetId);
+        } catch {}
         if (target) {
           e.preventDefault();
           target.scrollIntoView({

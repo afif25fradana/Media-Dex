@@ -1,3 +1,8 @@
+function encodeAssetPath(path) {
+  if (!path || typeof path !== 'string') return '';
+  return path.split('/').map(encodeURIComponent).join('/');
+}
+
 import './components/DexCard.js';
 import './components/DexEmptyState.js';
 
@@ -162,10 +167,10 @@ export function renderHero(profile, socials) {
       <span class="hero-deco-number">01</span>
       <div class="hero-id-card">
         <span class="hero-id-code">ID: FRD-125</span>
-        <h2 class="hero-id-name">${displayName}</h2>
+        <p class="hero-id-name">${displayName}</p>
         <p class="hero-id-location">${esc(profile?.location || '')}</p>
         <p class="hero-id-quote">"${esc(profile?.quote || '')}"</p>
-        <span class="hero-id-quote-marks">❝</span>
+        <span class="hero-id-quote-marks" aria-hidden="true">❝</span>
       </div>
       <a class="hero-scroll-down" href="#lastfm-section" aria-label="Scroll down to Last.fm section">
         <span class="hero-scroll-text">SCROLL DOWN</span>
@@ -277,7 +282,7 @@ export function renderExploreCategories(categories) {
     const moreNum = String(categories.length + 1).padStart(2, '0');
     exploreGrid.appendChild(
       h('div', { className: 'explore-card explore-card--more' },
-        h('span', { className: 'explore-card-number' }, moreNum),
+        h('span', { className: 'explore-card-number', 'aria-hidden': 'true' }, moreNum),
         h('span', { className: 'explore-card-icon', innerHTML: CATEGORY_ICONS.more }),
         h('h3', { className: 'explore-card-name' }, 'MORE'),
         h('span', { className: 'explore-card-count' }, 'Planned'),
@@ -290,7 +295,7 @@ export function renderExploreCategories(categories) {
     h('div', { className: 'explore-header-left' },
       h('h2', { className: 'explore-heading' }, 'EXPLORE CATEGORIES')
     ),
-    h('a', { href: '#categories-container', className: 'view-all-link' },
+    h('a', { href: '#categories-container', className: 'view-all-link', 'aria-label': 'VIEW ALL: View all media in collection' },
       'VIEW ALL',
       h('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', innerHTML: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>' })
     )
@@ -330,19 +335,25 @@ export function renderRecentlyAdded(categories, profile) {
   })();
   const recentCardsRow = h('div', { className: 'recent-cards-row' });
   recentItems.forEach(item => {
-    const dateStr = item.dateAdded
-      ? shortDateFormatter.format(new Date(item.dateAdded))
+    const d = item.dateAdded ? new Date(item.dateAdded) : null;
+    const dateStr = d && !Number.isNaN(d.getTime())
+      ? shortDateFormatter.format(d)
       : '';
     const tagLabel = (item.categoryTitle || 'Unknown').split(' ')[0];
 
     let imageHTML;
     if (item.image) {
-      imageHTML = h('img', { src: item.image, alt: '', loading: 'lazy', width: "120", height: "120" });
+      imageHTML = h('img', { src: encodeAssetPath(item.image), alt: '', loading: 'lazy', width: "120", height: "120" });
     } else {
       imageHTML = h('div', { className: 'recent-card-image-placeholder', 'aria-hidden': 'true' }, h('span', {}, (item.title || '?').charAt(0)));
     }
 
-    const card = h('button', { type: 'button', className: 'recent-card', 'data-category': item.categoryId || '' },
+    const card = h('button', {
+      type: 'button',
+      className: 'recent-card',
+      'data-category': item.categoryId || '',
+      'aria-label': `${item.title || 'Unknown'}${item.subtitle ? ', ' + item.subtitle : ''} (${tagLabel})`
+    },
       h('div', { className: 'recent-card-image' },
         imageHTML,
         h('span', { className: 'recent-card-tag' }, tagLabel)
@@ -362,7 +373,7 @@ export function renderRecentlyAdded(categories, profile) {
       h('div', { className: 'recent-header-left' },
         h('h2', { className: 'recent-heading' }, 'RECENTLY ADDED')
       ),
-      h('a', { href: '#categories-container', className: 'view-all-link' },
+      h('a', { href: '#categories-container', className: 'view-all-link', 'aria-label': 'VIEW ALL: Explore categories' },
         'VIEW ALL',
         h('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', innerHTML: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>' })
       )
@@ -381,8 +392,9 @@ function buildDexOverview(categories, profile) {
 
   const allItems = categories.flatMap(cat => (cat.items || []).map(item => ({ ...item, categoryId: cat.id, categoryTitle: cat.title })));
   const sorted = allItems.slice().sort((a, b) => (b.dateAdded || '').localeCompare(a.dateAdded || ''));
-  const latestDateStr = sorted[0]?.dateAdded
-    ? monthYearFormatter.format(new Date(sorted[0].dateAdded)).toUpperCase()
+  const latestDate = sorted[0]?.dateAdded ? new Date(sorted[0].dateAdded) : null;
+  const latestDateStr = latestDate && !Number.isNaN(latestDate.getTime())
+    ? monthYearFormatter.format(latestDate).toUpperCase()
     : 'AUG 2026';
   const curatorLocation = (profile?.location || 'SOLO, ID').toUpperCase();
 
@@ -503,7 +515,7 @@ export function renderLastFmSection(profile, lastfmConfig) {
 
               <circle cx="150" cy="160" r="48" fill="#0C0C0C" stroke="#D80000" stroke-width="2"/>
               <circle cx="150" cy="160" r="46" fill="#1A1A20"/>
-              <text x="150" y="148" text-anchor="middle" font-family="'Anton', Impact, sans-serif" font-size="10" fill="#D80000" letter-spacing="1">MEDIA-DEX</text>
+              <text x="150" y="148" text-anchor="middle" font-family="'Anton', Impact, sans-serif" font-size="10" fill="#FF3333" letter-spacing="1">MEDIA-DEX</text>
               <text x="150" y="172" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace" font-size="6" fill="#FFFFFF" opacity="0.6">HI-FI STEREO</text>
 
               <image id="lastfmVinylArt" x="104" y="114" width="92" height="92" clip-path="url(#lastfmLabelClip)" preserveAspectRatio="xMidYMid slice" href=""/>
@@ -540,7 +552,7 @@ export function renderLastFmSection(profile, lastfmConfig) {
             </g>
 
             <circle id="lastfmPowerLed" cx="290" cy="292" r="3.5" fill="#D80000" stroke="#000000" stroke-width="1"/>
-            <text x="24" y="296" font-size="8" font-family="'JetBrains Mono', Consolas, monospace" font-weight="700" fill="#D80000" letter-spacing="1">33⅓ RPM // STEREO AUDIO</text>
+            <text x="24" y="296" font-size="8" font-family="'JetBrains Mono', Consolas, monospace" font-weight="700" fill="#FF3333" letter-spacing="1">33⅓ RPM // STEREO AUDIO</text>
             </svg>
           </div>
         </div>

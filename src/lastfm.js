@@ -18,8 +18,12 @@ function esc(str) {
 
 function sanitizeUrl(url) {
   if (typeof url !== 'string') return '#';
-  const trimmed = url.trim();
-  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  try {
+    const u = new URL(url.trim());
+    if (u.protocol === 'http:' || u.protocol === 'https:') {
+      return esc(u.href);
+    }
+  } catch {}
   return '#';
 }
 
@@ -99,6 +103,11 @@ export async function initLastFm(lastfmConfig = {}) {
     }
     if (elements.vinylArt) {
       elements.vinylArt.setAttribute('href', '');
+    }
+    if (elements.trackLink) {
+      elements.trackLink.setAttribute('aria-disabled', 'true');
+      elements.trackLink.setAttribute('href', '#');
+      elements.trackLink.removeAttribute('target');
     }
     updateProfileLink();
   };
@@ -237,27 +246,35 @@ export async function initLastFm(lastfmConfig = {}) {
     if (elements.monthlyArtistsVal && data.totalUniqueArtists) {
       elements.monthlyArtistsVal.textContent = Number(data.totalUniqueArtists).toLocaleString('en-US');
     }
-    if (elements.topArtistsList && Array.isArray(data.artists) && data.artists.length > 0) {
-      elements.topArtistsList.innerHTML = data.artists.slice(0, 5).map((art, idx) => `
-        <div class="lastfm-rank-item">
-          <span class="lastfm-rank-num">#0${idx + 1}</span>
-          <a href="${sanitizeUrl(art.url)}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name">${esc(art.name)}</a>
-          <span class="lastfm-rank-count">${Number(art.playcount || 0).toLocaleString('en-US')} PLAYS</span>
-        </div>
-      `).join('');
+    if (elements.topArtistsList) {
+      if (Array.isArray(data.artists) && data.artists.length > 0) {
+        elements.topArtistsList.innerHTML = data.artists.slice(0, 5).map((art, idx) => `
+          <div class="lastfm-rank-item">
+            <span class="lastfm-rank-num">#0${idx + 1}</span>
+            <a href="${sanitizeUrl(art.url)}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name">${esc(art.name)}</a>
+            <span class="lastfm-rank-count">${Number(art.playcount || 0).toLocaleString('en-US')} PLAYS</span>
+          </div>
+        `).join('');
+      } else {
+        elements.topArtistsList.innerHTML = '<div class="lastfm-rank-item"><span class="lastfm-rank-num">--</span><span class="lastfm-rank-name">NO ARCHIVE DATA</span><span class="lastfm-rank-count">0 PLAYS</span></div>';
+      }
     }
 
     if (elements.monthlyTracksVal && data.totalUniqueTracks) {
       elements.monthlyTracksVal.textContent = Number(data.totalUniqueTracks).toLocaleString('en-US');
     }
-    if (elements.topTracksList && Array.isArray(data.tracks) && data.tracks.length > 0) {
-      elements.topTracksList.innerHTML = data.tracks.slice(0, 5).map((trk, idx) => `
-        <div class="lastfm-rank-item">
-          <span class="lastfm-rank-num">#0${idx + 1}</span>
-          <a href="${sanitizeUrl(trk.url)}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name" title="${esc(trk.name)}">${esc(trk.name)}</a>
-          <span class="lastfm-rank-count">${Number(trk.playcount || 0).toLocaleString('en-US')} PLAYS</span>
-        </div>
-      `).join('');
+    if (elements.topTracksList) {
+      if (Array.isArray(data.tracks) && data.tracks.length > 0) {
+        elements.topTracksList.innerHTML = data.tracks.slice(0, 5).map((trk, idx) => `
+          <div class="lastfm-rank-item">
+            <span class="lastfm-rank-num">#0${idx + 1}</span>
+            <a href="${sanitizeUrl(trk.url)}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name" title="${esc(trk.name)}">${esc(trk.name)}</a>
+            <span class="lastfm-rank-count">${Number(trk.playcount || 0).toLocaleString('en-US')} PLAYS</span>
+          </div>
+        `).join('');
+      } else {
+        elements.topTracksList.innerHTML = '<div class="lastfm-rank-item"><span class="lastfm-rank-num">--</span><span class="lastfm-rank-name">NO ARCHIVE DATA</span><span class="lastfm-rank-count">0 PLAYS</span></div>';
+      }
     }
   };
 
@@ -311,7 +328,9 @@ export async function initLastFm(lastfmConfig = {}) {
           data: telemetryData
         }));
       } catch {}
-    } catch {}
+    } catch (err) {
+      console.warn('Last.fm telemetry unavailable:', err);
+    }
   };
 
   await fetchTrack();

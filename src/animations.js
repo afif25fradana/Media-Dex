@@ -13,7 +13,7 @@ export function dismissLoading(onDone) {
   if (prefersReducedMotion()) {
     loader.style.display = 'none';
     loader.setAttribute('aria-hidden', 'true');
-    document.querySelectorAll('dex-card, .card').forEach(card => {
+    document.querySelectorAll('dex-card').forEach(card => {
       card.classList.remove('card-will-animate');
       card.classList.add('card-ready');
     });
@@ -92,7 +92,7 @@ export function setupScrollReveals() {
   });
 
   sections.forEach(s => {
-    sectionCardsMap.set(s, Array.from(s.querySelectorAll('dex-card, .card')));
+    sectionCardsMap.set(s, Array.from(s.querySelectorAll('dex-card')));
     observer.observe(s);
   });
 }

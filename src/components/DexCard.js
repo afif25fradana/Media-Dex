@@ -1,3 +1,8 @@
+function encodeAssetPath(path) {
+  if (!path || typeof path !== 'string') return '';
+  return path.split('/').map(encodeURIComponent).join('/');
+}
+
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(`
   :host {
@@ -117,7 +122,7 @@ sheet.replaceSync(`
     height: 100%;
     object-fit: cover;
     position: relative;
-    z-index: 0;
+    z-index: 2;
     opacity: 0;
     transition: opacity 0.3s ease;
   }
@@ -233,7 +238,7 @@ export class DexCard extends HTMLElement {
 
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    this.attachShadow({ mode: 'open', delegatesFocus: true });
     this.shadowRoot.adoptedStyleSheets = [sheet];
     this.shadowRoot.appendChild(template.content.cloneNode(true));
     
@@ -279,7 +284,7 @@ export class DexCard extends HTMLElement {
     this.buttonEl.style.setProperty('--rotation', `${rotation}deg`);
 
     if (imageSrc) {
-      const newSrc = encodeURI(imageSrc);
+      const newSrc = encodeAssetPath(imageSrc);
       
       // Only set src if it has actually changed to prevent aborting pending loads
       if (this.imgEl.getAttribute('src') !== newSrc) {
