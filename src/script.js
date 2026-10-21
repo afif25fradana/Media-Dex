@@ -16,11 +16,10 @@ import { initHalftoneBackground } from './halftoneBg.js';
 
 const init = async () => {
   try { localStorage.removeItem('dex-theme'); } catch { }
-  initHalftoneBackground();
-
   const fetchWithTimeout = () => DataStore.fetch(AbortSignal.timeout(10000));
 
   try {
+    initHalftoneBackground();
     const data = await fetchWithTimeout();
     
     renderNavbar(data.profile);

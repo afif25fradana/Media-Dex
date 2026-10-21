@@ -97,8 +97,6 @@ export function openDetailModal(item) {
       close();
     }
   });
-
-  const closeBtn = dialog.querySelector('.dex-modal-close');
   if (closeBtn) closeBtn.addEventListener('click', close);
 
   requestAnimationFrame(() => {
