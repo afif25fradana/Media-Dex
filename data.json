@@ -36,6 +36,60 @@
       "icon": "gamepad",
       "items": [
         {
+          "title": "Titanfall 2",
+          "subtitle": "FPS · Respawn Entertainment",
+          "image": "Asset/Games/Titanfall_2.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Hades",
+          "subtitle": "Roguelike Action · Supergiant Games",
+          "image": "Asset/Games/Hades.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Sleeping Dogs",
+          "subtitle": "Action-Adventure · United Front Games",
+          "image": "Asset/Games/Sleeping_Dogs.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "The Elder Scrolls V: Skyrim",
+          "subtitle": "Action RPG · Bethesda Game Studios",
+          "image": "Asset/Games/Skyrim.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Kingdom Come: Deliverance II",
+          "subtitle": "Medieval RPG · Warhorse Studios",
+          "image": "Asset/Games/Kingdom_Come_Deliverance_2.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "DiRT Rally 2.0",
+          "subtitle": "Racing Simulation · Codemasters",
+          "image": "Asset/Games/Dirt_Rally_2.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Death Stranding",
+          "subtitle": "Action / Strand · Kojima Productions",
+          "image": "Asset/Games/Death_Stranding.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Far Cry 3",
+          "subtitle": "Open World FPS · Ubisoft Montreal",
+          "image": "Asset/Games/Far_Cry_3.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Far Cry 4",
+          "subtitle": "Open World FPS · Ubisoft Montreal",
+          "image": "Asset/Games/Far_Cry_4.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
           "title": "Arknights",
           "subtitle": "Tactical RPG · Hypergryph",
           "image": "Asset/Games/Arknight.webp",
@@ -206,6 +260,36 @@
       "description": "Songs that define my moods and playlists.",
       "icon": "music",
       "items": [
+        {
+          "title": "addiction",
+          "subtitle": "LONOWN · Asenssia",
+          "image": "Asset/Music/addiction-LONOWN_Asenssia.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Ice u out",
+          "subtitle": "Ninajirachi · Kota Banks",
+          "image": "Asset/Music/Ice_u_out-Ninajirachi_Kota_Banks.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Fall Into",
+          "subtitle": "Ally Nicholas",
+          "image": "Asset/Music/Fall_Into-Ally_Nicholas.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "WannaCry",
+          "subtitle": "Ninajirachi · Porter Robinson",
+          "image": "Asset/Music/WannaCry-Ninajirachi_Porter_Robinson.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Suffocation",
+          "subtitle": "Crystal Castles",
+          "image": "Asset/Music/Suffocation-Crystal_Castles.webp",
+          "dateAdded": "2026-10-25"
+        },
         {
           "title": "Aria Math",
           "subtitle": "Daniel Rosenfeld",
