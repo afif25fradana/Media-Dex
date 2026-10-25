@@ -4,7 +4,7 @@ import { encodeAssetPath, esc, sanitizeUrl, sortItemsByDate } from './utils.js';
 import { reobserveCards } from './animations.js';
 import { prefersReducedMotion } from './motion.js';
 
-export {
+import {
   SOCIAL_ICONS,
   CATEGORY_ICONS,
   LOGO_SVG,
@@ -12,6 +12,15 @@ export {
   CLOSE_ICON_SVG,
   MENU_ICON_SVG
 } from './icons.js';
+
+export {
+  SOCIAL_ICONS,
+  CATEGORY_ICONS,
+  LOGO_SVG,
+  FOOTER_WINGS_SVG,
+  CLOSE_ICON_SVG,
+  MENU_ICON_SVG
+};
 
 export const CARD_ROTATIONS = [-3, 2, -1, 3, -1, 2, -2, 1, -2, 2, -1, 2];
 export const ENTRANCE_DIRS = ['left', 'right'];
