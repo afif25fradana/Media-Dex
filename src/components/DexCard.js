@@ -1,7 +1,4 @@
-function encodeAssetPath(path) {
-  if (!path || typeof path !== 'string') return '';
-  return path.split('/').map(encodeURIComponent).join('/');
-}
+import { encodeAssetPath } from '../utils.js';
 
 const sheet = new CSSStyleSheet();
 sheet.replaceSync(`
@@ -13,6 +10,16 @@ sheet.replaceSync(`
     --delay: 0ms;
     min-width: 0; /* Prevents grid blowout from long text */
   }
+
+  :host([category="music"]) {
+    --card-cover-ratio: 1 / 1;
+  }
+  :host([category="manga-manhwa"]), :host([category="manhwa"]) {
+    --card-cover-ratio: 3 / 4;
+  }
+  :host([category="movies-tv"]), :host([category="movietv"]), :host([category="games"]) {
+    --card-cover-ratio: 2 / 3;
+  }
   
   :host(.card-will-animate) {
     opacity: 0;
@@ -22,12 +29,12 @@ sheet.replaceSync(`
     opacity: 1;
     transform: translateY(0) rotate(var(--rotation)) translateZ(0);
     transition: opacity 80ms step-start var(--delay),
-                transform 380ms var(--ease-snap) var(--delay);
+                transform 340ms cubic-bezier(0.15, 0.85, 0.35, 1.15) var(--delay);
   }
   :host(.card-ready) {
     opacity: 1;
     transform: translateY(0) rotate(var(--rotation)) translateZ(0);
-    transition: opacity 0.2s var(--ease-snap), transform 0.2s var(--ease-snap);
+    transition: opacity 0.2s var(--ease-snap, ease), transform 0.2s var(--ease-snap, ease);
   }
 
   .card {
@@ -37,7 +44,7 @@ sheet.replaceSync(`
     opacity: 1;
     -webkit-font-smoothing: subpixel-antialiased;
     outline: 1px solid transparent;
-    transition: transform 0.2s var(--ease-snap), box-shadow 0.2s var(--ease-snap);
+    transition: transform 0.2s var(--ease-snap, ease), box-shadow 0.2s var(--ease-snap, ease);
     border: 3px solid #000;
     box-shadow: var(--shadow-card, 6px 6px 0 #000, -4px -4px 0 #D80000);
     
@@ -78,11 +85,11 @@ sheet.replaceSync(`
     opacity: 0;
     pointer-events: none;
     z-index: 10;
-    transition: opacity 0.2s var(--ease-snap);
+    transition: opacity 0.18s var(--ease-snap, ease);
   }
 
   .card:hover {
-    transform: translateY(-8px) scale(1.05) rotate(0deg) translateZ(0);
+    transform: translateY(-8px) scale(1.04) rotate(0deg) translateZ(0);
     z-index: 20;
     box-shadow: var(--shadow-card-hover, 10px 10px 0 #000, -6px -6px 0 #D80000);
   }
@@ -92,17 +99,29 @@ sheet.replaceSync(`
   }
 
   .card:active {
-    transform: translateY(-2px) scale(0.95) rotate(0deg) translateZ(0);
+    transform: translateY(-2px) scale(0.96) rotate(0deg) translateZ(0);
     box-shadow: var(--shadow-card-press, 2px 2px 0 #000, -2px -2px 0 #D80000);
     transition-duration: 60ms;
   }
 
   @media (prefers-reduced-motion: reduce) {
+    :host,
+    :host(.card-will-animate),
+    :host(.card-visible),
+    :host(.card-ready) {
+      transition: none !important;
+      opacity: 1 !important;
+      transform: rotate(var(--rotation, 0deg)) translateZ(0) !important;
+    }
     .card {
       transition: none !important;
     }
     .card:hover, .card:active {
       transform: rotate(var(--rotation, 0deg)) translateZ(0) !important;
+    }
+    .card-flash {
+      transition: none !important;
+      opacity: 0 !important;
     }
     .skeleton {
       animation: none !important;
@@ -198,24 +217,21 @@ sheet.replaceSync(`
   }
 
   .card-subtitle {
-    font-family: var(--font-messy, 'Caveat', 'Segoe Print', 'Bradley Hand', cursive);
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--color-text-muted-on-dark, rgba(240, 236, 226, 0.75));
+    font-family: var(--font-body, sans-serif);
+    font-size: 0.72rem;
+    color: var(--color-text-muted-on-dark, rgba(240, 236, 226, 0.7));
     margin: 0.2rem 0 0 0;
-    line-height: 1.3;
-    letter-spacing: 0.01em;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
   }
 `);
 
 const template = document.createElement('template');
 template.innerHTML = `
-  <button type="button" class="card" aria-label="Media item">
-    <div class="card-flash"></div>
+  <button class="card" type="button">
+    <div class="card-flash" aria-hidden="true"></div>
     <div class="card-cover">
       <div class="skeleton" aria-hidden="true"></div>
       <img loading="lazy" alt="" />
@@ -233,7 +249,7 @@ template.innerHTML = `
 
 export class DexCard extends HTMLElement {
   static get observedAttributes() {
-    return ['title', 'subtitle', 'image-src', 'rotation'];
+    return ['title', 'subtitle', 'image-src', 'rotation', 'category'];
   }
 
   constructor() {
@@ -272,60 +288,67 @@ export class DexCard extends HTMLElement {
   }
 
   _render() {
-    const title = this.getAttribute('title') || 'Unknown';
+    const title = this.getAttribute('title') || '';
     const subtitle = this.getAttribute('subtitle') || '';
-    const imageSrc = this.getAttribute('image-src');
-    const rotation = this.getAttribute('rotation') || '0';
+    const imageSrc = this.getAttribute('image-src') || '';
+    const rotation = this.getAttribute('rotation') || '0deg';
+
+    this.style.setProperty('--rotation', rotation);
 
     this.titleEl.textContent = title;
     this.subtitleEl.textContent = subtitle;
-    this.buttonEl.setAttribute('aria-label', `${title}${subtitle ? ', ' + subtitle : ''}`);
-    this.style.setProperty('--rotation', `${rotation}deg`);
-    this.buttonEl.style.setProperty('--rotation', `${rotation}deg`);
+    
+    const ariaLabel = subtitle ? `${title}, ${subtitle}` : title;
+    this.buttonEl.setAttribute('aria-label', ariaLabel);
 
     if (imageSrc) {
-      const newSrc = encodeAssetPath(imageSrc);
-      
-      // Only set src if it has actually changed to prevent aborting pending loads
-      if (this.imgEl.getAttribute('src') !== newSrc) {
-        this.imgEl.src = newSrc;
-        // Decorative: the <button>'s aria-label already names the item, so an
-        // inner img alt would double-announce it to screen readers.
-        this.imgEl.alt = '';
-        this.imgEl.style.display = '';
-        this.placeholderEl.style.display = 'none';
-        
-        this.imgEl.classList.remove('loaded');
+      const encodedSrc = encodeAssetPath(imageSrc);
+      if (this.imgEl.getAttribute('src') !== encodedSrc) {
         this.skeletonEl.style.display = 'block';
-      }
+        this.placeholderEl.style.display = 'none';
+        this.imgEl.classList.remove('loaded');
+        this.imgEl.style.display = 'block';
+        this.imgEl.src = encodedSrc;
 
-      // Handle instantly cached images.
-      if (this.imgEl.complete) {
-        if (this.imgEl.naturalWidth > 0) {
+        // If image was already cached by browser, load event might have fired synchronously
+        if (this.imgEl.complete && this.imgEl.naturalWidth > 0) {
           this._handleImageLoad();
-        } else if (this.imgEl.naturalWidth === 0 && this.imgEl.src) {
-          this._handleImageError();
         }
       }
     } else {
-      this._showFallback(title);
+      this._showPlaceholder(title);
     }
   }
 
   _handleImageLoad() {
     this.skeletonEl.style.display = 'none';
     this.imgEl.classList.add('loaded');
+    this.placeholderEl.style.display = 'none';
   }
 
   _handleImageError() {
-    this._showFallback(this.getAttribute('title') || '?');
+    this._showPlaceholder(this.getAttribute('title') || '');
   }
 
-  _showFallback(title) {
+  _showPlaceholder(title) {
     this.skeletonEl.style.display = 'none';
     this.imgEl.style.display = 'none';
+    this.imgEl.classList.remove('loaded');
     this.placeholderEl.style.display = 'flex';
-    this.letterEl.textContent = title.charAt(0).toUpperCase();
+    
+    const firstLetter = (title.trim()[0] || '?').toUpperCase();
+    this.letterEl.textContent = firstLetter;
+  }
+
+  /**
+   * Dismiss the loading state manually (e.g. timeout or forced show)
+   */
+  dismissLoading() {
+    this.classList.remove('card-will-animate');
+    this.classList.add('card-ready');
+    if (!this.imgEl.classList.contains('loaded')) {
+      this._showPlaceholder(this.getAttribute('title') || '');
+    }
   }
 }
 

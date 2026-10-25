@@ -92,8 +92,8 @@ export function initEvents(actions) {
             window.isNavScrolling = true;
             clearTimeout(navScrollTimeout);
             
-            const isCategory = target && target.classList.contains('category-section');
-            const mainTargetHref = isCategory ? '#explore-categories' : targetId;
+            const isCategory = target && (target.classList.contains('category-section') || target.id === 'collection-section');
+            const mainTargetHref = isCategory ? '#collection-section' : targetId;
 
             document.querySelectorAll('.navbar-link, .mobile-menu-link').forEach(l => {
               if (l.getAttribute('href') === mainTargetHref) l.classList.add('active');
@@ -116,7 +116,7 @@ export function initEvents(actions) {
   });
 
   document.addEventListener('action-click', () => {
-    const target = document.querySelector('#explore-categories');
+    const target = document.querySelector('#collection-section');
     if (target) target.scrollIntoView({ behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
   });
 

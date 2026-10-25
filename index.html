@@ -92,11 +92,23 @@
       <!-- Rendered by JS -->
     </section>
 
-    <section id="explore-categories" class="explore-section" aria-label="Explore categories">
+    <section id="collection-section" class="collection-section panel-enter" aria-label="Media collection catalog">
+      <div class="collection-header">
+        <div class="collection-banner">
+          <h2 class="collection-title">COLLECTION DEX</h2>
+        </div>
+        <span class="collection-accent">ARCHIVE // ALL CHANNELS</span>
+      </div>
+      <div class="collection-toolbar" id="collection-toolbar" role="toolbar" aria-label="Collection filters and sorting">
+        <div class="category-tabs-group" id="categoryTabs" role="tablist" aria-label="Category filters"></div>
+        <button type="button" class="sort-toggle-btn" id="sortToggleBtn" aria-label="Sort by date added: currently newest first" aria-pressed="false">
+          <span class="sort-label">DATE: NEWEST</span>
+          <span class="sort-icon" aria-hidden="true">↓</span>
+        </button>
+      </div>
+      <div id="collection-live-announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+      <div class="card-grid" id="dexCardGrid" role="tabpanel" aria-labelledby="tab-all"></div>
     </section>
-
-    <div id="categories-container">
-    </div>
 
     <section id="recent-overview" class="recent-overview-section" aria-label="Recent entries and statistics">
     </section>

@@ -4,8 +4,7 @@ import {
   renderNavbar, 
   renderMobileMenu, 
   renderHero, 
-  renderExploreCategories, 
-  renderCategories, 
+  renderCollection, 
   renderRecentlyAdded, 
   renderLastFmSection,
   renderFooter 
@@ -26,8 +25,7 @@ const init = async () => {
     renderMobileMenu(data.categories);
     renderHero(data.profile, data.socials);
     renderLastFmSection(data.profile, data.lastfm);
-    renderExploreCategories(data.categories);
-    renderCategories(data.categories);
+    renderCollection(data.categories);
     renderRecentlyAdded(data.categories, data.profile);
     renderFooter(data.profile, data.socials);
 
@@ -162,11 +160,10 @@ function setupScrollSpy() {
     }
   });
 
-  document.querySelectorAll('.category-section').forEach(sec => {
-    if (!sections.includes(sec)) {
-      sections.push(sec);
-    }
-  });
+  const collectionSection = document.getElementById('collection-section');
+  if (collectionSection && !sections.includes(collectionSection)) {
+    sections.push(collectionSection);
+  }
 
   // Debounce observer during manual scroll to prevent active-state flicker.
   window.isNavScrolling = false;
@@ -185,8 +182,8 @@ function setupScrollSpy() {
 
     if (activeId) {
       const activeEl = document.querySelector(activeId);
-      const isCategory = activeEl && activeEl.classList.contains('category-section');
-      const mainTargetHref = isCategory ? '#explore-categories' : activeId;
+      const isCollection = activeEl && (activeEl.id === 'collection-section' || activeEl.classList.contains('category-section'));
+      const mainTargetHref = isCollection ? '#collection-section' : activeId;
 
       navLinks.forEach(link => {
         if (link.getAttribute('href') === mainTargetHref) link.classList.add('active');
@@ -194,7 +191,7 @@ function setupScrollSpy() {
       });
 
       catLinks.forEach(link => {
-        if (isCategory && link.getAttribute('href') === activeId) link.classList.add('active');
+        if (isCollection && link.getAttribute('href') === activeId) link.classList.add('active');
         else link.classList.remove('active');
       });
     }
@@ -217,5 +214,3 @@ function setupScrollSpy() {
 
   window.refreshNavActive = applyActive;
 }
-
-
