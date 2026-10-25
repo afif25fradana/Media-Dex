@@ -204,6 +204,42 @@
       "icon": "tv",
       "items": [
         {
+          "title": "Cyberpunk: Edgerunners 2",
+          "subtitle": "Sci-Fi / Cyberpunk · Studio Trigger",
+          "image": "Asset/MovieTV/Cyberpunk_Edgerunners_2.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Cyberpunk: Edgerunners",
+          "subtitle": "Sci-Fi / Action · Studio Trigger",
+          "image": "Asset/MovieTV/Cyberpunk_Edgerunners.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "86: Eighty-Six",
+          "subtitle": "Mecha / Military Drama · A-1 Pictures",
+          "image": "Asset/MovieTV/86_Eighty_Six.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Steins;Gate",
+          "subtitle": "Sci-Fi / Psychological · White Fox",
+          "image": "Asset/MovieTV/Steins_Gate.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "No Game No Life",
+          "subtitle": "Fantasy / Strategy · Madhouse",
+          "image": "Asset/MovieTV/No_Game_No_Life.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Violet Evergarden",
+          "subtitle": "Drama / Coming-of-Age · Kyoto Animation",
+          "image": "Asset/MovieTV/Violet_Evergarden.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
           "title": "Project Hail Mary",
           "subtitle": "Sci-Fi / Space Adventure · 2026",
           "image": "Asset/MovieTV/Project_Hail_Mary.webp",
@@ -260,6 +296,18 @@
       "description": "Songs that define my moods and playlists.",
       "icon": "music",
       "items": [
+        {
+          "title": "NO LUCK",
+          "subtitle": "Tiffany Day",
+          "image": "Asset/Music/NO_LUCK-Tiffany_Day.webp",
+          "dateAdded": "2026-10-25"
+        },
+        {
+          "title": "Hello Juliet",
+          "subtitle": "Clarion",
+          "image": "Asset/Music/Hello_Juliet-Clarion.webp",
+          "dateAdded": "2026-10-25"
+        },
         {
           "title": "addiction",
           "subtitle": "LONOWN · Asenssia",
