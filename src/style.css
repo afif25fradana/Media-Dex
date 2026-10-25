@@ -1299,10 +1299,11 @@ body:has(#mobile-menu.menu-open) {
 }
 
 .card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 2.5rem 2rem;
+  padding: 1.25rem 1rem;
   min-height: 480px;
-  contain: layout style;
-  content-visibility: auto;
-  contain-intrinsic-size: auto 650px;
   transition: opacity 120ms ease-out;
 }
 
@@ -1310,13 +1311,6 @@ body:has(#mobile-menu.menu-open) {
   opacity: 0;
   transform: scale(0.96) translateY(6px);
   transition: opacity 120ms ease-out, transform 120ms ease-out;
-}
-
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 2.5rem 2rem;
-  padding: 0.5rem;
 }
 
 dex-empty-state {

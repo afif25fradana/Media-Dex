@@ -277,11 +277,11 @@ export function renderCollection(categories) {
       const labelEl = sortBtn.querySelector('.sort-label');
       if (labelEl) labelEl.textContent = isAsc ? 'DATE: OLDEST' : 'DATE: NEWEST';
 
-      filterAndRenderCards();
+      filterAndRenderCards(false);
     });
   }
 
-  filterAndRenderCards();
+  filterAndRenderCards(true);
 }
 
 export function switchCategory(catId) {
@@ -302,10 +302,10 @@ export function switchCategory(catId) {
     grid.setAttribute('aria-labelledby', `tab-${activeCategory}`);
   }
 
-  filterAndRenderCards();
+  filterAndRenderCards(false);
 }
 
-export function filterAndRenderCards() {
+export function filterAndRenderCards(isInitial = false) {
   const grid = document.getElementById('dexCardGrid');
   if (!grid) return;
 
@@ -346,7 +346,7 @@ export function filterAndRenderCards() {
     reobserveCards();
   };
 
-  if (prefersReducedMotion()) {
+  if (isInitial || prefersReducedMotion()) {
     renderContent();
   } else {
     grid.classList.add('is-switching');

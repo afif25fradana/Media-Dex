@@ -73,9 +73,6 @@ export function setupScrollReveals() {
     return;
   }
 
-  // Cache cards to avoid synchronous DOM queries inside the scroll observer
-  const sectionCardsMap = new WeakMap();
-
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
@@ -83,7 +80,7 @@ export function setupScrollReveals() {
       const el = entry.target;
       el.classList.add('revealed');
 
-      const cards = sectionCardsMap.get(el) || Array.from(el.querySelectorAll('dex-card'));
+      const cards = Array.from(el.querySelectorAll('dex-card'));
       cards.forEach((card, i) => {
         card.style.setProperty('--delay', `${i * 50}ms`);
         card.classList.add('card-visible');
@@ -99,12 +96,11 @@ export function setupScrollReveals() {
       observer.unobserve(el);
     });
   }, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -8% 0px'
+    threshold: 0.05,
+    rootMargin: '0px 0px -5% 0px'
   });
 
   sections.forEach(s => {
-    sectionCardsMap.set(s, Array.from(s.querySelectorAll('dex-card')));
     observer.observe(s);
   });
 }
