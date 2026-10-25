@@ -206,12 +206,13 @@ export function createCard(item, index, cat) {
 
 let allItems = [];
 let allCategories = [];
-let activeCategory = 'all';
+let activeCategory = 'games';
 let sortDirection = 'desc';
 
 export function renderCollection(categories) {
   allCategories = categories || [];
   allItems = [];
+  activeCategory = allCategories[0]?.id || 'games';
 
   allCategories.forEach(cat => {
     (cat.items || []).forEach(it => {
@@ -225,17 +226,13 @@ export function renderCollection(categories) {
 
   const tabsContainer = document.getElementById('categoryTabs');
   if (tabsContainer) {
-    let tabsHTML = `
-      <button type="button" class="cat-tab is-active" id="tab-all" role="tab" data-cat="all" aria-selected="true" aria-controls="dexCardGrid" tabindex="0">
-        <span class="tab-label">ALL</span>
-        <span class="tab-count">${allItems.length}</span>
-      </button>
-    `;
+    let tabsHTML = '';
 
-    allCategories.forEach(cat => {
+    allCategories.forEach((cat, index) => {
       const count = (cat.items || []).length;
+      const isInitial = index === 0;
       tabsHTML += `
-        <button type="button" class="cat-tab" id="tab-${esc(cat.id)}" role="tab" data-cat="${esc(cat.id)}" aria-selected="false" aria-controls="dexCardGrid" tabindex="-1">
+        <button type="button" class="cat-tab${isInitial ? ' is-active' : ''}" id="tab-${esc(cat.id)}" role="tab" data-cat="${esc(cat.id)}" aria-selected="${isInitial ? 'true' : 'false'}" aria-controls="dexCardGrid" tabindex="${isInitial ? '0' : '-1'}">
           <span class="tab-label">${esc(cat.title)}</span>
           <span class="tab-count">${count}</span>
         </button>
@@ -247,7 +244,7 @@ export function renderCollection(categories) {
     // Attach click listeners
     tabsContainer.querySelectorAll('.cat-tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        switchCategory(tab.dataset.cat || 'all');
+        switchCategory(tab.dataset.cat || (allCategories[0]?.id || 'games'));
       });
     });
 
@@ -273,7 +270,7 @@ export function renderCollection(categories) {
 
       if (nextIndex >= 0 && tabs[nextIndex]) {
         const nextTab = tabs[nextIndex];
-        switchCategory(nextTab.dataset.cat || 'all');
+        switchCategory(nextTab.dataset.cat || (allCategories[0]?.id || 'games'));
         nextTab.focus();
       }
     });
@@ -300,12 +297,12 @@ export function renderCollection(categories) {
 }
 
 export function switchCategory(catId) {
-  activeCategory = catId || 'all';
+  activeCategory = catId || (allCategories[0]?.id || 'games');
 
   const tabsContainer = document.getElementById('categoryTabs');
   if (tabsContainer) {
     tabsContainer.querySelectorAll('.cat-tab').forEach(t => {
-      const isMatch = (t.dataset.cat || 'all') === activeCategory;
+      const isMatch = (t.dataset.cat || '') === activeCategory;
       t.classList.toggle('is-active', isMatch);
       t.setAttribute('aria-selected', isMatch ? 'true' : 'false');
       t.setAttribute('tabindex', isMatch ? '0' : '-1');
@@ -325,7 +322,7 @@ export function filterAndRenderCards() {
   if (!grid) return;
 
   const filtered = allItems.filter(item => {
-    return activeCategory === 'all' || item.categoryId === activeCategory;
+    return item.categoryId === activeCategory;
   });
 
   const sorted = sortItemsByDate(filtered, sortDirection);
@@ -334,7 +331,7 @@ export function filterAndRenderCards() {
   const announcer = document.getElementById('collection-live-announcer');
   if (announcer) {
     const activeCatObj = allCategories.find(c => c.id === activeCategory);
-    const catName = activeCategory === 'all' ? 'All Collection' : (activeCatObj?.title || activeCategory);
+    const catName = activeCatObj?.title || activeCategory;
     const dirName = sortDirection === 'desc' ? 'newest first' : 'oldest first';
     announcer.textContent = `Showing ${sorted.length} entries for ${catName}, sorted ${dirName}.`;
   }
@@ -346,8 +343,8 @@ export function filterAndRenderCards() {
       const emptyState = document.createElement('dex-empty-state');
       emptyState.setAttribute('icon', 'bookmark');
       emptyState.setAttribute('message', 'No items in this category yet.');
-      emptyState.setAttribute('action-text', 'VIEW ALL ITEMS');
-      emptyState.addEventListener('action-click', () => switchCategory('all'));
+      emptyState.setAttribute('action-text', 'VIEW FIRST CATEGORY');
+      emptyState.addEventListener('action-click', () => switchCategory(allCategories[0]?.id || 'games'));
       grid.appendChild(emptyState);
     } else {
       const fragment = document.createDocumentFragment();
