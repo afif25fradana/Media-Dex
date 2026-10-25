@@ -16,6 +16,7 @@ export async function initLastFm(lastfmConfig = {}) {
     badge: document.getElementById('lastfmStatusBadge'),
     recordGroup: document.getElementById('lastfmRecordGroup'),
     tonearm: document.getElementById('lastfmTonearm'),
+    timeLabel: document.getElementById('lastfmTimeLabel'),
     eq: document.querySelector('.lastfm-eq'),
     vinylArt: document.getElementById('lastfmVinylArt'),
     time: document.getElementById('lastfmTrackTime'),
@@ -64,6 +65,9 @@ export async function initLastFm(lastfmConfig = {}) {
     if (elements.album) {
       elements.album.textContent = 'STANDBY';
     }
+    if (elements.timeLabel) {
+      elements.timeLabel.textContent = 'STATUS //';
+    }
     if (elements.time) {
       elements.time.textContent = 'STANDBY';
     }
@@ -84,7 +88,8 @@ export async function initLastFm(lastfmConfig = {}) {
     }
     if (elements.trackLink) {
       elements.trackLink.setAttribute('aria-disabled', 'true');
-      elements.trackLink.setAttribute('href', '#');
+      elements.trackLink.removeAttribute('href');
+      elements.trackLink.setAttribute('tabindex', '-1');
       elements.trackLink.removeAttribute('target');
     }
     updateProfileLink();
@@ -172,20 +177,22 @@ export async function initLastFm(lastfmConfig = {}) {
         elements.artist.textContent = artist;
       }
       if (elements.album) {
-        elements.album.textContent = album;
+        elements.album.textContent = album === 'STANDBY' ? '[SINGLE / NO ALBUM]' : album;
       }
 
       const totalScrobbles = json?.recenttracks?.['@attr']?.total;
       if (totalScrobbles) {
         const formatted = Number(totalScrobbles).toLocaleString('en-US');
-        if (elements.totalScrobblesChip) elements.totalScrobblesChip.textContent = `${formatted} SCROBBLES`;
-        if (elements.totalScrobblesVal) elements.totalScrobblesVal.textContent = formatted;
+        if (elements.totalScrobblesChip) elements.totalScrobblesChip.textContent = `LIFETIME // ${formatted} SCROBBLES`;
       }
 
       const rawTrackUrl = track.url || `https://www.last.fm/user/${encodeURIComponent(username)}`;
       const trackUrl = sanitizeUrl(rawTrackUrl);
       if (elements.trackLink) {
         elements.trackLink.href = trackUrl;
+        elements.trackLink.target = '_blank';
+        elements.trackLink.removeAttribute('aria-disabled');
+        elements.trackLink.removeAttribute('tabindex');
       }
 
       if (isPlaying) {
@@ -197,6 +204,7 @@ export async function initLastFm(lastfmConfig = {}) {
         }
         if (elements.eq) elements.eq.classList.add('is-active');
         if (elements.led) elements.led.classList.add('is-live');
+        if (elements.timeLabel) elements.timeLabel.textContent = 'TRANSMISSION //';
         if (elements.time) elements.time.textContent = 'PLAYING NOW';
       } else {
         if (elements.recordGroup) elements.recordGroup.classList.remove('is-playing');
@@ -207,6 +215,7 @@ export async function initLastFm(lastfmConfig = {}) {
         }
         if (elements.eq) elements.eq.classList.remove('is-active');
         if (elements.led) elements.led.classList.remove('is-live');
+        if (elements.timeLabel) elements.timeLabel.textContent = 'SCROBBLED //';
         if (elements.time) elements.time.textContent = formatRelativeTime(track.date?.uts);
       }
 
@@ -224,6 +233,9 @@ export async function initLastFm(lastfmConfig = {}) {
 
   const renderTelemetry = (data) => {
     if (!data) return;
+    if (elements.totalScrobblesVal && data.monthlyScrobblesTotal) {
+      elements.totalScrobblesVal.textContent = Number(data.monthlyScrobblesTotal).toLocaleString('en-US');
+    }
     if (elements.monthlyArtistsVal && data.totalUniqueArtists) {
       elements.monthlyArtistsVal.textContent = Number(data.totalUniqueArtists).toLocaleString('en-US');
     }
@@ -274,15 +286,19 @@ export async function initLastFm(lastfmConfig = {}) {
 
     try {
       const base = 'https://ws.audioscrobbler.com/2.0/?format=json&period=1month&limit=5';
+      const thirtyDaysAgo = Math.floor(Date.now() / 1000) - (30 * 86400);
+      const recent30Url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(username)}&api_key=${encodeURIComponent(apiKey)}&format=json&limit=1&from=${thirtyDaysAgo}`;
       const artistsUrl = `${base}&method=user.gettopartists&user=${encodeURIComponent(username)}&api_key=${encodeURIComponent(apiKey)}`;
       const tracksUrl = `${base}&method=user.gettoptracks&user=${encodeURIComponent(username)}&api_key=${encodeURIComponent(apiKey)}`;
 
-      const [artistsRes, tracksRes] = await Promise.allSettled([
+      const [artistsRes, tracksRes, recent30Res] = await Promise.allSettled([
         fetch(artistsUrl, { signal: AbortSignal.timeout(5000) }),
-        fetch(tracksUrl, { signal: AbortSignal.timeout(5000) })
+        fetch(tracksUrl, { signal: AbortSignal.timeout(5000) }),
+        fetch(recent30Url, { signal: AbortSignal.timeout(5000) })
       ]);
 
       const telemetryData = {
+        monthlyScrobblesTotal: null,
         artists: [],
         totalUniqueArtists: null,
         tracks: [],
@@ -299,6 +315,11 @@ export async function initLastFm(lastfmConfig = {}) {
         const data = await tracksRes.value.json();
         telemetryData.tracks = data?.toptracks?.track || [];
         telemetryData.totalUniqueTracks = data?.toptracks?.['@attr']?.total || null;
+      }
+
+      if (recent30Res.status === 'fulfilled' && recent30Res.value.ok) {
+        const data = await recent30Res.value.json();
+        telemetryData.monthlyScrobblesTotal = data?.recenttracks?.['@attr']?.total || null;
       }
 
       renderTelemetry(telemetryData);

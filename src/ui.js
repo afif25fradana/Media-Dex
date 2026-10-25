@@ -498,9 +498,9 @@ export function renderLastFmSection(profile, lastfmConfig) {
   section.innerHTML = `
     <div class="lastfm-section-header">
       <div class="lastfm-section-banner">
-        <h2 class="lastfm-section-title">MY LAST.FM</h2>
+        <h2 class="lastfm-section-title">LAST.FM DEX</h2>
       </div>
-      <span class="lastfm-section-accent">LIVE STATS // 33⅓ RPM</span>
+      <span class="lastfm-section-accent">LIVE STATS // 33 1/3 RPM</span>
     </div>
 
     <div class="lastfm-bento-grid">
@@ -614,16 +614,16 @@ export function renderLastFmSection(profile, lastfmConfig) {
             </g>
 
             <circle id="lastfmPowerLed" cx="290" cy="292" r="3.5" fill="#D80000" stroke="#000000" stroke-width="1"/>
-            <text x="24" y="296" font-size="8" font-family="'JetBrains Mono', Consolas, monospace" font-weight="700" fill="#FF3333" letter-spacing="1">33⅓ RPM // STEREO AUDIO</text>
+            <text x="24" y="296" font-size="8" font-family="'JetBrains Mono', Consolas, monospace" font-weight="700" fill="#FF3333" letter-spacing="1">33 1/3 RPM // STEREO AUDIO</text>
             </svg>
           </div>
         </div>
         <div class="lastfm-track-info-block">
           <h3 id="lastfmTrackTitle" class="lastfm-track-title">SCANNING FREQUENCY...</h3>
           <div id="lastfmTrackMeta" class="lastfm-track-meta">
-            <div>ARTIST // <span id="lastfmTrackArtist">STANDBY</span></div>
-            <div>ALBUM // <span id="lastfmTrackAlbum">STANDBY</span></div>
-            <div>SCROBBLED // <span id="lastfmTrackTime">STANDBY</span></div>
+            <div class="lastfm-meta-row"><span class="lastfm-meta-label">ARTIST //</span> <span id="lastfmTrackArtist" class="lastfm-meta-val">STANDBY</span></div>
+            <div class="lastfm-meta-row"><span class="lastfm-meta-label">ALBUM //</span> <span id="lastfmTrackAlbum" class="lastfm-meta-val">STANDBY</span></div>
+            <div class="lastfm-meta-row"><span id="lastfmTimeLabel" class="lastfm-meta-label">STATUS //</span> <span id="lastfmTrackTime" class="lastfm-meta-val">STANDBY</span></div>
           </div>
           <div class="lastfm-monitor-footer">
             <div class="lastfm-eq" aria-hidden="true">
@@ -640,7 +640,7 @@ export function renderLastFmSection(profile, lastfmConfig) {
       <div class="lastfm-dossier-card">
         <div class="lastfm-card-eyebrow-row">
           <span class="lastfm-card-eyebrow">// LISTENING STATS</span>
-          <span id="lastfmMonthlyScrobbles" class="lastfm-scrobbles-chip">0 SCROBBLES</span>
+          <span id="lastfmMonthlyScrobbles" class="lastfm-scrobbles-chip">LIFETIME // 0 SCROBBLES</span>
         </div>
         <div class="lastfm-dossier-header">
           <h3 class="lastfm-dossier-heading">30-DAY STATS</h3>
@@ -649,7 +649,7 @@ export function renderLastFmSection(profile, lastfmConfig) {
         <div class="lastfm-stats-trio">
           <div class="lastfm-stat-box">
             <span class="lastfm-stat-val" id="lastfmTotalScrobblesVal">--</span>
-            <span class="lastfm-stat-label">ALL-TIME PLAYS</span>
+            <span class="lastfm-stat-label">30D SCROBBLES</span>
           </div>
           <div class="lastfm-stat-box">
             <span class="lastfm-stat-val" id="lastfmMonthlyArtistsVal">--</span>

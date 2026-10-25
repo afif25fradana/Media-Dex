@@ -1811,6 +1811,20 @@ dex-empty-state {
   margin-bottom: 1.75rem;
 }
 
+.lastfm-meta-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lastfm-meta-label {
+  color: rgba(240, 236, 226, 0.55);
+}
+
+.lastfm-meta-val {
+  color: var(--white);
+  font-weight: 600;
+}
+
 .lastfm-monitor-footer {
   display: flex;
   justify-content: space-between;
@@ -1830,7 +1844,7 @@ dex-empty-state {
 .lastfm-eq span {
   width: 4px;
   height: 4px;
-  background: var(--red);
+  background: var(--red-on-dark);
   border-radius: 1px;
   transition: height 0.2s ease;
 }
@@ -1888,6 +1902,12 @@ dex-empty-state {
 
 .lastfm-btn.lastfm-btn-secondary:active {
   transform: translateY(1px);
+}
+
+.lastfm-btn[aria-disabled="true"] {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 .lastfm-stage:focus-visible {
@@ -2017,7 +2037,7 @@ dex-empty-state {
 .lastfm-rank-count {
   font-family: var(--font-mono);
   font-size: 0.65rem;
-  color: rgba(240, 236, 226, 0.5);
+  color: rgba(240, 236, 226, 0.75);
 }
 
 .lastfm-dossier-footer {
@@ -2055,12 +2075,15 @@ dex-empty-state {
   .lastfm-player-card {
     padding: 1.25rem 1rem;
   }
-  .lastfm-stats-trio {
-    grid-template-columns: 1fr;
+  .lastfm-stat-box {
+    padding: 0.6rem 0.35rem;
+  }
+  .lastfm-stat-val {
+    font-size: 1.15rem;
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .lastfm-section {
     min-height: auto;
     padding: 5rem 1.5rem 3rem;
