@@ -92,8 +92,8 @@ export function initEvents(actions) {
             window.isNavScrolling = true;
             clearTimeout(navScrollTimeout);
             
-            const isCategory = target && (target.classList.contains('category-section') || target.id === 'collection-section');
-            const mainTargetHref = isCategory ? '#collection-section' : targetId;
+            const isCollection = target && target.id === 'collection-section';
+            const mainTargetHref = isCollection ? '#collection-section' : targetId;
 
             document.querySelectorAll('.navbar-link, .mobile-menu-link').forEach(l => {
               if (l.getAttribute('href') === mainTargetHref) l.classList.add('active');
@@ -101,7 +101,7 @@ export function initEvents(actions) {
             });
 
             document.querySelectorAll('.mobile-menu-cat').forEach(c => {
-              if (isCategory && c.getAttribute('href') === targetId) c.classList.add('active');
+              if (isCollection && c.getAttribute('href') === targetId) c.classList.add('active');
               else c.classList.remove('active');
             });
             

@@ -3,29 +3,7 @@
  * Persona 5 styled live broadcast & recent scrobble status + 30-day telemetry
  */
 
-const ESC_MAP = {
-  '&': '&amp;',
-  '<': '&lt;',
-  '>': '&gt;',
-  '"': '&quot;',
-  "'": '&#039;'
-};
-
-function esc(str) {
-  if (str == null) return '';
-  return String(str).replace(/[&<>"']/g, c => ESC_MAP[c]);
-}
-
-function sanitizeUrl(url) {
-  if (typeof url !== 'string') return '#';
-  try {
-    const u = new URL(url.trim());
-    if (u.protocol === 'http:' || u.protocol === 'https:') {
-      return esc(u.href);
-    }
-  } catch {}
-  return '#';
-}
+import { esc, sanitizeUrl } from './utils.js';
 
 export async function initLastFm(lastfmConfig = {}) {
   const { username = '', apiKey = '' } = lastfmConfig || {};
@@ -181,7 +159,10 @@ export async function initLastFm(lastfmConfig = {}) {
       }
 
       if (elements.vinylArt && coverUrl) {
-        elements.vinylArt.setAttribute('href', coverUrl);
+        const safeCover = sanitizeUrl(coverUrl);
+        if (safeCover && safeCover !== '#') {
+          elements.vinylArt.setAttribute('href', safeCover);
+        }
       }
 
       if (elements.title) {

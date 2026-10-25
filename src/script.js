@@ -182,7 +182,7 @@ function setupScrollSpy() {
 
     if (activeId) {
       const activeEl = document.querySelector(activeId);
-      const isCollection = activeEl && (activeEl.id === 'collection-section' || activeEl.classList.contains('category-section'));
+      const isCollection = activeEl && activeEl.id === 'collection-section';
       const mainTargetHref = isCollection ? '#collection-section' : activeId;
 
       navLinks.forEach(link => {

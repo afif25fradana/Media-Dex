@@ -503,9 +503,7 @@ body:has(#mobile-menu.menu-open) {
 /* Keep scroll targets clear of the 64px sticky navbar */
 #hero-section,
 #lastfm-section,
-.explore-section,
-#categories-container,
-.category-section,
+#collection-section,
 .recent-overview-section,
 .site-footer,
 .hero-right,
@@ -701,7 +699,7 @@ body:has(#mobile-menu.menu-open) {
   height: 100%;
   object-fit: cover;
   object-position: center 30%; /* Shifts focus slightly up towards the face/torso */
-  transform: scale(1.35); /* Zooms in by 35% to crop out wide weapons/effects */
+  transform: scale(1.0); /* Reduced from 1.35 to eliminate magnification blur */
 }
 
 .hero-illustration-placeholder {
@@ -921,33 +919,9 @@ body:has(#mobile-menu.menu-open) {
 }
 
 
-.explore-section {
-  position: relative;
-  background: transparent;
-  padding: 5rem 2rem;
-  overflow: hidden;
-  content-visibility: auto;
-  contain-intrinsic-size: auto 560px;
-  min-height: 560px;
-}
 
-.explore-section::before {
-  display: none;
-}
 
-.explore-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto 3rem;
-}
 
-.explore-header-left {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
 
 .section-eyebrow {
   font-family: var(--font-mono);
@@ -963,23 +937,12 @@ body:has(#mobile-menu.menu-open) {
 
 /* The explore section is always void, so its eyebrow needs the bright red that
    stays ≥4.5:1 on dark regardless of theme. */
-.explore-section .section-eyebrow {
-  color: var(--red-on-dark);
-}
 
 .section-eyebrow::before {
   content: '//';
   font-weight: 700;
 }
 
-.explore-heading {
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  line-height: 1.05;
-  color: var(--white);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
 
 .view-all-link {
   font-family: var(--font-body);
@@ -1001,13 +964,7 @@ body:has(#mobile-menu.menu-open) {
 }
 
 /* The explore section is always void, so it needs white base text and bright red on hover (≥4.5:1 on dark). */
-.explore-section .view-all-link {
-  color: var(--white);
-}
 
-.explore-section .view-all-link:hover {
-  color: var(--red-on-dark);
-}
 
 .view-all-link svg {
   width: 16px;
@@ -1019,149 +976,26 @@ body:has(#mobile-menu.menu-open) {
   transform: translateX(4px);
 }
 
-.explore-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 1.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
 
-.explore-card {
-  position: relative;
-  background: var(--cream);
-  padding: 1.5rem;
-  cursor: pointer;
-  border: 3px solid #000;
-  box-shadow: 4px 4px 0 #000;
-  transform: rotate(-1deg);
-  transition: transform var(--dur-fast) var(--ease-snap), box-shadow var(--dur-fast) var(--ease-snap);
-  display: flex;
-  flex-direction: column;
-  min-height: 200px;
-  color: var(--black);
-}
 
-.explore-card:hover {
-  transform: translateY(-6px) scale(1.02) rotate(-1deg);
-  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.7), -4px -4px 0px var(--red);
-}
 
-.explore-card:active {
-  transform: translateY(-1px) scale(0.98);
-  transition-duration: 60ms;
-}
 
-.explore-card-number {
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
-  color: rgba(12, 12, 12, 0.55);
-  letter-spacing: 0.05em;
-  margin-bottom: auto;
-}
 
-.explore-card-icon {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 40px;
-  height: 40px;
-  background: var(--black);
-  color: var(--white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: rotate(6deg);
-  clip-path: polygon(5% 0%, 100% 5%, 95% 100%, 0% 95%);
-  transition: transform var(--dur-fast) var(--ease-snap);
-}
 
-.explore-card-icon svg {
-  width: 20px;
-  height: 20px;
-}
 
-.explore-card-name {
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--black);
-  margin-bottom: 0.3rem;
-}
 
-.explore-card-count {
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--red);
-  margin-bottom: 0.4rem;
-}
 
-.explore-card-desc {
-  font-family: var(--font-body);
-  font-size: 0.78rem;
-  color: rgba(12, 12, 12, 0.6);
-  line-height: 1.4;
-  margin-bottom: 0.8rem;
-}
 
-.explore-card-arrow {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  width: 20px;
-  height: 20px;
-  color: var(--black);
-  transition: transform var(--dur-fast) var(--ease-snap), color var(--dur-fast) ease;
-}
 
-.explore-card:hover .explore-card-arrow {
-  transform: translateX(6px);
-  color: var(--red);
-}
+.explore-card:hover 
+.explore-card:hover 
 
-.explore-card:hover .explore-card-icon {
-  transform: rotate(12deg) scale(1.06);
-}
 
-.explore-card--more {
-  border: 2px dashed rgba(240, 236, 226, 0.3);
-  background: rgba(240, 236, 226, 0.05);
-  clip-path: none;
-  filter: none;
-}
-
-.explore-card--more,
-.explore-card--more:hover {
-  cursor: default;
-  transform: rotate(-1deg);
-  box-shadow: 4px 4px 0 #000;
-}
-
-.explore-card--more .explore-card-name {
-  color: var(--cream);
-}
-
-.explore-card--more .explore-card-count {
-  color: var(--red-on-dark);
-}
-
-.explore-card--more .explore-card-desc {
-  color: var(--color-text-muted-on-dark);
-}
-
-.explore-card--more .explore-card-number {
-  color: rgba(240, 236, 226, 0.15);
-}
-
-.explore-card--more .explore-card-icon {
-  background: rgba(240, 236, 226, 0.1);
-  color: var(--cream);
-}
-
+.explore-card--more 
+.explore-card--more 
+.explore-card--more 
+.explore-card--more 
+.explore-card--more 
 
 .slash-divider {
   position: relative;
@@ -1194,18 +1028,7 @@ body:has(#mobile-menu.menu-open) {
   box-shadow: 2px 2px 0 #000;
 }
 
-.category-section {
-  --card-cover-ratio: 2 / 3;
-  padding: 2rem 2rem 3rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  content-visibility: auto;
-  contain-intrinsic-size: auto none auto 900px;
-}
 
-.category-section[data-category="music"] {
-  --card-cover-ratio: 1 / 1;
-}
 
 .section-header {
   position: relative;
@@ -1290,7 +1113,6 @@ body:has(#mobile-menu.menu-open) {
   padding: 4rem 2rem 3rem;
   max-width: 1200px;
   margin: 0 auto;
-  contain-intrinsic-size: auto none auto 700px;
 }
 
 .collection-header {
@@ -1479,6 +1301,8 @@ body:has(#mobile-menu.menu-open) {
 .card-grid {
   min-height: 480px;
   contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 650px;
   transition: opacity 120ms ease-out;
 }
 
@@ -2414,14 +2238,7 @@ dex-empty-state {
   animation: slashInRight var(--dur-entry) var(--ease-snap) forwards;
 }
 
-.category-section.revealed .section-banner {
-  clip-path: inset(0 0 0 0);
-}
 
-.category-section.revealed .section-accent {
-  opacity: 1;
-  transform: rotate(-2deg) translateX(0);
-}
 
 
 @media (max-width: 1024px) {
@@ -2511,15 +2328,8 @@ dex-empty-state {
     font-size: clamp(5rem, 20vw, 8rem);
   }
 
-  .explore-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  .explore-section {
-    padding: 3rem 1rem;
-  }
-
+  
+  
   .recent-overview-section {
     padding: 3rem 1rem;
   }
@@ -2528,16 +2338,8 @@ dex-empty-state {
     padding: 1.5rem 1rem;
   }
 
-  .explore-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
-  }
-
-  .category-section {
-    padding: 1.5rem 1rem 2rem;
-  }
-
+  
+  
   .collection-section {
     padding: 2.5rem 1rem 2rem;
   }
@@ -2586,32 +2388,12 @@ dex-empty-state {
     justify-content: center;
   }
 
-  .explore-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .explore-card {
-    padding: 1rem;
-  }
-
-  .explore-card-name {
-    font-size: 0.95rem;
-  }
-
-  .explore-card-desc {
-    font-size: 0.7rem;
-  }
-
-  .explore-card-icon {
-    width: 32px;
-    height: 32px;
-  }
-
-  .explore-card-icon svg {
-    width: 16px;
-    height: 16px;
-  }
-
+  
+  
+  
+  
+  
+  
   .card-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.4rem 0.8rem;
@@ -2632,10 +2414,7 @@ dex-empty-state {
     grid-template-columns: repeat(4, 1fr);
   }
 
-  .explore-grid {
-    grid-template-columns: repeat(6, 1fr);
   }
-}
 
 
 .mobile-menu-link:focus-visible {
@@ -2703,10 +2482,7 @@ dex-empty-state {
     display: none;
   }
 
-  .explore-card {
-    transition: none !important;
-  }
-
+  
   .recent-card {
     transition: none !important;
   }

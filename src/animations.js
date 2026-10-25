@@ -2,9 +2,7 @@ import { prefersReducedMotion } from './motion.js';
 
 const TIMING = {
   PAGE_ENTRANCE_STAGGER: 120,
-  SCROLL_READY_DELAY: 1000,
-  LOADING_DISMISS_DELAY: 500,
-  LOADING_HIDE_DELAY: 400
+  SCROLL_READY_DELAY: 1000
 };
 
 export function dismissLoading(onDone) {
@@ -21,14 +19,25 @@ export function dismissLoading(onDone) {
     return;
   }
 
-  setTimeout(() => {
+  requestAnimationFrame(() => {
     loader.classList.add('dismissed');
-    setTimeout(() => {
+
+    const handleTransitionEnd = (e) => {
+      if (e.target !== loader) return;
+      loader.removeEventListener('transitionend', handleTransitionEnd);
       loader.style.display = 'none';
       loader.setAttribute('aria-hidden', 'true');
-      if (onDone) onDone();
-    }, TIMING.LOADING_HIDE_DELAY);
-  }, TIMING.LOADING_DISMISS_DELAY);
+    };
+
+    loader.addEventListener('transitionend', handleTransitionEnd);
+    setTimeout(() => {
+      loader.removeEventListener('transitionend', handleTransitionEnd);
+      loader.style.display = 'none';
+      loader.setAttribute('aria-hidden', 'true');
+    }, 360);
+
+    if (onDone) onDone();
+  });
 }
 
 export function triggerPageEntrance() {
@@ -53,7 +62,7 @@ function isInViewport(el) {
 export function setupScrollReveals() {
   if (prefersReducedMotion()) return;
 
-  const sections = document.querySelectorAll('.panel-enter, .collection-section, .category-section');
+  const sections = document.querySelectorAll('.panel-enter, .collection-section');
 
   if (!window.IntersectionObserver) {
     sections.forEach(s => s.classList.add('revealed'));

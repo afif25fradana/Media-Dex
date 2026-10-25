@@ -1,9 +1,5 @@
-function encodeAssetPath(path) {
-  if (!path || typeof path !== 'string') return '';
-  return path.split('/').map(encodeURIComponent).join('/');
-}
-
-import { esc, CLOSE_ICON_SVG } from './ui.js';
+import { encodeAssetPath, esc } from './utils.js';
+import { CLOSE_ICON_SVG } from './icons.js';
 
 let activeModal = null;
 
