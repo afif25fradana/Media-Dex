@@ -13,17 +13,7 @@ import {
   MENU_ICON_SVG
 } from './icons.js';
 
-export {
-  SOCIAL_ICONS,
-  CATEGORY_ICONS,
-  LOGO_SVG,
-  FOOTER_WINGS_SVG,
-  CLOSE_ICON_SVG,
-  MENU_ICON_SVG
-};
-
 export const CARD_ROTATIONS = [-3, 2, -1, 3, -1, 2, -2, 1, -2, 2, -1, 2];
-export const ENTRANCE_DIRS = ['left', 'right'];
 export const NAV_LINKS = [
   { label: 'Home', href: '#hero-section' },
   { label: 'Last.fm', href: '#lastfm-section' },
@@ -31,17 +21,14 @@ export const NAV_LINKS = [
   { label: 'Recently Added', href: '#recent-overview' },
   { label: 'About', href: '#dex-overview' }
 ];
-export const MAX_CATEGORY_CARDS = 6;
 
-export { esc };
-
-// Hyperscript-like helper for DOM generation without innerHTML
+// Hyperscript-like helper for DOM generation (restricts raw markup strictly to static SVG nodes)
 export function h(tag, props, ...children) {
   const el = document.createElement(tag);
   if (props) {
     for (const key in props) {
       if (key === 'className' && props[key]) el.className = props[key];
-      else if (key === 'innerHTML') el.innerHTML = props[key];
+      else if (key === 'svgMarkup' && typeof props[key] === 'string') el.innerHTML = props[key];
       else if (key === 'textContent') el.textContent = props[key];
       else if (key === 'style' && typeof props[key] === 'string') el.style.cssText = props[key];
       else if (props[key] !== undefined && props[key] !== null) el.setAttribute(key, props[key]);
@@ -120,7 +107,7 @@ export function renderMobileMenu(categories) {
 
 export function renderHero(profile, socials) {
   const hero = document.getElementById('hero-section');
-  let heroImageHTML = profile?.heroImage ? `<img src="${esc(profile.heroImage)}" alt="${esc(profile.name || 'GUEST')} illustration" fetchpriority="high" width="600" height="600">` : `<div class="hero-illustration-placeholder"></div>`;
+  let heroImageHTML = profile?.heroImage ? `<img src="${esc(encodeAssetPath(profile.heroImage))}" alt="${esc(profile.name || 'GUEST')} illustration" fetchpriority="high" width="600" height="600">` : `<div class="hero-illustration-placeholder"></div>`;
   const socialRailHTML = (socials || []).map(s => `
     <a href="${esc(sanitizeUrl(s.url))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(s.label)}" title="${esc(s.label)}">
       ${SOCIAL_ICONS[s.platform] || ''}
@@ -365,11 +352,7 @@ export function filterAndRenderCards(isInitial = false) {
   }
 }
 
-// Backward-compatibility wrappers
-export function renderCategories(categories) {
-  renderCollection(categories);
-}
-export function renderExploreCategories() {}
+
 
 /* ==========================================================================
    RECENTLY ADDED & STATS
@@ -445,7 +428,7 @@ export function renderRecentlyAdded(categories, profile) {
       ),
       h('a', { href: '#collection-section', className: 'view-all-link', 'aria-label': 'VIEW ALL: View collection' },
         'VIEW ALL',
-        h('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', innerHTML: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>' })
+        h('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', svgMarkup: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>' })
       )
     ),
     recentCardsRow
@@ -474,22 +457,22 @@ function buildDexOverview(categories, profile) {
     ),
     h('div', { className: 'overview-grid' },
       h('div', { className: 'overview-stat' },
-        h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' }),
+        h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' }),
         h('span', { className: 'overview-stat-number' }, totalEntries),
         h('span', { className: 'overview-stat-label' }, 'TOTAL ENTRIES')
       ),
       h('div', { className: 'overview-stat' },
-        h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>' }),
+        h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>' }),
         h('span', { className: 'overview-stat-number' }, categoryCount),
         h('span', { className: 'overview-stat-label' }, 'CATEGORIES')
       ),
       h('div', { className: 'overview-stat' },
-        h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' }),
+        h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' }),
         h('span', { className: 'overview-stat-number' }, latestDateStr),
         h('span', { className: 'overview-stat-label' }, 'LATEST ADDED')
       ),
       h('div', { className: 'overview-stat' },
-        h('div', { className: 'overview-stat-icon', innerHTML: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' }),
+        h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' }),
         h('span', { className: 'overview-stat-number' }, curatorLocation),
         h('span', { className: 'overview-stat-label' }, 'LOCATION')
       )

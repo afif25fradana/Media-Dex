@@ -79,7 +79,9 @@ const init = async () => {
       if (appEl) appEl.inert = false;
       if (headerEl) headerEl.inert = false;
       menuTriggers.forEach(btn => btn.setAttribute('aria-expanded', 'false'));
-      const fallbackTarget = document.getElementById('navbar-menu-btn');
+      const mobileBtn = document.getElementById('navbar-menu-btn');
+      const desktopBtn = document.getElementById('navbar-menu-desktop-btn');
+      const fallbackTarget = (mobileBtn && mobileBtn.offsetParent !== null) ? mobileBtn : (desktopBtn || mobileBtn);
       const target = lastFocusedEl && lastFocusedEl.isConnected ? lastFocusedEl : fallbackTarget;
       if (target && target.focus) target.focus();
       lastFocusedEl = null;
@@ -190,8 +192,9 @@ function setupScrollSpy() {
         else link.classList.remove('active');
       });
 
+      const activeTabCat = document.querySelector('.cat-tab.is-active')?.dataset.cat;
       catLinks.forEach(link => {
-        if (isCollection && link.getAttribute('href') === activeId) link.classList.add('active');
+        if (isCollection && link.dataset.cat === activeTabCat) link.classList.add('active');
         else link.classList.remove('active');
       });
     }
@@ -207,7 +210,7 @@ function setupScrollSpy() {
     applyActive();
   }, {
     rootMargin: '-10% 0px -10% 0px',
-    threshold: [0, 0.5]
+    threshold: [0, 0.1, 0.2, 0.3, 0.5, 0.75]
   });
 
   sections.forEach(sec => observer.observe(sec));

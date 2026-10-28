@@ -100,8 +100,9 @@ export function initEvents(actions) {
               else l.classList.remove('active');
             });
 
+            const activeTabCat = document.querySelector('.cat-tab.is-active')?.dataset.cat;
             document.querySelectorAll('.mobile-menu-cat').forEach(c => {
-              if (isCollection && c.getAttribute('href') === targetId) c.classList.add('active');
+              if (isCollection && c.dataset.cat === activeTabCat) c.classList.add('active');
               else c.classList.remove('active');
             });
             

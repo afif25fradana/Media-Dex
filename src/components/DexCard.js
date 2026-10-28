@@ -340,16 +340,7 @@ export class DexCard extends HTMLElement {
     this.letterEl.textContent = firstLetter;
   }
 
-  /**
-   * Dismiss the loading state manually (e.g. timeout or forced show)
-   */
-  dismissLoading() {
-    this.classList.remove('card-will-animate');
-    this.classList.add('card-ready');
-    if (!this.imgEl.classList.contains('loaded')) {
-      this._showPlaceholder(this.getAttribute('title') || '');
-    }
-  }
+
 }
 
 if (!customElements.get('dex-card')) {

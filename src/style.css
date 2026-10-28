@@ -923,25 +923,7 @@ body:has(#mobile-menu.menu-open) {
 
 
 
-.section-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--red-text);
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
 
-/* The explore section is always void, so its eyebrow needs the bright red that
-   stays ≥4.5:1 on dark regardless of theme. */
-
-.section-eyebrow::before {
-  content: '//';
-  font-weight: 700;
-}
 
 
 .view-all-link {
@@ -987,16 +969,6 @@ body:has(#mobile-menu.menu-open) {
 
 
 
-.explore-card:hover 
-.explore-card:hover 
-
-
-.explore-card--more 
-.explore-card--more 
-.explore-card--more 
-.explore-card--more 
-.explore-card--more 
-
 .slash-divider {
   position: relative;
   height: 40px;
@@ -1030,65 +1002,7 @@ body:has(#mobile-menu.menu-open) {
 
 
 
-.section-header {
-  position: relative;
-  margin-bottom: 2rem;
-}
 
-.section-banner {
-  display: inline-block;
-  background: var(--red);
-  padding: 0.6rem 2.5rem 0.6rem 1.5rem;
-  transform: skewX(-8deg);
-  box-shadow: inset 0px 4px 10px rgba(0, 0, 0, 0.4), 5px 5px 0 #000, -3px -3px 0 rgba(255, 255, 255, 0.15);
-  border: 2px solid #000;
-  position: relative;
-  overflow: hidden;
-  contain: layout style;
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 300ms var(--ease-snap);
-}
-
-.section-banner::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(0, 0, 0, 0.4) 15%, transparent 16%);
-  background-size: 6px 6px;
-  opacity: 1;
-  pointer-events: none;
-  transform: translateZ(0);
-  z-index: 1;
-}
-
-.section-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  line-height: 1.05;
-  color: var(--white);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  transform: skewX(8deg);
-  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.8);
-  font-style: italic;
-  font-weight: bold;
-  -webkit-text-stroke: 1.5px #000;
-  paint-order: stroke fill;
-  position: relative;
-  z-index: 2;
-}
-
-.section-accent {
-  font-family: var(--font-messy);
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--red-text);
-  display: inline-block;
-  margin-left: 1rem;
-  margin-top: 0.4rem;
-  transform: rotate(-2deg);
-  letter-spacing: 0.02em;
-}
 
 
 .sr-only {
@@ -1467,15 +1381,7 @@ dex-empty-state {
   text-overflow: ellipsis;
 }
 
-.recent-card-meta {
-  display: block;
-  font-family: var(--font-body);
-  font-size: 0.7rem;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+
 
 .recent-card-sub {
   display: block;
@@ -2213,47 +2119,7 @@ dex-empty-state {
 }
 
 
-@keyframes slashInLeft {
-  0% {
-    transform: translateX(-105%) rotate(-4deg);
-    opacity: 0;
-  }
 
-  65% {
-    transform: translateX(1.5%) rotate(1deg);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translateX(0) rotate(0deg);
-    opacity: 1;
-  }
-}
-
-@keyframes slashInRight {
-  0% {
-    transform: translateX(105%) rotate(4deg);
-    opacity: 0;
-  }
-
-  65% {
-    transform: translateX(-1.5%) rotate(-1deg);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translateX(0) rotate(0deg);
-    opacity: 1;
-  }
-}
-
-.panel-enter--left.revealed {
-  animation: slashInLeft var(--dur-entry) var(--ease-snap) forwards;
-}
-
-.panel-enter--right.revealed {
-  animation: slashInRight var(--dur-entry) var(--ease-snap) forwards;
-}
 
 
 
@@ -2384,9 +2250,7 @@ dex-empty-state {
     gap: 1.8rem 1.2rem;
   }
 
-  .section-title {
-    font-size: clamp(1.5rem, 6vw, 2.2rem);
-  }
+  
 
 }
 
@@ -2467,16 +2331,7 @@ dex-empty-state {
     transition: none !important;
   }
 
-  .section-banner {
-    clip-path: none !important;
-    transition: none !important;
-  }
-
-  .section-accent {
-    opacity: 1 !important;
-    transform: rotate(-2deg) !important;
-    transition: none !important;
-  }
+  
 
   .loading-screen {
     transition: none !important;
@@ -2577,31 +2432,7 @@ body:has(dialog.dex-modal-dialog[open]) {
   overflow: hidden;
 }
 
-.dex-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 3000;
-  background: rgba(0, 0, 0, 0.82);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  opacity: 0;
-  transition: opacity 0.25s var(--ease-snap);
-}
 
-.dex-modal-overlay.is-open {
-  opacity: 1;
-}
-
-.dex-modal-overlay::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 6px 6px;
-  pointer-events: none;
-}
 
 .dex-modal {
   position: relative;
@@ -2616,9 +2447,7 @@ body:has(dialog.dex-modal-dialog[open]) {
   transition: transform 280ms var(--ease-snap), opacity 280ms var(--ease-snap);
 }
 
-.dex-modal-dialog.is-open .dex-modal,
-.dex-modal.is-open,
-.dex-modal-overlay.is-open .dex-modal {
+.dex-modal-dialog.is-open .dex-modal {
   transform: skewX(0deg) rotate(0deg) scale(1);
   opacity: 1;
 }
@@ -2823,17 +2652,12 @@ body:has(dialog.dex-modal-dialog[open]) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dex-modal-overlay,
   .dex-modal {
     transition: opacity 0.15s ease !important;
-  }
-
-  .dex-modal {
     transform: none !important;
   }
 
-  .dex-modal-dialog.is-open .dex-modal,
-  .dex-modal-overlay.is-open .dex-modal {
+  .dex-modal-dialog.is-open .dex-modal {
     transform: none !important;
   }
 }

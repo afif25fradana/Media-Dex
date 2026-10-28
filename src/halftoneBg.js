@@ -89,7 +89,8 @@ export function initHalftoneBackground() {
   ];
 
   const BUCKET_COUNT = 6;
-  const bucketBuffers = Array.from({ length: BUCKET_COUNT }, () => new Float32Array(65536 * 3));
+  const MAX_DOTS_PER_BUCKET = 16384;
+  const bucketBuffers = Array.from({ length: BUCKET_COUNT }, () => new Float32Array(MAX_DOTS_PER_BUCKET * 3));
   const bucketCounts = new Int32Array(BUCKET_COUNT);
 
   let width = 0;
