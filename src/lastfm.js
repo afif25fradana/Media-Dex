@@ -6,7 +6,14 @@
 import { esc, sanitizeUrl } from './utils.js';
 
 export async function initLastFm(lastfmConfig = {}) {
-  const { username = '', apiKey = '' } = lastfmConfig || {};
+  const { username = '', apiKey: configApiKey = '' } = lastfmConfig || {};
+  let localKey = '';
+  try {
+    localKey = localStorage.getItem('dex-lastfm-key') || '';
+  } catch (err) {
+    console.debug('localStorage unavailable:', err);
+  }
+  const apiKey = (localKey || configApiKey).trim();
 
   const elements = {
     title: document.getElementById('lastfmTrackTitle'),
@@ -96,7 +103,9 @@ export async function initLastFm(lastfmConfig = {}) {
   };
 
   const isConfigured = Boolean(
-    apiKey && apiKey !== 'PASTE_YOUR_API_KEY_HERE' && apiKey.trim() !== '' &&
+    apiKey &&
+    apiKey !== 'PASTE_YOUR_API_KEY_HERE' &&
+    !/^<.+>$/.test(apiKey) &&
     username && username.trim() !== ''
   );
 
@@ -231,17 +240,20 @@ export async function initLastFm(lastfmConfig = {}) {
     }
   };
 
+  const toArray = (val) => (Array.isArray(val) ? val : val ? [val] : []);
+
   const renderTelemetry = (data) => {
     if (!data) return;
-    if (elements.totalScrobblesVal && data.monthlyScrobblesTotal) {
+    if (elements.totalScrobblesVal && data.monthlyScrobblesTotal != null) {
       elements.totalScrobblesVal.textContent = Number(data.monthlyScrobblesTotal).toLocaleString('en-US');
     }
-    if (elements.monthlyArtistsVal && data.totalUniqueArtists) {
+    if (elements.monthlyArtistsVal && data.totalUniqueArtists != null) {
       elements.monthlyArtistsVal.textContent = Number(data.totalUniqueArtists).toLocaleString('en-US');
     }
     if (elements.topArtistsList) {
-      if (Array.isArray(data.artists) && data.artists.length > 0) {
-        elements.topArtistsList.innerHTML = data.artists.slice(0, 5).map((art, idx) => `
+      const artists = toArray(data.artists);
+      if (artists.length > 0) {
+        elements.topArtistsList.innerHTML = artists.slice(0, 5).map((art, idx) => `
           <div class="lastfm-rank-item">
             <span class="lastfm-rank-num">#0${idx + 1}</span>
             <a href="${sanitizeUrl(art.url)}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name">${esc(art.name)}</a>
@@ -253,12 +265,13 @@ export async function initLastFm(lastfmConfig = {}) {
       }
     }
 
-    if (elements.monthlyTracksVal && data.totalUniqueTracks) {
+    if (elements.monthlyTracksVal && data.totalUniqueTracks != null) {
       elements.monthlyTracksVal.textContent = Number(data.totalUniqueTracks).toLocaleString('en-US');
     }
     if (elements.topTracksList) {
-      if (Array.isArray(data.tracks) && data.tracks.length > 0) {
-        elements.topTracksList.innerHTML = data.tracks.slice(0, 5).map((trk, idx) => `
+      const tracks = toArray(data.tracks);
+      if (tracks.length > 0) {
+        elements.topTracksList.innerHTML = tracks.slice(0, 5).map((trk, idx) => `
           <div class="lastfm-rank-item">
             <span class="lastfm-rank-num">#0${idx + 1}</span>
             <a href="${sanitizeUrl(trk.url)}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name" title="${esc(trk.name)}">${esc(trk.name)}</a>
@@ -305,31 +318,46 @@ export async function initLastFm(lastfmConfig = {}) {
         totalUniqueTracks: null
       };
 
+      let hasAnyTelemetry = false;
+
       if (artistsRes.status === 'fulfilled' && artistsRes.value.ok) {
         const data = await artistsRes.value.json();
-        telemetryData.artists = data?.topartists?.artist || [];
-        telemetryData.totalUniqueArtists = data?.topartists?.['@attr']?.total || null;
+        if (data?.topartists && !data.error) {
+          telemetryData.artists = toArray(data.topartists.artist);
+          telemetryData.totalUniqueArtists = data.topartists['@attr']?.total ?? '0';
+          hasAnyTelemetry = true;
+        }
       }
 
       if (tracksRes.status === 'fulfilled' && tracksRes.value.ok) {
         const data = await tracksRes.value.json();
-        telemetryData.tracks = data?.toptracks?.track || [];
-        telemetryData.totalUniqueTracks = data?.toptracks?.['@attr']?.total || null;
+        if (data?.toptracks && !data.error) {
+          telemetryData.tracks = toArray(data.toptracks.track);
+          telemetryData.totalUniqueTracks = data.toptracks['@attr']?.total ?? '0';
+          hasAnyTelemetry = true;
+        }
       }
 
       if (recent30Res.status === 'fulfilled' && recent30Res.value.ok) {
         const data = await recent30Res.value.json();
-        telemetryData.monthlyScrobblesTotal = data?.recenttracks?.['@attr']?.total || null;
+        if (data?.recenttracks && !data.error) {
+          telemetryData.monthlyScrobblesTotal = data.recenttracks['@attr']?.total ?? '0';
+          hasAnyTelemetry = true;
+        }
       }
 
       renderTelemetry(telemetryData);
 
-      try {
-        sessionStorage.setItem(cacheKey, JSON.stringify({
-          timestamp: Date.now(),
-          data: telemetryData
-        }));
-      } catch {}
+      if (hasAnyTelemetry) {
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify({
+            timestamp: Date.now(),
+            data: telemetryData
+          }));
+        } catch (storageErr) {
+          console.debug('sessionStorage telemetry write skipped:', storageErr);
+        }
+      }
     } catch (err) {
       console.warn('Last.fm telemetry unavailable:', err);
     }
@@ -340,7 +368,9 @@ export async function initLastFm(lastfmConfig = {}) {
 
   if (elements.stage) {
     elements.stage.onclick = () => {
-      const url = elements.trackLink?.href || `https://www.last.fm/user/${encodeURIComponent(username)}`;
+      const rawHref = elements.trackLink?.getAttribute('href');
+      const fallbackUrl = `https://www.last.fm/user/${encodeURIComponent(username)}`;
+      const url = (rawHref && rawHref !== '#') ? elements.trackLink.href : fallbackUrl;
       window.open(url, '_blank', 'noopener,noreferrer');
     };
     elements.stage.onkeydown = (e) => {

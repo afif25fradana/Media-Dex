@@ -196,6 +196,7 @@ let allItems = [];
 let allCategories = [];
 let activeCategory = 'games';
 let sortDirection = 'desc';
+let switchTimeoutId = null;
 
 export function renderCollection(categories) {
   allCategories = categories || [];
@@ -346,11 +347,18 @@ export function filterAndRenderCards(isInitial = false) {
     reobserveCards();
   };
 
+  if (switchTimeoutId !== null) {
+    clearTimeout(switchTimeoutId);
+    switchTimeoutId = null;
+  }
+
   if (isInitial || prefersReducedMotion()) {
+    grid.classList.remove('is-switching');
     renderContent();
   } else {
     grid.classList.add('is-switching');
-    setTimeout(() => {
+    switchTimeoutId = setTimeout(() => {
+      switchTimeoutId = null;
       renderContent();
       grid.classList.remove('is-switching');
     }, 120);

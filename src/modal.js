@@ -1,7 +1,9 @@
 import { encodeAssetPath, esc } from './utils.js';
 import { CLOSE_ICON_SVG } from './icons.js';
+import { prefersReducedMotion } from './motion.js';
 
 let activeModal = null;
+let activeCloseCleanup = null;
 
 function formatDate(dateAdded) {
   if (!dateAdded) return '';
@@ -11,7 +13,11 @@ function formatDate(dateAdded) {
 }
 
 export function openDetailModal(item) {
-  if (!item || activeModal) return;
+  if (!item) return;
+  if (activeCloseCleanup) {
+    activeCloseCleanup();
+  }
+  if (activeModal) return;
 
   const previouslyFocused = document.activeElement;
   const title = item.title || 'Unknown';
@@ -59,28 +65,41 @@ export function openDetailModal(item) {
   if (closeBtn) closeBtn.focus();
 
   let isClosing = false;
+  let closeTimerId = null;
+
+  const finish = () => {
+    if (closeTimerId !== null) {
+      clearTimeout(closeTimerId);
+      closeTimerId = null;
+    }
+    activeCloseCleanup = null;
+    if (dialog.open) {
+      dialog.close();
+    }
+    dialog.remove();
+    if (activeModal === dialog) {
+      activeModal = null;
+    }
+    if (previouslyFocused) {
+      if (previouslyFocused.shadowRoot) {
+        const inner = previouslyFocused.shadowRoot.querySelector('.card') || previouslyFocused;
+        if (inner && inner.focus) inner.focus({ preventScroll: true });
+      } else if (previouslyFocused.focus) {
+        previouslyFocused.focus({ preventScroll: true });
+      }
+    }
+  };
   const close = () => {
     if (isClosing) return;
     isClosing = true;
     dialog.classList.remove('is-open');
 
-    const finish = () => {
-      if (dialog.open) {
-        dialog.close();
-      }
-      dialog.remove();
-      activeModal = null;
-      if (previouslyFocused) {
-        if (previouslyFocused.shadowRoot) {
-          const inner = previouslyFocused.shadowRoot.querySelector('.card') || previouslyFocused;
-          if (inner && inner.focus) inner.focus({ preventScroll: true });
-        } else if (previouslyFocused.focus) {
-          previouslyFocused.focus({ preventScroll: true });
-        }
-      }
-    };
-
-    setTimeout(finish, 150);
+    activeCloseCleanup = finish;
+    if (prefersReducedMotion()) {
+      finish();
+    } else {
+      closeTimerId = setTimeout(finish, 280);
+    }
   };
 
   dialog.addEventListener('cancel', (e) => {

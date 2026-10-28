@@ -1,5 +1,7 @@
 import { prefersReducedMotion } from './motion.js';
 
+let reobserveReadyTimer = null;
+
 const TIMING = {
   PAGE_ENTRANCE_STAGGER: 120,
   SCROLL_READY_DELAY: 1000
@@ -124,6 +126,10 @@ export function reobserveCards() {
   const isSectionRevealed = section && (section.classList.contains('revealed') || isInViewport(section));
 
   if (isSectionRevealed) {
+    if (reobserveReadyTimer !== null) {
+      clearTimeout(reobserveReadyTimer);
+      reobserveReadyTimer = null;
+    }
     cards.forEach((card, i) => {
       card.style.setProperty('--delay', `${i * 50}ms`);
       requestAnimationFrame(() => {
@@ -131,7 +137,8 @@ export function reobserveCards() {
       });
     });
 
-    setTimeout(() => {
+    reobserveReadyTimer = setTimeout(() => {
+      reobserveReadyTimer = null;
       cards.forEach(card => {
         card.classList.remove('card-will-animate');
         card.classList.add('card-ready');
