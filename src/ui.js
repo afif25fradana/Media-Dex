@@ -6,7 +6,7 @@ import { prefersReducedMotion } from './motion.js';
 
 import {
   SOCIAL_ICONS,
-  CATEGORY_ICONS,
+
   LOGO_SVG,
   FOOTER_WINGS_SVG,
   CLOSE_ICON_SVG,
