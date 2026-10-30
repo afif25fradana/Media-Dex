@@ -1,0 +1,63 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run Test Suite
+        run: node --test tests/dex.test.mjs
+
+      - name: Inject Last.fm API Key for Deployment
+        env:
+          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
+        run: |
+          if [ -n "$LASTFM_API_KEY" ]; then
+            echo "Injecting configured Last.fm API key into deployment data.json..."
+            node -e '
+              const fs = require("fs");
+              const data = JSON.parse(fs.readFileSync("data.json", "utf8"));
+              if (data.lastfm) {
+                data.lastfm.apiKey = process.env.LASTFM_API_KEY;
+                fs.writeFileSync("data.json", JSON.stringify(data, null, 2) + "\n");
+              }
+            '
+          else
+            echo "LASTFM_API_KEY not configured. Deploying in Standby mode."
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
