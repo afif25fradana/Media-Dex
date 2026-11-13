@@ -53,3 +53,7 @@ coverage/
 
 # opencode skill/tooling files
 .opencode/
+
+# taste-skill finish gate artifacts
+.taste-skill/
+

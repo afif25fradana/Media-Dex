@@ -6,7 +6,6 @@ sheet.replaceSync(`
     display: block;
     contain: layout style;
     isolation: isolate;
-    --rotation: 0deg;
     --delay: 0ms;
     min-width: 0; /* Prevents grid blowout from long text */
   }
@@ -23,17 +22,17 @@ sheet.replaceSync(`
   
   :host(.card-will-animate) {
     opacity: 0;
-    transform: translateY(50px) rotate(var(--rotation)) translateZ(0);
+    transform: translateY(50px) translateZ(0);
   }
   :host(.card-visible) {
     opacity: 1;
-    transform: translateY(0) rotate(var(--rotation)) translateZ(0);
+    transform: translateY(0) translateZ(0);
     transition: opacity 80ms step-start var(--delay),
                 transform 340ms cubic-bezier(0.15, 0.85, 0.35, 1.15) var(--delay);
   }
   :host(.card-ready) {
     opacity: 1;
-    transform: translateY(0) rotate(var(--rotation)) translateZ(0);
+    transform: translateY(0) translateZ(0);
     transition: opacity 0.2s var(--ease-snap, ease), transform 0.2s var(--ease-snap, ease);
   }
 
@@ -45,8 +44,10 @@ sheet.replaceSync(`
     -webkit-font-smoothing: subpixel-antialiased;
     outline: 1px solid transparent;
     transition: transform 0.2s var(--ease-snap, ease), box-shadow 0.2s var(--ease-snap, ease);
-    border: 3px solid #000;
-    box-shadow: var(--shadow-card, 6px 6px 0 #000, -4px -4px 0 #D80000);
+    border: 1px solid var(--border-default, rgba(255, 255, 255, 0.14));
+    border-radius: var(--radius-card, 0px);
+    overflow: hidden;
+    box-shadow: var(--shadow-card, 0 4px 16px -2px rgba(0, 0, 0, 0.5));
     
     text-align: left;
     padding: 0;
@@ -58,30 +59,17 @@ sheet.replaceSync(`
     display: flex;
     flex-direction: column;
     min-width: 0;
-
-    transform: rotate(var(--rotation, 0deg)) translateZ(0);
   }
   
   .card:focus-visible {
-    outline: 4px solid var(--red, #D80000);
-    outline-offset: 4px;
-  }
-
-  .card-cover::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgba(0, 0, 0, 0.4) 15%, transparent 16%);
-    background-size: 6px 6px;
-    opacity: 1;
-    pointer-events: none;
-    z-index: 5;
+    outline: 2px solid var(--operator-accent, var(--red, #D01E25));
+    outline-offset: 2px;
   }
 
   .card-flash {
     position: absolute;
     inset: 0;
-    background: rgba(216, 0, 0, 0.4);
+    background: var(--card-flash-bg, rgba(208, 30, 37, 0.35));
     opacity: 0;
     pointer-events: none;
     z-index: 10;
@@ -89,18 +77,23 @@ sheet.replaceSync(`
   }
 
   .card:hover {
-    transform: translateY(-8px) scale(1.04) rotate(0deg) translateZ(0);
+    transform: translateY(-2px);
     z-index: 20;
-    box-shadow: var(--shadow-card-hover, 10px 10px 0 #000, -6px -6px 0 #D80000);
+    box-shadow: var(--shadow-card-hover, 0 12px 32px -4px rgba(0, 0, 0, 0.7));
   }
 
   .card:hover .card-flash {
     opacity: 0.6;
   }
 
+  .card:hover .card-img,
+  .card:hover .card-cover img {
+    transform: scale(1.025);
+  }
+
   .card:active {
-    transform: translateY(-2px) scale(0.96) rotate(0deg) translateZ(0);
-    box-shadow: var(--shadow-card-press, 2px 2px 0 #000, -2px -2px 0 #D80000);
+    transform: translateY(0);
+    box-shadow: var(--shadow-card-press, 0 2px 6px rgba(0, 0, 0, 0.6));
     transition-duration: 60ms;
   }
 
@@ -111,13 +104,22 @@ sheet.replaceSync(`
     :host(.card-ready) {
       transition: none !important;
       opacity: 1 !important;
-      transform: rotate(var(--rotation, 0deg)) translateZ(0) !important;
+      transform: none !important;
     }
     .card {
       transition: none !important;
+      transform: none !important;
     }
     .card:hover, .card:active {
-      transform: rotate(var(--rotation, 0deg)) translateZ(0) !important;
+      transform: none !important;
+      transition: none !important;
+    }
+    .card-cover img,
+    .card-img,
+    .card:hover .card-cover img,
+    .card:hover .card-img {
+      transform: none !important;
+      transition: none !important;
     }
     .card-flash {
       transition: none !important;
@@ -131,22 +133,24 @@ sheet.replaceSync(`
   .card-cover {
     aspect-ratio: var(--card-cover-ratio, 2 / 3);
     overflow: hidden;
-    border-bottom: 3px solid #000;
+    border-bottom: 1px solid var(--border-default, rgba(255, 255, 255, 0.14));
     position: relative;
     background: var(--black, #0C0C0C);
   }
 
-  .card-cover img {
+  .card-cover img,
+  .card-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     position: relative;
     z-index: 2;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease, transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .card-cover img.loaded {
+  .card-cover img.loaded,
+  .card-img.loaded {
     opacity: 1;
   }
 
@@ -187,7 +191,7 @@ sheet.replaceSync(`
   .fallback-bg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, var(--red, #D80000) 0%, var(--black, #0C0C0C) 100%);
+    background: linear-gradient(135deg, var(--operator-accent, var(--red, #D01E25)) 0%, var(--black, #0C0C0C) 100%);
     z-index: 0;
   }
 
@@ -234,7 +238,7 @@ template.innerHTML = `
     <div class="card-flash" aria-hidden="true"></div>
     <div class="card-cover">
       <div class="skeleton" aria-hidden="true"></div>
-      <img loading="lazy" alt="" />
+      <img class="card-img" loading="lazy" alt="" />
       <div class="card-placeholder" style="display: none;">
         <div class="fallback-bg"></div>
         <span class="card-placeholder-letter"></span>
@@ -291,9 +295,8 @@ export class DexCard extends HTMLElement {
     const title = this.getAttribute('title') || '';
     const subtitle = this.getAttribute('subtitle') || '';
     const imageSrc = this.getAttribute('image-src') || '';
-    const rotation = this.getAttribute('rotation') || '0deg';
 
-    this.style.setProperty('--rotation', rotation);
+    this.style.setProperty('--rotation', '0deg');
 
     this.titleEl.textContent = title;
     this.subtitleEl.textContent = subtitle;
@@ -339,8 +342,6 @@ export class DexCard extends HTMLElement {
     const firstLetter = (title.trim()[0] || '?').toUpperCase();
     this.letterEl.textContent = firstLetter;
   }
-
-
 }
 
 if (!customElements.get('dex-card')) {

@@ -1,12 +1,48 @@
 import { openDetailModal } from './modal.js';
 import { prefersReducedMotion } from './motion.js';
+import { toggleOperator, mountHeroMedia } from './operator.js';
 
-export function initEvents(actions) {
+const OPERATOR_DEFAULTS = {
+  wisadel: {
+    id: 'wisadel',
+    displayName: 'WISADEL',
+    code: 'ID: WSD-014',
+    tagline: 'A personal collection of games, manhwa, movies, series, and music.',
+    quote: 'Living a life surrounded by stories I love.',
+    video: 'Asset/Profile/Wisadel_Live.webm',
+    videoReady: false,
+    poster: 'Asset/Profile/Wisadel_Skin.webp',
+    alt: 'Wisadel animated character portrait'
+  },
+  shu: {
+    id: 'shu',
+    displayName: 'SHU',
+    code: 'ID: SHU-012',
+    tagline: 'Cultivating stories and sound from across the realm.',
+    quote: 'Spring plowing, autumn harvest; every tale finds its soil.',
+    video: 'Asset/Profile/Shu_Live.webm',
+    videoReady: false,
+    poster: 'Asset/Profile/Wisadel_Skin.webp',
+    alt: 'Shu animated character portrait (poster placeholder)'
+  }
+};
+
+export function initEvents(actions, profileConfig = null) {
   let navScrollTimeout;
 
   document.addEventListener('click', (e) => {
+    const opTrigger = e.target.closest('#operatorToggleBtn, #mobileOperatorBtn, .hero-id-code');
+    if (opTrigger) {
+      e.preventDefault();
+      toggleOperator();
+      return;
+    }
+
     const openMenuBtn = e.target.closest('#navbar-menu-btn, #navbar-menu-desktop-btn');
     if (openMenuBtn && actions.openMenu) {
+      document.querySelectorAll('#navbar-menu-btn, #navbar-menu-desktop-btn').forEach(btn => {
+        btn.setAttribute('aria-expanded', 'true');
+      });
       actions.openMenu();
       return;
     }
@@ -14,6 +50,9 @@ export function initEvents(actions) {
     const closeMenuBtn = e.target.closest('#mobile-menu-close');
     const menuLink = e.target.closest('.mobile-menu-link, .mobile-menu-cat');
     if ((closeMenuBtn || menuLink) && actions.closeMenu) {
+      document.querySelectorAll('#navbar-menu-btn, #navbar-menu-desktop-btn').forEach(btn => {
+        btn.setAttribute('aria-expanded', 'false');
+      });
       actions.closeMenu();
       // Don't early return if it's a link, so smooth scroll logic below still runs.
       if (closeMenuBtn) return;
@@ -122,16 +161,25 @@ export function initEvents(actions) {
   });
 
   document.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('.hero-id-code')) {
+      e.preventDefault();
+      toggleOperator();
+      return;
+    }
+
     const menu = document.getElementById('mobile-menu');
 
     if (e.key === 'Escape') {
       if (menu && menu.classList.contains('menu-open') && actions.closeMenu) {
+        document.querySelectorAll('#navbar-menu-btn, #navbar-menu-desktop-btn').forEach(btn => {
+          btn.setAttribute('aria-expanded', 'false');
+        });
         actions.closeMenu();
       }
     }
 
     if (e.key === 'Tab' && menu && menu.classList.contains('menu-open')) {
-      const focusables = menu.querySelectorAll('.mobile-menu-close, .mobile-menu-link, .mobile-menu-cat');
+      const focusables = menu.querySelectorAll('.mobile-menu-close, .mobile-menu-link, .mobile-operator-btn, .mobile-menu-cat');
       if (focusables.length) {
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
@@ -142,6 +190,70 @@ export function initEvents(actions) {
           e.preventDefault();
           first.focus();
         }
+      }
+    }
+  });
+
+  // Listen for operator changes to refresh UI indicators, hero ID card, and media stage
+  window.addEventListener('operatorchange', (e) => {
+    const nextOpId = e.detail?.operator || 'wisadel';
+    const opConfig = (profileConfig?.operators?.[nextOpId]) || OPERATOR_DEFAULTS[nextOpId] || OPERATOR_DEFAULTS.wisadel;
+
+    // 1. Update #operatorToggleBtn aria-label and label text
+    const toggleBtn = document.getElementById('operatorToggleBtn');
+    if (toggleBtn) {
+      toggleBtn.setAttribute('aria-label', `Operator: ${opConfig.displayName}. Click to switch operator theme.`);
+      const label = toggleBtn.querySelector('.operator-label') || toggleBtn;
+      if (label !== toggleBtn) {
+        label.textContent = opConfig.displayName;
+      } else {
+        toggleBtn.textContent = opConfig.displayName;
+      }
+    }
+
+    // 2. Update #mobileOperatorBtn label text
+    const mobileBtn = document.getElementById('mobileOperatorBtn');
+    if (mobileBtn) {
+      mobileBtn.setAttribute('aria-label', `Operator: ${opConfig.displayName}. Click to switch operator theme.`);
+      const mobileLabel = mobileBtn.querySelector('.mobile-operator-label') || mobileBtn;
+      if (mobileLabel !== mobileBtn) {
+        mobileLabel.textContent = `OPERATOR: ${opConfig.displayName}`;
+      } else {
+        mobileBtn.textContent = `OPERATOR: ${opConfig.displayName}`;
+      }
+    }
+
+    // 3. Update hero text fields for active operator
+    const codeEl = document.getElementById('heroIdCode');
+    if (codeEl) {
+      codeEl.textContent = opConfig.code;
+      codeEl.setAttribute('aria-label', `Switch operator: ${opConfig.code}`);
+    }
+
+    const nameEl = document.getElementById('heroIdName');
+    if (nameEl) nameEl.textContent = opConfig.displayName;
+
+    const quoteEl = document.getElementById('heroIdQuote');
+    if (quoteEl) quoteEl.textContent = `"${opConfig.quote}"`;
+
+    const bioEl = document.getElementById('heroBio');
+    if (bioEl) bioEl.textContent = opConfig.tagline;
+
+    // 4. Mount hero media with clean crossfade
+    const heroIllustration = document.getElementById('heroIllustration');
+    if (heroIllustration) {
+      const { posterImg } = mountHeroMedia(heroIllustration, {
+        poster: opConfig.poster,
+        video: opConfig.video || opConfig.videoSrc,
+        videoSrc: opConfig.video || opConfig.videoSrc,
+        videoReady: Boolean(opConfig.videoReady),
+        alt: opConfig.alt || `${opConfig.displayName} character portrait`
+      });
+      if (posterImg) {
+        posterImg.id = 'heroPoster';
+        posterImg.setAttribute('fetchpriority', 'high');
+        posterImg.setAttribute('width', '600');
+        posterImg.setAttribute('height', '600');
       }
     }
   });

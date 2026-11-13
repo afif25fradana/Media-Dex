@@ -4,12 +4,21 @@ import { prefersReducedMotion } from './motion.js';
 
 let activeModal = null;
 let activeCloseCleanup = null;
+let activeCloseFn = null;
 
 function formatDate(dateAdded) {
   if (!dateAdded) return '';
   const d = new Date(dateAdded);
   if (Number.isNaN(d.getTime())) return '';
   return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+}
+
+export function closeDetailModal() {
+  if (typeof activeCloseFn === 'function') {
+    activeCloseFn();
+  } else if (typeof activeCloseCleanup === 'function') {
+    activeCloseCleanup();
+  }
 }
 
 export function openDetailModal(item) {
@@ -73,6 +82,7 @@ export function openDetailModal(item) {
       closeTimerId = null;
     }
     activeCloseCleanup = null;
+    activeCloseFn = null;
     if (dialog.open) {
       dialog.close();
     }
@@ -89,6 +99,7 @@ export function openDetailModal(item) {
       }
     }
   };
+
   const close = () => {
     if (isClosing) return;
     isClosing = true;
@@ -98,9 +109,11 @@ export function openDetailModal(item) {
     if (prefersReducedMotion()) {
       finish();
     } else {
-      closeTimerId = setTimeout(finish, 280);
+      closeTimerId = setTimeout(finish, 200);
     }
   };
+
+  activeCloseFn = close;
 
   dialog.addEventListener('cancel', (e) => {
     e.preventDefault();

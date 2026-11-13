@@ -3,6 +3,7 @@ import './components/DexEmptyState.js';
 import { encodeAssetPath, esc, sanitizeUrl, sortItemsByDate } from './utils.js';
 import { reobserveCards } from './animations.js';
 import { prefersReducedMotion } from './motion.js';
+import { getInitialOperator, setOperator, toggleOperator, mountHeroMedia } from './operator.js';
 
 import {
   SOCIAL_ICONS,
@@ -52,6 +53,8 @@ export function h(tag, props, ...children) {
 export function renderNavbar(profile) {
   const navbar = document.getElementById('site-navbar');
   const firstName = esc((profile?.name || 'GUEST').split(' ')[0].toUpperCase());
+  const currentOp = getInitialOperator();
+  const opDisplayName = profile?.operators?.[currentOp]?.displayName || (currentOp === 'shu' ? 'SHU' : 'WISADEL');
 
   navbar.innerHTML = `
     <div class="navbar-left">
@@ -67,11 +70,15 @@ export function renderNavbar(profile) {
       `).join('')}
     </div>
     <div class="navbar-right">
-      <button class="navbar-menu-desktop" id="navbar-menu-desktop-btn" aria-label="MENU: Open navigation menu" aria-expanded="false">
+      <button type="button" class="navbar-operator-toggle nav-btn" id="operatorToggleBtn" aria-label="Operator: ${esc(opDisplayName)}. Click to switch operator theme.">
+        <span class="operator-badge" aria-hidden="true"></span>
+        <span class="operator-label">${esc(opDisplayName)}</span>
+      </button>
+      <button type="button" class="navbar-menu-desktop nav-btn" id="navbar-menu-desktop-btn" aria-label="Toggle navigation menu" aria-expanded="false">
         MENU
         ${MENU_ICON_SVG}
       </button>
-      <button class="navbar-menu-btn" id="navbar-menu-btn" aria-label="MENU: Open mobile navigation menu" aria-expanded="false">
+      <button type="button" class="navbar-menu-btn nav-btn" id="navbar-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
         MENU
         ${MENU_ICON_SVG}
       </button>
@@ -79,14 +86,21 @@ export function renderNavbar(profile) {
   `;
 }
 
-export function renderMobileMenu(categories) {
+export function renderMobileMenu(categories, profile = null) {
   const menu = document.getElementById('mobile-menu');
   const cats = categories || [];
+  const currentOp = getInitialOperator();
+  const opDisplayName = profile?.operators?.[currentOp]?.displayName || (currentOp === 'shu' ? 'SHU' : 'WISADEL');
+
   menu.innerHTML = `
     <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">
       ${CLOSE_ICON_SVG}
     </button>
     ${NAV_LINKS.map(link => `<a href="${link.href}" class="mobile-menu-link">${esc(link.label)}</a>`).join('')}
+    <button type="button" class="mobile-operator-btn" id="mobileOperatorBtn" aria-label="Operator: ${esc(opDisplayName)}. Click to switch operator theme.">
+      <span class="mobile-operator-label">OPERATOR: ${esc(opDisplayName)}</span>
+      <span class="operator-badge" aria-hidden="true"></span>
+    </button>
     ${cats.length ? `
       <div class="mobile-menu-cats" role="group" aria-label="Jump to a category">
         <span class="mobile-menu-cats-label">JUMP TO CATEGORY</span>
@@ -107,20 +121,34 @@ export function renderMobileMenu(categories) {
 
 export function renderHero(profile, socials) {
   const hero = document.getElementById('hero-section');
-  let heroImageHTML = profile?.heroImage ? `<img src="${esc(encodeAssetPath(profile.heroImage))}" alt="${esc(profile.name || 'GUEST')} illustration" fetchpriority="high" width="600" height="600">` : `<div class="hero-illustration-placeholder"></div>`;
+  const currentOp = getInitialOperator();
+  const opConfig = profile?.operators?.[currentOp] || {
+    id: currentOp,
+    displayName: currentOp === 'shu' ? 'SHU' : 'WISADEL',
+    code: currentOp === 'shu' ? 'ID: SHU-012' : 'ID: WSD-014',
+    tagline: profile?.tagline || 'A personal collection of games, manhwa, movies, series, and music.',
+    quote: profile?.quote || 'Living a life surrounded by stories I love.',
+    video: currentOp === 'shu' ? 'Asset/Profile/Shu_Live.webm' : 'Asset/Profile/Wisadel_Live.webm',
+    videoReady: false,
+    poster: profile?.heroImage || 'Asset/Profile/Wisadel_Skin.webp',
+    alt: `${currentOp === 'shu' ? 'Shu' : 'Wisadel'} animated character portrait`
+  };
+
+  const initialPoster = esc(encodeAssetPath(opConfig.poster || profile?.heroImage || 'Asset/Profile/Wisadel_Skin.webp'));
+  const initialAlt = esc(opConfig.alt || `${opConfig.displayName || 'Operator'} illustration`);
+
   const socialRailHTML = (socials || []).map(s => `
     <a href="${esc(sanitizeUrl(s.url))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(s.label)}" title="${esc(s.label)}">
       ${SOCIAL_ICONS[s.platform] || ''}
     </a>
   `).join('<div class="hero-social-divider"></div>');
-  const displayName = esc((profile?.name || 'GUEST').split(' ')[0].toUpperCase());
 
   hero.innerHTML = `
     <div class="hero-left">
       <div class="hero-social-rail">${socialRailHTML}</div>
       <div class="hero-eyebrow">MEDIA COLLECTION</div>
       <h1 class="hero-headline">WELCOME TO<br>MY <span class="hero-headline-accent">PERSONAL</span> DEX</h1>
-      <p class="hero-bio">${esc(profile?.tagline || '')}</p>
+      <p class="hero-bio" id="heroBio">${esc(opConfig.tagline || profile?.tagline || '')}</p>
       <div class="hero-cta-row">
         <button class="btn-primary" data-scroll-to="#collection-section" aria-label="EXPLORE DEX: Browse collection">
           EXPLORE DEX
@@ -133,13 +161,17 @@ export function renderHero(profile, socials) {
       </div>
     </div>
     <div class="hero-right" id="hero-id-card-anchor">
-      <div class="hero-illustration">${heroImageHTML}</div>
+      <div class="hero-illustration" id="heroIllustration">
+        <picture class="hero-poster-picture">
+          <img id="heroPoster" class="hero-poster" src="${initialPoster}" alt="${initialAlt}" fetchpriority="high" width="600" height="600">
+        </picture>
+      </div>
       <span class="hero-deco-number">01</span>
       <div class="hero-id-card">
-        <span class="hero-id-code">ID: FRD-125</span>
-        <p class="hero-id-name">${displayName}</p>
+        <span class="hero-id-code" id="heroIdCode" role="button" tabindex="0" title="Click to switch operator" aria-label="Switch operator: ${esc(opConfig.code)}">${esc(opConfig.code)}</span>
+        <p class="hero-id-name" id="heroIdName">${esc(opConfig.displayName)}</p>
         <p class="hero-id-location">${esc(profile?.location || '')}</p>
-        <p class="hero-id-quote">"${esc(profile?.quote || '')}"</p>
+        <p class="hero-id-quote" id="heroIdQuote">"${esc(opConfig.quote || profile?.quote || '')}"</p>
         <span class="hero-id-quote-marks" aria-hidden="true">❝</span>
       </div>
       <a class="hero-scroll-down" href="#lastfm-section" aria-label="Scroll down to Last.fm section">
@@ -148,6 +180,23 @@ export function renderHero(profile, socials) {
       </a>
     </div>
   `;
+
+  const heroIllustration = document.getElementById('heroIllustration');
+  if (heroIllustration) {
+    const { posterImg } = mountHeroMedia(heroIllustration, {
+      poster: opConfig.poster || profile?.heroImage || 'Asset/Profile/Wisadel_Skin.webp',
+      video: opConfig.video || opConfig.videoSrc,
+      videoSrc: opConfig.video || opConfig.videoSrc,
+      videoReady: Boolean(opConfig.videoReady),
+      alt: opConfig.alt || `${opConfig.displayName} character portrait`
+    });
+    if (posterImg) {
+      posterImg.id = 'heroPoster';
+      posterImg.setAttribute('fetchpriority', 'high');
+      posterImg.setAttribute('width', '600');
+      posterImg.setAttribute('height', '600');
+    }
+  }
 }
 
 export function createCard(item, index, cat) {
@@ -421,7 +470,7 @@ export function renderRecentlyAdded(categories, profile) {
     recentCardsRow.appendChild(card);
   });
 
-  const recentColumn = h('div', { className: 'recent-column' },
+  const recentColumn = h('div', { className: 'recent-column', id: 'recently-added' },
     h('div', { className: 'recent-header' },
       h('div', { className: 'recent-header-left' },
         h('h2', { className: 'recent-heading' }, 'RECENTLY ADDED')
@@ -502,7 +551,7 @@ export function renderLastFmSection(profile, lastfmConfig) {
         </div>
         <div class="lastfm-stage-container">
           <div class="lastfm-stage" role="button" tabindex="0" aria-label="Open current track on Last.fm" title="Click to open track on Last.fm">
-            <svg class="vinyl-svg" viewBox="0 0 320 320" shape-rendering="geometricPrecision" role="img" aria-label="Persona 5 Hi-Fi Vinyl Turntable">
+            <svg class="vinyl-svg" viewBox="0 0 320 320" shape-rendering="geometricPrecision" role="img" aria-label="Hi-Fi Vinyl Turntable">
             <defs>
               <radialGradient id="lastfmVinylFace" cx="36%" cy="30%" r="72%">
                 <stop offset="0%" stop-color="#24242A"/>
@@ -533,20 +582,20 @@ export function renderLastFmSection(profile, lastfmConfig) {
 
             <rect x="12" y="16" width="300" height="300" rx="8" fill="#000000" opacity="0.8"/>
             <rect x="8" y="8" width="304" height="304" rx="8" fill="url(#lastfmPlinthGrad)"/>
-            <rect x="10" y="10" width="300" height="300" rx="6" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+            <rect x="10" y="10" width="300" height="300" rx="6" fill="none" stroke="var(--turntable-plinth-stroke)" stroke-width="1"/>
 
             <g clip-path="url(#lastfmPlinthClip)">
-              <polygon points="8,8 70,8 8,70" fill="#D80000"/>
+              <polygon points="8,8 70,8 8,70" fill="var(--turntable-accent)"/>
               <polygon points="76,8 90,8 8,90 8,76" fill="#000000" opacity="0.6"/>
-              <line x1="8" y1="18" x2="294" y2="18" stroke="#D80000" stroke-width="1.5" stroke-dasharray="12 6" opacity="0.4"/>
+              <line x1="8" y1="18" x2="294" y2="18" stroke="var(--turntable-accent)" stroke-width="1.5" stroke-dasharray="12 6" opacity="0.4"/>
             </g>
 
-            <rect x="8" y="8" width="304" height="304" rx="8" fill="none" stroke="#D80000" stroke-width="2.5"/>
+            <rect x="8" y="8" width="304" height="304" rx="8" fill="none" stroke="var(--turntable-accent)" stroke-width="2.5"/>
 
             <circle cx="150" cy="160" r="126" fill="#08080A" stroke="#222222" stroke-width="2"/>
-            <circle cx="150" cy="160" r="122" fill="#D80000"/>
+            <circle cx="150" cy="160" r="122" fill="var(--turntable-accent-dark)"/>
             <circle cx="150" cy="160" r="118" fill="none" stroke="#000000" stroke-width="2" opacity="0.4"/>
-            <circle cx="150" cy="160" r="70" fill="none" stroke="#CC0000" stroke-width="1" stroke-dasharray="4 4" opacity="0.6"/>
+            <circle cx="150" cy="160" r="70" fill="none" stroke="var(--turntable-accent-strobe)" stroke-width="1" stroke-dasharray="4 4"/>
 
             <g id="lastfmRecordGroup" class="vinyl-disc">
               <circle cx="150" cy="160" r="115" fill="url(#lastfmVinylFace)"/>
@@ -563,49 +612,49 @@ export function renderLastFmSection(profile, lastfmConfig) {
               <circle cx="150" cy="160" r="65" fill="none" stroke="#000000" stroke-width="0.8" opacity="0.6"/>
               <circle cx="150" cy="160" r="56" fill="none" stroke="#2A2A30" stroke-width="0.6" opacity="0.4"/>
 
-              <path d="M150,160 m-104,0 a104,104 0 0 1 52,-90" fill="none" stroke="#D80000" stroke-width="6" opacity="0.2" stroke-linecap="round"/>
+              <path d="M150,160 m-104,0 a104,104 0 0 1 52,-90" fill="none" stroke="var(--turntable-accent)" stroke-width="6" opacity="0.25" stroke-linecap="round"/>
               <path d="M150,160 m104,0 a104,104 0 0 1 -52,90" fill="none" stroke="#FFFFFF" stroke-width="4" opacity="0.08" stroke-linecap="round"/>
 
-              <circle cx="150" cy="160" r="48" fill="#0C0C0C" stroke="#D80000" stroke-width="2"/>
+              <circle cx="150" cy="160" r="48" fill="#0C0C0C" stroke="var(--turntable-accent)" stroke-width="2"/>
               <circle cx="150" cy="160" r="46" fill="#1A1A20"/>
-              <text x="150" y="148" text-anchor="middle" font-family="'Anton', Impact, sans-serif" font-size="10" fill="#FF3333" letter-spacing="1">MEDIA-DEX</text>
+              <text x="150" y="148" text-anchor="middle" font-family="'Anton', Impact, sans-serif" font-size="10" fill="var(--turntable-accent-text)" letter-spacing="1">MEDIA-DEX</text>
               <text x="150" y="172" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace" font-size="6" fill="#FFFFFF" opacity="0.6">HI-FI STEREO</text>
 
               <image id="lastfmVinylArt" x="104" y="114" width="92" height="92" clip-path="url(#lastfmLabelClip)" preserveAspectRatio="xMidYMid slice" href=""/>
 
               <circle cx="150" cy="160" r="46" fill="none" stroke="#000000" stroke-width="2" opacity="0.6"/>
-              <circle cx="150" cy="160" r="6" fill="#0C0C0C" stroke="#D80000" stroke-width="1"/>
+              <circle cx="150" cy="160" r="6" fill="#0C0C0C" stroke="var(--turntable-accent)" stroke-width="1"/>
               <circle cx="150" cy="160" r="2.5" fill="url(#lastfmMetalShine)"/>
             </g>
 
             <g id="lastfmTonearmGroup">
               <!-- Arm Rest Post (Right Gutter) -->
               <rect x="277" y="176" width="8" height="18" rx="2" fill="#141418" stroke="#000000" stroke-width="1.5"/>
-              <rect x="275" y="180" width="12" height="3" rx="1" fill="#D80000"/>
+              <rect x="275" y="180" width="12" height="3" rx="1" fill="var(--turntable-accent)"/>
 
               <!-- Gimbal Base Rings -->
               <circle cx="276" cy="48" r="16" fill="#000000" opacity="0.6"/>
               <circle cx="276" cy="48" r="14" fill="#1A1A20" stroke="#000000" stroke-width="2"/>
-              <circle cx="276" cy="48" r="11" fill="none" stroke="#D80000" stroke-width="1.5"/>
+              <circle cx="276" cy="48" r="11" fill="none" stroke="var(--turntable-accent)" stroke-width="1.5"/>
 
               <!-- Rotating Tonearm Assembly -->
               <g id="lastfmTonearm" class="vinyl-tonearm" filter="drop-shadow(3px 8px 4px rgba(0,0,0,0.85))">
                 <line x1="276" y1="48" x2="276" y2="190" stroke="#EAEAEA" stroke-width="4.5" stroke-linecap="round"/>
                 <line x1="274.8" y1="50" x2="274.8" y2="186" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" opacity="0.9"/>
-                <rect x="268" y="184" width="16" height="20" rx="3" fill="#D80000" stroke="#000000" stroke-width="1.5"/>
+                <rect x="268" y="184" width="16" height="20" rx="3" fill="var(--turntable-accent)" stroke="#000000" stroke-width="1.5"/>
                 <rect x="271" y="188" width="10" height="7" rx="1" fill="#0C0C0C"/>
-                <circle cx="276" cy="191" r="2" fill="#D80000"/>
+                <circle cx="276" cy="191" r="2" fill="var(--turntable-accent-text)"/>
                 <polygon points="273,204 279,204 276,212" fill="#FFFFFF"/>
               </g>
 
               <!-- Gimbal Center Bearing Cap (Locks Arm Visually at 276, 48) -->
               <circle cx="276" cy="48" r="6" fill="#0C0C0C" stroke="#000000" stroke-width="1"/>
-              <circle cx="276" cy="48" r="4" fill="#D80000"/>
+              <circle cx="276" cy="48" r="4" fill="var(--turntable-accent)"/>
               <circle cx="276" cy="48" r="1.5" fill="#FFFFFF"/>
             </g>
 
-            <circle id="lastfmPowerLed" cx="290" cy="292" r="3.5" fill="#D80000" stroke="#000000" stroke-width="1"/>
-            <text x="24" y="296" font-size="8" font-family="'JetBrains Mono', Consolas, monospace" font-weight="700" fill="#FF3333" letter-spacing="1">33 1/3 RPM // STEREO AUDIO</text>
+            <circle id="lastfmPowerLed" cx="290" cy="292" r="3.5" fill="var(--turntable-led)" stroke="#000000" stroke-width="1"/>
+            <text x="24" y="296" font-size="8" font-family="'JetBrains Mono', Consolas, monospace" font-weight="700" fill="var(--turntable-accent-text)" letter-spacing="1">33 1/3 RPM // STEREO AUDIO</text>
             </svg>
           </div>
         </div>

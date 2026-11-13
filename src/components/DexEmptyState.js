@@ -9,7 +9,8 @@ sheet.replaceSync(`
     justify-content: center;
     padding: 4rem 2rem;
     background: var(--color-surface-dark, #1A1A20);
-    border: 3px solid #000;
+    border: 1px solid var(--border-default, rgba(255, 255, 255, 0.14));
+    border-radius: var(--radius-card, 0px);
     text-align: center;
     position: relative;
     contain: layout style;
@@ -18,30 +19,19 @@ sheet.replaceSync(`
     width: 100%;
   }
 
-  :host::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 15%, transparent 16%);
-    background-size: 6px 6px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
   .icon-container {
     width: 64px;
     height: 64px;
-    background: var(--red, #D80000);
+    background: var(--operator-accent, var(--red, #D01E25));
     color: var(--white, #FFFFFF);
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: rotate(4deg);
-    clip-path: polygon(5% 0%, 100% 5%, 95% 100%, 0% 95%);
+    border-radius: var(--radius-card, 0px);
     margin-bottom: 1.5rem;
     position: relative;
     z-index: 1;
-    box-shadow: inset 0px 4px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
   
   .icon-container svg {
@@ -71,9 +61,10 @@ sheet.replaceSync(`
     text-transform: uppercase;
     letter-spacing: 0.06em;
     padding: 0.85rem 2rem;
-    border: 2px solid var(--color-text-on-dark, #F0ECE2);
+    border: 1px solid var(--border-default, rgba(255, 255, 255, 0.2));
+    border-radius: var(--radius-btn, 0px);
     cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
     position: relative;
     z-index: 1;
   }
@@ -81,6 +72,7 @@ sheet.replaceSync(`
   .cta-button:hover {
     background: var(--color-text-on-dark, #F0ECE2);
     color: var(--black, #0C0C0C);
+    border-color: var(--color-text-on-dark, #F0ECE2);
     transform: translateY(-2px);
   }
 
@@ -89,8 +81,8 @@ sheet.replaceSync(`
   }
 
   .cta-button:focus-visible {
-    outline: 4px solid var(--red, #D80000);
-    outline-offset: 4px;
+    outline: 2px solid var(--operator-accent, var(--red, #D01E25));
+    outline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {

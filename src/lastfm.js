@@ -1,6 +1,6 @@
 /**
  * Last.fm Vinyl Player Integration for Media-Dex
- * Persona 5 styled live broadcast & recent scrobble status + 30-day telemetry
+ * Hi-Fi vinyl live broadcast & recent scrobble status + 30-day telemetry
  */
 
 import { esc, sanitizeUrl } from './utils.js';

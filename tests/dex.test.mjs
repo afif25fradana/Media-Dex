@@ -76,3 +76,27 @@ test('data.json schema and asset existence on disk', () => {
   }
   assert.equal(totalItems, 54, 'data.json should contain exactly 54 catalog items');
 });
+
+test('data.json profile.operators schema and poster existence on disk', () => {
+  const raw = fs.readFileSync(path.join(rootDir, 'data.json'), 'utf8');
+  const data = JSON.parse(raw);
+
+  assert.ok(data.profile?.operators && typeof data.profile.operators === 'object', 'profile.operators must be an object');
+  assert.ok(data.profile.operators.wisadel, 'profile.operators must contain wisadel');
+  assert.ok(data.profile.operators.shu, 'profile.operators must contain shu');
+
+  const requiredFields = ['id', 'displayName', 'code', 'tagline', 'quote', 'video', 'poster', 'alt'];
+
+  for (const [key, op] of Object.entries(data.profile.operators)) {
+    assert.ok(op && typeof op === 'object', `operator ${key} must be an object`);
+    for (const field of requiredFields) {
+      assert.equal(typeof op[field], 'string', `operator ${key}.${field} must be a string`);
+      assert.ok(op[field].length > 0, `operator ${key}.${field} must not be empty`);
+    }
+    assert.ok(
+      fs.existsSync(path.join(rootDir, op.poster)),
+      `Missing poster asset for operator ${key}: ${op.poster}`
+    );
+  }
+});
+

@@ -9,6 +9,7 @@ import {
   renderLastFmSection,
   renderFooter 
 } from './ui.js';
+import { getInitialOperator, setOperator } from './operator.js';
 import { initLastFm } from './lastfm.js';
 import { dismissLoading, triggerPageEntrance, setupScrollReveals } from './animations.js';
 import { initHalftoneBackground } from './halftoneBg.js';
@@ -20,9 +21,12 @@ const init = async () => {
   try {
     initHalftoneBackground();
     const data = await fetchWithTimeout();
+
+    const initialOp = getInitialOperator();
+    setOperator(initialOp);
     
     renderNavbar(data.profile);
-    renderMobileMenu(data.categories);
+    renderMobileMenu(data.categories, data.profile);
     renderHero(data.profile, data.socials);
     renderLastFmSection(data.profile, data.lastfm);
     renderCollection(data.categories);
@@ -90,7 +94,7 @@ const init = async () => {
     initEvents({
       openMenu,
       closeMenu
-    });
+    }, data.profile);
 
     dismissLoading(() => {
       triggerPageEntrance();

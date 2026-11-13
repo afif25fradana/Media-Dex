@@ -4,7 +4,31 @@
     "tagline": "A personal collection of games, manhwa, movies, series, and music.",
     "quote": "Living a life surrounded by stories I love.",
     "location": "Solo, ID",
-    "heroImage": "Asset/Profile/Wisadel_Skin.webp"
+    "heroImage": "Asset/Profile/Wisadel_Skin.webp",
+    "operators": {
+      "wisadel": {
+        "id": "wisadel",
+        "displayName": "WISADEL",
+        "code": "ID: WSD-014",
+        "tagline": "A personal collection of games, manhwa, movies, series, and music.",
+        "quote": "Living a life surrounded by stories I love.",
+        "video": "Asset/Profile/Wisadel_Live.webm",
+        "videoReady": false,
+        "poster": "Asset/Profile/Wisadel_Skin.webp",
+        "alt": "Wisadel animated character portrait"
+      },
+      "shu": {
+        "id": "shu",
+        "displayName": "SHU",
+        "code": "ID: SHU-012",
+        "tagline": "Cultivating stories and sound from across the realm.",
+        "quote": "Spring plowing, autumn harvest; every tale finds its soil.",
+        "video": "Asset/Profile/Shu_Live.webm",
+        "videoReady": false,
+        "poster": "Asset/Profile/Wisadel_Skin.webp",
+        "alt": "Shu animated character portrait (poster placeholder)"
+      }
+    }
   },
   "socials": [
     {
