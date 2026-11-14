@@ -1,0 +1,250 @@
+/* ==========================================================================
+   INVARIANT SPACING SCALE & SECTION RHYTHM
+   ========================================================================== */
+:root {
+  /* Invariant spacing scale */
+  --s-1: 0.25rem;  /* 4px */
+  --s-2: 0.5rem;   /* 8px */
+  --s-3: 0.75rem;  /* 12px */
+  --s-4: 1rem;     /* 16px */
+  --s-5: 1.5rem;   /* 24px */
+  --s-6: 2rem;     /* 32px */
+  --s-7: 3rem;     /* 48px */
+  --s-8: 4rem;     /* 64px */
+  --s-9: 6rem;     /* 96px */
+  --s-10: 8rem;    /* 128px */
+
+  /* Section rhythm */
+  --nav-h: 64px;
+  --gut: 80px;
+  --padt: 120px;
+  --padb: 72px;
+  --hpadb: 64px;
+
+  /* Global scroll padding to protect all anchor targets from sticky navbar */
+  scroll-padding-top: var(--nav-h);
+
+  /* Motion micro-interactions */
+  --m-in: 150ms;
+  --m-out: 120ms;
+  --m-press: 90ms;
+  --ease-ui: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snap: cubic-bezier(0.1, 0.9, 0.2, 1);
+  --dur-fast: 150ms;
+  --dur-entry: 400ms;
+
+  /* Spacing aliases */
+  --space-xs: var(--s-1);
+  --space-sm: var(--s-2);
+  --space-md: var(--s-4);
+  --space-lg: var(--s-5);
+  --space-xl: var(--s-6);
+  --space-section: var(--s-8);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --nav-h: 56px;
+    --gut: 24px;
+    --padt: 96px;
+    --padb: 48px;
+    --hpadb: 24px;
+  }
+}
+
+/* ==========================================================================
+   OPERATOR TOKENS: WISADEL (DEFAULT - DARK TACTICAL EDITORIAL)
+   ========================================================================== */
+:root,
+:root[data-operator="wisadel"] {
+  color-scheme: dark;
+
+  /* Typography */
+  --font-display: 'Anton', 'Impact', sans-serif;
+  --font-body: 'Schibsted Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --font-messy: 'Caveat', 'Segoe Print', cursive;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+
+  /* Grounds */
+  --bg-canvas: #090A0D;
+  --bg-surface: #121318;
+  --bg-surface-elevated: #1A1C24;
+  --bg-surface-subtle: #151720;
+  --bg-overlay: rgba(9, 10, 13, 0.92);
+
+  /* Inks (Text & Glyphs) */
+  --ink-primary: #F2F0EB;
+  --ink-secondary: #A6A49F;
+  --ink-muted: #707078;
+  --ink-inverse: #FAF8F2;
+
+  /* Accents */
+  --operator-accent: #D01E25;
+  --operator-accent-dark: #B5181E;
+  --operator-accent-text: #FF4D52;
+  --operator-accent-on-dark: #FF4D52;
+  --operator-flash: rgba(208, 30, 37, 0.35);
+
+  /* Secondary & Tertiary Accents */
+  --operator-accent-secondary: #C59B27;
+  --operator-gold-text: #E5BE52;
+  --operator-accent-tertiary: #B63925;
+  --operator-vermilion-text: #FF666A;
+
+  /* Hairlines & Borders */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-default: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.28);
+  --border-accent: rgba(208, 30, 37, 0.60);
+
+  /* Elevation */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 4px 16px -2px rgba(0, 0, 0, 0.5);
+  --shadow-card-hover: 0 12px 32px -4px rgba(0, 0, 0, 0.7);
+  --shadow-card-press: 0 2px 6px rgba(0, 0, 0, 0.6);
+  --shadow-modal: 0 24px 64px -12px rgba(0, 0, 0, 0.85);
+
+  /* Geometry & Radius */
+  --radius-card: 0px;
+  --radius-btn: 0px;
+  --radius-chip: 2px;
+  --radius-modal: 0px;
+
+  /* Hero Watermark & Media Vignette */
+  --hero-watermark: rgba(255, 255, 255, 0.06);
+  --hero-slot-bg: #090A0D;
+
+  /* Vinyl Turntable Theming (Tactical Hi-Fi Red) */
+  --turntable-accent: #D01E25;
+  --turntable-accent-dark: #A5141A;
+  --turntable-accent-text: #FF4D52;
+  --turntable-accent-strobe: rgba(208, 30, 37, 0.65);
+  --turntable-led: #D01E25;
+  --turntable-led-glow: #FF4D52;
+  --turntable-plinth-stroke: rgba(255, 255, 255, 0.08);
+
+
+  /* Universal Token Aliases */
+  --red: var(--operator-accent);
+  --red-dark: var(--operator-accent-dark);
+  --red-text: var(--operator-accent-text);
+  --red-on-dark: var(--operator-accent-on-dark);
+  --card-flash-bg: var(--operator-flash);
+  --black: #0C0C0C;
+  --cream: #F0ECE2;
+  --white: #FFFFFF;
+  --color-bg: var(--bg-canvas);
+  --color-surface: var(--bg-surface);
+  --color-surface-dark: var(--bg-surface);
+  --color-text: var(--ink-primary);
+  --color-text-muted: var(--ink-secondary);
+  --color-text-on-dark: var(--ink-primary);
+  --color-text-muted-on-dark: var(--ink-secondary);
+  --placeholder-deep: #14161F;
+  --skeleton-base: #1C1E26;
+  --skeleton-shine: #2A2C38;
+  --color-border: var(--border-default);
+  --color-border-dark: var(--border-default);
+  --navbar-bg: var(--bg-overlay);
+  --navbar-bg-top: var(--bg-overlay);
+}
+
+/* ==========================================================================
+   OPERATOR TOKENS: SHU (SPRING FEAST - RICE-PAPER & COBALT RIVER)
+   ========================================================================== */
+:root[data-operator="shu"] {
+  color-scheme: light;
+
+  /* Typography Families */
+  --font-display: 'Fraunces', 'Instrument Serif', Georgia, serif;
+  --font-body: 'Schibsted Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --font-messy: 'Caveat', 'Segoe Print', cursive;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+
+  /* Grounds (Warm Rice-Paper Architecture) */
+  --bg-canvas: #F5F2EB;                 /* Warm fibrous rice-paper canvas */
+  --bg-surface: #EDE8DC;                /* Primary paper card surface */
+  --bg-surface-elevated: #FAF8F2;       /* Lifted paper modal / active card */
+  --bg-surface-subtle: #E5DFD3;         /* Recessed panels & toolbar wells */
+  --bg-overlay: rgba(245, 242, 235, 0.94); /* Frosted rice-paper navbar */
+
+  /* Inks (Sumi-e Charcoal & Calibrated Washes) */
+  --ink-primary: #1A1C1A;               /* Deep sumi-e charcoal (15.33:1 on canvas) */
+  --ink-secondary: #555B54;             /* Mid charcoal wash (6.24:1 on canvas) */
+  --ink-muted: #646B62;                 /* Calibrated caption ink (4.92:1 on canvas, 4.5:1 on surface) */
+  --ink-faint: #7E857C;                 /* Decorative / non-text glyphs (3.39:1) */
+  --ink-inverse: #FAF8F2;               /* Inverted ink on dark/solid accents (8.16:1 on Cobalt River) */
+
+  /* Primary Accent: Cobalt River Blue */
+  --operator-accent: #1F4E79;           /* Cobalt River Blue (7.92:1 AAA on canvas, 7.17:1 on surface) */
+  --operator-accent-dark: #163A5C;      /* Deep river blue for hover / border active */
+  --operator-accent-text: #1F4E79;      /* Calibrated blue text (7.92:1 AAA) */
+  --operator-accent-on-dark: #6CA5D9;   /* Accessible blue glow on dark backgrounds */
+  --operator-flash: rgba(31, 78, 121, 0.20); /* Soft river blue highlight wash */
+
+  /* Secondary Accent: Ceremonial Gold */
+  --operator-accent-secondary: #C59B27; /* Ceremonial Gold (grain, bronze & seal foil) */
+  --operator-gold-text: #876013;        /* Calibrated gold text (5.11:1 AA on canvas) */
+
+  /* Tertiary Accent: Vermilion Seal Stamp */
+  --operator-accent-tertiary: #B63925;  /* Vermilion seal stamp accent */
+  --operator-vermilion-text: #B63925;   /* Calibrated vermilion text (5.22:1 AA on canvas) */
+
+  /* Hairlines & Borders */
+  --border-subtle: rgba(26, 28, 26, 0.08);
+  --border-default: #D5CEBF;            /* Subtle parchment boundary */
+  --border-strong: rgba(26, 28, 26, 0.24);
+  --border-accent: rgba(31, 78, 121, 0.55);
+
+  /* Elevation (Warm Charcoal Ambient Diffusion) */
+  --shadow-sm: 0 1px 4px rgba(45, 40, 32, 0.08);
+  --shadow-card: 0 4px 16px -2px rgba(45, 40, 32, 0.10);
+  --shadow-card-hover: 0 12px 28px -4px rgba(45, 40, 32, 0.16);
+  --shadow-card-press: 0 2px 6px rgba(45, 40, 32, 0.12);
+  --shadow-modal: 0 24px 60px -12px rgba(45, 40, 32, 0.25);
+
+  /* Geometry & Radius (Softened Organic Edges) */
+  --radius-card: 6px;
+  --radius-btn: 4px;
+  --radius-chip: 4px;
+  --radius-modal: 8px;
+
+  /* Hero Watermark & Media Vignette */
+  --hero-watermark: rgba(26, 28, 26, 0.05);
+  --hero-slot-bg: #F5F2EB;
+
+  /* Turntable Mappings for Shu */
+  --turntable-accent: var(--operator-accent-tertiary); /* Vermilion #B63925 */
+  --turntable-accent-dark: #912B1B;
+  --turntable-accent-text: var(--operator-vermilion-text); /* #B63925 */
+  --turntable-accent-strobe: rgba(182, 57, 37, 0.60);
+  --turntable-led: var(--operator-accent);               /* Cobalt River Blue #1F4E79 */
+  --turntable-led-glow: #3A7CBD;
+  --turntable-plinth-stroke: rgba(26, 28, 26, 0.12);
+
+
+  /* Universal Compatibility Aliases */
+  --red: var(--operator-accent);
+  --red-dark: var(--operator-accent-dark);
+  --red-text: var(--operator-accent-text);
+  --red-on-dark: var(--operator-accent-on-dark);
+  --card-flash-bg: var(--operator-flash);
+  --black: #1A1C1A;
+  --cream: var(--bg-canvas);
+  --white: #FAF8F2;
+  --color-bg: var(--bg-canvas);
+  --color-surface: var(--bg-surface);
+  --color-surface-dark: var(--bg-surface);
+  --color-text: var(--ink-primary);
+  --color-text-muted: var(--ink-secondary);
+  --color-text-on-dark: var(--ink-primary);
+  --color-text-muted-on-dark: var(--ink-secondary);
+  --placeholder-deep: #EDE8DC;
+  --skeleton-base: #E5DFD3;
+  --skeleton-shine: #FAF8F2;
+  --color-border: var(--border-default);
+  --color-border-dark: var(--border-default);
+  --navbar-bg: var(--bg-overlay);
+  --navbar-bg-top: var(--bg-overlay);
+}

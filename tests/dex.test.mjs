@@ -117,3 +117,66 @@ test('data.json profile.operators schema, videoReady, video and poster integrity
   );
 });
 
+test('modularized stylesheets exist, are non-empty, and contain zero @import rules', () => {
+  const modularStylesheets = [
+    'src/styles/tokens.css',
+    'src/styles/base.css',
+    'src/styles/sections.css'
+  ];
+
+  for (const relPath of modularStylesheets) {
+    const fullPath = path.join(rootDir, relPath);
+    assert.ok(fs.existsSync(fullPath), `Stylesheet must exist: ${relPath}`);
+    const stat = fs.statSync(fullPath);
+    assert.ok(stat.size > 0, `Stylesheet must not be empty: ${relPath}`);
+
+    const content = fs.readFileSync(fullPath, 'utf8');
+    assert.doesNotMatch(
+      content,
+      /@import\b/,
+      `Stylesheet ${relPath} must not contain @import rules to avoid loading waterfalls`
+    );
+  }
+});
+
+test('legacy monolithic stylesheet src/style.css does not exist on disk', () => {
+  const legacyPath = path.join(rootDir, 'src/style.css');
+  assert.equal(
+    fs.existsSync(legacyPath),
+    false,
+    'legacy src/style.css must not exist on disk'
+  );
+});
+
+test('index.html platform meta tags and head bootstrap operator synchronization', () => {
+  const htmlPath = path.join(rootDir, 'index.html');
+  assert.ok(fs.existsSync(htmlPath), 'index.html must exist');
+  const html = fs.readFileSync(htmlPath, 'utf8');
+
+  assert.match(
+    html,
+    /<meta\s+name=["']theme-color["']\s+content=["'][^"']+["']\s*\/?>/i,
+    'index.html must declare a theme-color meta tag'
+  );
+  assert.match(
+    html,
+    /<meta\s+name=["']color-scheme["']\s+content=["'][^"']+["']\s*\/?>/i,
+    'index.html must declare a color-scheme meta tag'
+  );
+
+  const headMatch = html.match(/<head>([\s\S]*?)<\/head>/i);
+  assert.ok(headMatch, 'index.html must contain a <head> element');
+  const head = headMatch[1];
+
+  assert.match(head, /localStorage\.getItem\(['"]media-dex-operator['"]\)/, 'Bootstrap script must read media-dex-operator');
+  assert.match(head, /setAttribute\(['"]data-operator['"]/, 'Bootstrap script must set data-operator attribute');
+  assert.match(head, /querySelector\(['"]meta\[name=["']theme-color["']\]['"]\)/, 'Bootstrap script must query theme-color meta');
+  assert.match(head, /querySelector\(['"]meta\[name=["']color-scheme["']\]['"]\)/, 'Bootstrap script must query color-scheme meta');
+
+  assert.match(head, /#090A0D/i, 'Bootstrap script must define Wisadel dark theme-color (#090A0D)');
+  assert.match(head, /#F5F2EB/i, 'Bootstrap script must define Shu light theme-color (#F5F2EB)');
+  assert.match(head, /'dark'|"dark"/, 'Bootstrap script must define dark color-scheme');
+  assert.match(head, /'light'|"light"/, 'Bootstrap script must define light color-scheme');
+});
+
+

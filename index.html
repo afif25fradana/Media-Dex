@@ -13,7 +13,7 @@
   <meta name="twitter:title" content="PERSONAL DEX: My Media Collection">
   <meta name="twitter:description" content="A curated personal media archive of favorite games, manhwa, movies, TV series, and music, inspired by Arknights operators Wisadel and Shu.">
   <meta name="twitter:image" content="Asset/Profile/Wisadel_Skin.webp">
-  <meta name="theme-color" content="#070707">
+  <meta name="theme-color" content="#090A0D">
   <meta name="color-scheme" content="dark">
   <meta name="page-type" content="software">
   <meta name="site-kind" content="gaming">
@@ -24,10 +24,13 @@
         var op = localStorage.getItem('media-dex-operator');
         var valid = (op === 'shu' || op === 'wisadel') ? op : 'wisadel';
         document.documentElement.setAttribute('data-operator', valid);
-        document.documentElement.setAttribute('data-persona', valid);
+        var isShu = valid === 'shu';
+        var themeMeta = document.querySelector('meta[name="theme-color"]');
+        if (themeMeta) themeMeta.setAttribute('content', isShu ? '#F5F2EB' : '#090A0D');
+        var schemeMeta = document.querySelector('meta[name="color-scheme"]');
+        if (schemeMeta) schemeMeta.setAttribute('content', isShu ? 'light' : 'dark');
       } catch (e) {
         document.documentElement.setAttribute('data-operator', 'wisadel');
-        document.documentElement.setAttribute('data-persona', 'wisadel');
       }
     })();
   </script>
@@ -38,9 +41,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@400;700&family=Fraunces:opsz,wght@9..144,400..700&family=JetBrains+Mono:wght@400;500;700&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="src/style.css">
+  <link rel="stylesheet" href="src/styles/tokens.css">
+  <link rel="stylesheet" href="src/styles/base.css">
+  <link rel="stylesheet" href="src/styles/sections.css">
   <link rel="preload" href="Asset/Profile/wisadel-poster.webp" as="image" type="image/webp" fetchpriority="high">
-  <link rel="preload" href="Asset/monochrome-overlay-background.webp" as="image" type="image/webp">
 </head>
 <body>
   <a href="#app" class="skip-link">Skip to content</a>

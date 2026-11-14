@@ -8,7 +8,7 @@ sheet.replaceSync(`
     align-items: center;
     justify-content: center;
     padding: 4rem 2rem;
-    background: var(--color-surface-dark, #1A1A20);
+    background: var(--bg-surface, #121318);
     border: 1px solid var(--border-default, rgba(255, 255, 255, 0.14));
     border-radius: var(--radius-card, 0px);
     text-align: center;
@@ -22,8 +22,8 @@ sheet.replaceSync(`
   .icon-container {
     width: 64px;
     height: 64px;
-    background: var(--operator-accent, var(--red, #D01E25));
-    color: var(--white, #FFFFFF);
+    background: var(--operator-accent, #D01E25);
+    color: var(--ink-inverse, #FAF8F2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -43,7 +43,7 @@ sheet.replaceSync(`
     font-family: var(--font-display, 'Anton', sans-serif);
     font-size: 1.5rem;
     line-height: 1.05;
-    color: var(--color-text-on-dark, #F0ECE2);
+    color: var(--ink-primary, #F2F0EB);
     text-transform: uppercase;
     letter-spacing: 0.03em;
     margin: 0 0 1.5rem 0;
@@ -54,7 +54,7 @@ sheet.replaceSync(`
   .cta-button {
     appearance: none;
     background: transparent;
-    color: var(--color-text-on-dark, #F0ECE2);
+    color: var(--ink-primary, #F2F0EB);
     font-family: var(--font-body, 'Schibsted Grotesk', sans-serif);
     font-size: 0.85rem;
     font-weight: 700;
@@ -70,9 +70,9 @@ sheet.replaceSync(`
   }
 
   .cta-button:hover {
-    background: var(--color-text-on-dark, #F0ECE2);
-    color: var(--black, #0C0C0C);
-    border-color: var(--color-text-on-dark, #F0ECE2);
+    background: var(--ink-primary, #F0ECE2);
+    color: var(--bg-canvas);
+    border-color: var(--ink-primary, #F0ECE2);
     transform: translateY(-2px);
   }
 
@@ -81,7 +81,7 @@ sheet.replaceSync(`
   }
 
   .cta-button:focus-visible {
-    outline: 2px solid var(--operator-accent, var(--red, #D01E25));
+    outline: 2px solid var(--operator-accent, #D01E25);
     outline-offset: 2px;
   }
 

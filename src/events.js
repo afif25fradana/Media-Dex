@@ -31,7 +31,7 @@ export function initEvents(actions, profileConfig = null) {
   let navScrollTimeout;
 
   document.addEventListener('click', (e) => {
-    const opTrigger = e.target.closest('#operatorToggleBtn, #mobileOperatorBtn, .hero-id-code');
+    const opTrigger = e.target.closest('#operatorToggleBtn, #mobileOperatorBtn');
     if (opTrigger) {
       e.preventDefault();
       toggleOperator();
@@ -161,12 +161,6 @@ export function initEvents(actions, profileConfig = null) {
   });
 
   document.addEventListener('keydown', (e) => {
-    if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('.hero-id-code')) {
-      e.preventDefault();
-      toggleOperator();
-      return;
-    }
-
     const menu = document.getElementById('mobile-menu');
 
     if (e.key === 'Escape') {
@@ -224,18 +218,6 @@ export function initEvents(actions, profileConfig = null) {
     }
 
     // 3. Update hero text fields for active operator
-    const codeEl = document.getElementById('heroIdCode');
-    if (codeEl) {
-      codeEl.textContent = opConfig.code;
-      codeEl.setAttribute('aria-label', `Switch operator: ${opConfig.code}`);
-    }
-
-    const nameEl = document.getElementById('heroIdName');
-    if (nameEl) nameEl.textContent = opConfig.displayName;
-
-    const quoteEl = document.getElementById('heroIdQuote');
-    if (quoteEl) quoteEl.textContent = `"${opConfig.quote}"`;
-
     const bioEl = document.getElementById('heroBio');
     if (bioEl) bioEl.textContent = opConfig.tagline;
 

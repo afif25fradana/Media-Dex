@@ -158,16 +158,9 @@ export function renderHero(profile, socials) {
         </button>
       </div>
     </div>
-    <div class="hero-right" id="hero-id-card-anchor">
+    <div class="hero-right">
       <div class="hero-illustration" id="heroIllustration"></div>
       <span class="hero-deco-number">01</span>
-      <div class="hero-id-card">
-        <span class="hero-id-code" id="heroIdCode" role="button" tabindex="0" title="Click to switch operator" aria-label="Switch operator: ${esc(opConfig.code)}">${esc(opConfig.code)}</span>
-        <p class="hero-id-name" id="heroIdName">${esc(opConfig.displayName)}</p>
-        <p class="hero-id-location">${esc(profile?.location || '')}</p>
-        <p class="hero-id-quote" id="heroIdQuote">"${esc(opConfig.quote || profile?.quote || '')}"</p>
-        <span class="hero-id-quote-marks" aria-hidden="true">❝</span>
-      </div>
       <a class="hero-scroll-down" href="#lastfm-section" aria-label="Scroll down to Last.fm section">
         <span class="hero-scroll-text">SCROLL DOWN</span>
         <svg class="hero-scroll-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>

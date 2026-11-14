@@ -61,6 +61,39 @@ class PerlinNoise3D {
   }
 }
 
+const THEMES = {
+  wisadel: {
+    ground: '#070707',
+    palette: [
+      '#0D0D10', // Bucket 0: Subtle ambient ground dot
+      '#111115', // Bucket 1: Faint contour shoulder
+      '#16161C', // Bucket 2: Low-mid isoline ridge
+      '#1C1C23', // Bucket 3: Mid-tier halftone ridge
+      '#23232C', // Bucket 4: High halftone ridge
+      '#2A2A34'  // Bucket 5: Peak isoline crest
+    ]
+  },
+  shu: {
+    ground: '#F5F2EB',
+    palette: [
+      '#E6ECD6', // Bucket 0: Rice-paper ambient tint
+      '#D8E2C3', // Bucket 1: Soft celadon wash
+      '#C8D7AF', // Bucket 2: Low-mid jade contour
+      '#B9CB9B', // Bucket 3: Mid-tier harvest green
+      '#ACBF8F', // Bucket 4: High jade ridge
+      '#9FB885'  // Bucket 5: Peak sumi-e bamboo green
+    ]
+  }
+};
+
+function getActiveTheme() {
+  if (typeof document !== 'undefined' && document.documentElement) {
+    const op = document.documentElement.getAttribute('data-operator');
+    if (op === 'shu') return THEMES.shu;
+  }
+  return THEMES.wisadel;
+}
+
 export function initHalftoneBackground() {
   const canvas = document.getElementById('bg-halftone-canvas');
   if (!canvas) return;
@@ -79,14 +112,7 @@ export function initHalftoneBackground() {
     contrast: 2.2
   };
 
-  const palette = [
-    '#0D0D10', // Bucket 0: Subtle ambient ground dot
-    '#111115', // Bucket 1: Faint contour shoulder
-    '#16161C', // Bucket 2: Low-mid isoline ridge
-    '#1C1C23', // Bucket 3: Mid-tier halftone ridge
-    '#23232C', // Bucket 4: High halftone ridge
-    '#2A2A34'  // Bucket 5: Peak isoline crest
-  ];
+  let currentTheme = getActiveTheme();
 
   const BUCKET_COUNT = 6;
   const MAX_DOTS_PER_BUCKET = 16384;
@@ -99,7 +125,6 @@ export function initHalftoneBackground() {
   let simTime = 0;
   let lastTimestamp = performance.now();
   let rafId = null;
-
   let dpr = 1;
 
   function resize() {
@@ -111,6 +136,9 @@ export function initHalftoneBackground() {
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // Prevent resize black flash by painting current ground color immediately
+    ctx.fillStyle = currentTheme.ground;
+    ctx.fillRect(0, 0, width, height);
     params.gridSpacing = width > 2560 ? 24 : (width > 1600 ? 18 : 16);
   }
 
@@ -176,7 +204,7 @@ export function initHalftoneBackground() {
   }
 
   function drawFrame(t) {
-    ctx.fillStyle = '#070707';
+    ctx.fillStyle = currentTheme.ground;
     ctx.fillRect(0, 0, width, height);
 
     bucketCounts.fill(0);
@@ -265,7 +293,7 @@ export function initHalftoneBackground() {
       const count = bucketCounts[b];
       if (count === 0) continue;
 
-      ctx.fillStyle = palette[b];
+      ctx.fillStyle = currentTheme.palette[b];
       const buffer = bucketBuffers[b];
       for (let i = 0; i < count; i += 3) {
         const bx = buffer[i];
@@ -322,6 +350,13 @@ export function initHalftoneBackground() {
     }
   }
 
+  // Subscribe to operatorchange event to switch theme & trigger immediate repaint
+  window.addEventListener('operatorchange', (e) => {
+    const op = e.detail && e.detail.operator;
+    currentTheme = (op === 'shu') ? THEMES.shu : THEMES.wisadel;
+    drawFrame(simTime || 1.0);
+  });
+
   let resizeRaf = null;
   window.addEventListener('resize', () => {
     if (resizeRaf) return;
@@ -329,23 +364,35 @@ export function initHalftoneBackground() {
       resizeRaf = null;
       resize();
       if (!isRunning && prefersReducedMotion()) {
-        drawFrame(1.0);
+        drawFrame(simTime || 1.0);
       }
     });
   }, { passive: true });
 
-  const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  motionQuery.addEventListener('change', () => {
-    if (motionQuery.matches) {
+  const handleMotionChange = () => {
+    if (prefersReducedMotion()) {
       stop();
-      drawFrame(1.0);
+      drawFrame(simTime || 1.0);
     } else {
       start();
     }
-  });
+  };
 
-  // Suspend when tab is inactive to preserve CPU / battery
-  document.addEventListener('visibilitychange', () => {
+  const motionQuery = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+    ? window.matchMedia('(prefers-reduced-motion: reduce)')
+    : null;
+
+  if (motionQuery) {
+    if (typeof motionQuery.addEventListener === 'function') {
+      motionQuery.addEventListener('change', handleMotionChange);
+    } else if (typeof motionQuery.addListener === 'function') {
+      motionQuery.addListener(handleMotionChange);
+    }
+  }
+  window.addEventListener('motionpreferencechange', handleMotionChange);
+
+  // Suspend when tab is inactive to preserve CPU / battery; wakeup refreshes dimensions & ground
+  const handleVisibilityChange = () => {
     if (document.hidden) {
       stop();
       if (resizeRaf) {
@@ -353,9 +400,12 @@ export function initHalftoneBackground() {
         resizeRaf = null;
       }
     } else {
+      // Prevent stale dimensions on visibility wakeup by calling resize()
+      resize();
       start();
     }
-  });
+  };
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 
   resize();
   start();

@@ -90,6 +90,23 @@ export const getInitialOperator = () => {
 };
 
 /**
+ * Synchronize <meta name="theme-color"> and <meta name="color-scheme"> tags with active operator.
+ * @param {string} target - Active operator identifier ('wisadel' | 'shu')
+ */
+export const syncMetaTheme = (target) => {
+  if (typeof document === 'undefined') return;
+  const isShu = target === 'shu';
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeMeta) {
+    themeMeta.setAttribute('content', isShu ? '#F5F2EB' : '#090A0D');
+  }
+  const schemeMeta = document.querySelector('meta[name="color-scheme"]');
+  if (schemeMeta) {
+    schemeMeta.setAttribute('content', isShu ? 'light' : 'dark');
+  }
+};
+
+/**
  * Set and persist the active operator on documentElement and localStorage.
  * @param {string} operatorId
  * @returns {'wisadel' | 'shu'}
@@ -99,8 +116,7 @@ export const setOperator = (operatorId) => {
 
   if (typeof document !== 'undefined' && document.documentElement) {
     document.documentElement.setAttribute('data-operator', target);
-    // Backward compatibility alias for early references
-    document.documentElement.setAttribute('data-persona', target);
+    syncMetaTheme(target);
   }
 
   try {

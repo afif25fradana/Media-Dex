@@ -38,7 +38,7 @@ sheet.replaceSync(`
 
   .card {
     position: relative;
-    background: var(--color-surface-dark, #1A1A20);
+    background: var(--bg-surface, #121318);
     cursor: pointer;
     opacity: 1;
     -webkit-font-smoothing: subpixel-antialiased;
@@ -62,7 +62,7 @@ sheet.replaceSync(`
   }
   
   .card:focus-visible {
-    outline: 2px solid var(--operator-accent, var(--red, #D01E25));
+    outline: 2px solid var(--operator-accent, #D01E25);
     outline-offset: 2px;
   }
 
@@ -191,13 +191,13 @@ sheet.replaceSync(`
   .fallback-bg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, var(--operator-accent, var(--red, #D01E25)) 0%, var(--black, #0C0C0C) 100%);
+    background: linear-gradient(135deg, var(--operator-accent, #D01E25) 0%, var(--bg-canvas, #090A0D) 100%);
     z-index: 0;
   }
 
   .card-info {
     padding: 0.7rem 0.75rem;
-    background: var(--color-surface-dark, #1A1A20);
+    background: var(--bg-surface, #121318);
     position: relative;
     flex-grow: 1;
     display: flex;
@@ -211,7 +211,7 @@ sheet.replaceSync(`
     text-transform: uppercase;
     letter-spacing: 0.02em;
     line-height: 1.2;
-    color: var(--color-text-on-dark, #F0ECE2);
+    color: var(--ink-primary, #F2F0EB);
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: auto;
     margin: 0;
@@ -223,7 +223,7 @@ sheet.replaceSync(`
   .card-subtitle {
     font-family: var(--font-body, sans-serif);
     font-size: 0.72rem;
-    color: var(--color-text-muted-on-dark, rgba(240, 236, 226, 0.7));
+    color: var(--ink-secondary, #A6A49F);
     margin: 0.2rem 0 0 0;
     white-space: nowrap;
     overflow: hidden;
