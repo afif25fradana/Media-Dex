@@ -1,6 +1,6 @@
 import { openDetailModal } from './modal.js';
 import { prefersReducedMotion } from './motion.js';
-import { toggleOperator, mountHeroMedia } from './operator.js';
+import { toggleOperator, mountHeroMedia, teardownVideo, getInitialOperator } from './operator.js';
 
 const OPERATOR_DEFAULTS = {
   wisadel: {
@@ -9,9 +9,9 @@ const OPERATOR_DEFAULTS = {
     code: 'ID: WSD-014',
     tagline: 'A personal collection of games, manhwa, movies, series, and music.',
     quote: 'Living a life surrounded by stories I love.',
-    video: 'Asset/Profile/Wisadel_Live.webm',
-    videoReady: false,
-    poster: 'Asset/Profile/Wisadel_Skin.webp',
+    video: 'Asset/Profile/wisadel-bg-fast.webm',
+    videoReady: true,
+    poster: 'Asset/Profile/wisadel-poster.webp',
     alt: 'Wisadel animated character portrait'
   },
   shu: {
@@ -20,10 +20,10 @@ const OPERATOR_DEFAULTS = {
     code: 'ID: SHU-012',
     tagline: 'Cultivating stories and sound from across the realm.',
     quote: 'Spring plowing, autumn harvest; every tale finds its soil.',
-    video: 'Asset/Profile/Shu_Live.webm',
-    videoReady: false,
-    poster: 'Asset/Profile/Wisadel_Skin.webp',
-    alt: 'Shu animated character portrait (poster placeholder)'
+    video: 'Asset/Profile/shu-bg-short.webm',
+    videoReady: true,
+    poster: 'Asset/Profile/shu-poster.webp',
+    alt: 'Shu animated character portrait'
   }
 };
 
@@ -254,6 +254,29 @@ export function initEvents(actions, profileConfig = null) {
         posterImg.setAttribute('fetchpriority', 'high');
         posterImg.setAttribute('width', '600');
         posterImg.setAttribute('height', '600');
+      }
+    }
+  });
+
+  // Handle runtime OS reduced motion preference changes
+  window.addEventListener('motionpreferencechange', (e) => {
+    const heroIllustration = document.getElementById('heroIllustration');
+    if (!heroIllustration) return;
+
+    if (e.detail?.reducedMotion) {
+      const activeVideo = heroIllustration.querySelector('video');
+      if (activeVideo) teardownVideo(activeVideo);
+    } else {
+      const currentOp = getInitialOperator();
+      const opConfig = (profileConfig?.operators?.[currentOp]) || OPERATOR_DEFAULTS[currentOp] || OPERATOR_DEFAULTS.wisadel;
+      if (opConfig && opConfig.videoReady) {
+        mountHeroMedia(heroIllustration, {
+          poster: opConfig.poster,
+          video: opConfig.video || opConfig.videoSrc,
+          videoSrc: opConfig.video || opConfig.videoSrc,
+          videoReady: Boolean(opConfig.videoReady),
+          alt: opConfig.alt || `${opConfig.displayName} character portrait`
+        });
       }
     }
   });

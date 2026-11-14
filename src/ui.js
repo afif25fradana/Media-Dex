@@ -121,6 +121,7 @@ export function renderMobileMenu(categories, profile = null) {
 
 export function renderHero(profile, socials) {
   const hero = document.getElementById('hero-section');
+  if (!hero) return;
   const currentOp = getInitialOperator();
   const opConfig = profile?.operators?.[currentOp] || {
     id: currentOp,
@@ -128,14 +129,11 @@ export function renderHero(profile, socials) {
     code: currentOp === 'shu' ? 'ID: SHU-012' : 'ID: WSD-014',
     tagline: profile?.tagline || 'A personal collection of games, manhwa, movies, series, and music.',
     quote: profile?.quote || 'Living a life surrounded by stories I love.',
-    video: currentOp === 'shu' ? 'Asset/Profile/Shu_Live.webm' : 'Asset/Profile/Wisadel_Live.webm',
-    videoReady: false,
-    poster: profile?.heroImage || 'Asset/Profile/Wisadel_Skin.webp',
+    video: currentOp === 'shu' ? 'Asset/Profile/shu-bg-short.webm' : 'Asset/Profile/wisadel-bg-fast.webm',
+    videoReady: true,
+    poster: currentOp === 'shu' ? 'Asset/Profile/shu-poster.webp' : 'Asset/Profile/wisadel-poster.webp',
     alt: `${currentOp === 'shu' ? 'Shu' : 'Wisadel'} animated character portrait`
   };
-
-  const initialPoster = esc(encodeAssetPath(opConfig.poster || profile?.heroImage || 'Asset/Profile/Wisadel_Skin.webp'));
-  const initialAlt = esc(opConfig.alt || `${opConfig.displayName || 'Operator'} illustration`);
 
   const socialRailHTML = (socials || []).map(s => `
     <a href="${esc(sanitizeUrl(s.url))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(s.label)}" title="${esc(s.label)}">
@@ -161,11 +159,7 @@ export function renderHero(profile, socials) {
       </div>
     </div>
     <div class="hero-right" id="hero-id-card-anchor">
-      <div class="hero-illustration" id="heroIllustration">
-        <picture class="hero-poster-picture">
-          <img id="heroPoster" class="hero-poster" src="${initialPoster}" alt="${initialAlt}" fetchpriority="high" width="600" height="600">
-        </picture>
-      </div>
+      <div class="hero-illustration" id="heroIllustration"></div>
       <span class="hero-deco-number">01</span>
       <div class="hero-id-card">
         <span class="hero-id-code" id="heroIdCode" role="button" tabindex="0" title="Click to switch operator" aria-label="Switch operator: ${esc(opConfig.code)}">${esc(opConfig.code)}</span>
@@ -184,7 +178,7 @@ export function renderHero(profile, socials) {
   const heroIllustration = document.getElementById('heroIllustration');
   if (heroIllustration) {
     const { posterImg } = mountHeroMedia(heroIllustration, {
-      poster: opConfig.poster || profile?.heroImage || 'Asset/Profile/Wisadel_Skin.webp',
+      poster: opConfig.poster || profile?.heroImage || 'Asset/Profile/wisadel-poster.webp',
       video: opConfig.video || opConfig.videoSrc,
       videoSrc: opConfig.video || opConfig.videoSrc,
       videoReady: Boolean(opConfig.videoReady),

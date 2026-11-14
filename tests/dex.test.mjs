@@ -77,7 +77,7 @@ test('data.json schema and asset existence on disk', () => {
   assert.equal(totalItems, 54, 'data.json should contain exactly 54 catalog items');
 });
 
-test('data.json profile.operators schema and poster existence on disk', () => {
+test('data.json profile.operators schema, videoReady, video and poster integrity on disk', () => {
   const raw = fs.readFileSync(path.join(rootDir, 'data.json'), 'utf8');
   const data = JSON.parse(raw);
 
@@ -86,17 +86,34 @@ test('data.json profile.operators schema and poster existence on disk', () => {
   assert.ok(data.profile.operators.shu, 'profile.operators must contain shu');
 
   const requiredFields = ['id', 'displayName', 'code', 'tagline', 'quote', 'video', 'poster', 'alt'];
+  const operators = data.profile.operators;
 
-  for (const [key, op] of Object.entries(data.profile.operators)) {
+  for (const [key, op] of Object.entries(operators)) {
     assert.ok(op && typeof op === 'object', `operator ${key} must be an object`);
     for (const field of requiredFields) {
       assert.equal(typeof op[field], 'string', `operator ${key}.${field} must be a string`);
       assert.ok(op[field].length > 0, `operator ${key}.${field} must not be empty`);
     }
-    assert.ok(
-      fs.existsSync(path.join(rootDir, op.poster)),
-      `Missing poster asset for operator ${key}: ${op.poster}`
-    );
+
+    assert.equal(op.videoReady, true, `operator ${key}.videoReady must be true`);
+
+    assert.ok(op.video.endsWith('.webm'), `operator ${key}.video must be a .webm file`);
+    const videoPath = path.join(rootDir, op.video);
+    assert.ok(fs.existsSync(videoPath), `Missing video asset for operator ${key}: ${op.video}`);
+    assert.ok(fs.statSync(videoPath).size > 1024, `video asset for operator ${key} must be > 1KB`);
+
+    assert.ok(op.poster.endsWith('.webp'), `operator ${key}.poster must be a .webp file`);
+    const posterPath = path.join(rootDir, op.poster);
+    assert.ok(fs.existsSync(posterPath), `Missing poster asset for operator ${key}: ${op.poster}`);
+    assert.ok(fs.statSync(posterPath).size > 1024, `poster asset for operator ${key} must be > 1KB`);
   }
+
+  const posterPaths = Object.values(operators).map(op => op.poster);
+  const distinctPosters = new Set(posterPaths);
+  assert.equal(
+    distinctPosters.size,
+    Object.keys(operators).length,
+    'Each operator must have a distinct poster asset'
+  );
 });
 

@@ -19,8 +19,22 @@ export const prefersReducedMotion = () => {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 };
 
-// Listen for dynamic changes to the user's motion preference
-if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+let motionMqlCleanup = null;
+
+/**
+ * Initialize dynamic prefers-reduced-motion media query listener with cleanup.
+ * @returns {() => void} Teardown function
+ */
+export const initMotionPreferenceListener = () => {
+  if (motionMqlCleanup) {
+    motionMqlCleanup();
+    motionMqlCleanup = null;
+  }
+
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return () => {};
+  }
+
   try {
     const motionMql = window.matchMedia('(prefers-reduced-motion: reduce)');
     const onMotionChange = (event) => {
@@ -30,14 +44,25 @@ if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
         })
       );
     };
+
     if (typeof motionMql.addEventListener === 'function') {
       motionMql.addEventListener('change', onMotionChange);
+      motionMqlCleanup = () => motionMql.removeEventListener('change', onMotionChange);
     } else if (typeof motionMql.addListener === 'function') {
       motionMql.addListener(onMotionChange);
+      motionMqlCleanup = () => motionMql.removeListener(onMotionChange);
+    } else {
+      motionMqlCleanup = () => {};
     }
   } catch {
-    // Ignore environments where matchMedia is restricted
+    motionMqlCleanup = () => {};
   }
+
+  return motionMqlCleanup;
+};
+
+if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+  initMotionPreferenceListener();
 }
 
 /**
@@ -105,11 +130,30 @@ export const toggleOperator = () => {
   return setOperator(next);
 };
 
+let pendingVideoMount = null;
+
+/**
+ * Cancel any scheduled deferred video mount.
+ */
+export const cancelDeferredVideoMount = () => {
+  if (pendingVideoMount) {
+    if (typeof cancelIdleCallback === 'function' && pendingVideoMount.type === 'idle') {
+      cancelIdleCallback(pendingVideoMount.id);
+    } else if (pendingVideoMount.type === 'timer') {
+      clearTimeout(pendingVideoMount.id);
+    } else if (pendingVideoMount.type === 'listener' && typeof window !== 'undefined') {
+      window.removeEventListener('load', pendingVideoMount.fn);
+    }
+    pendingVideoMount = null;
+  }
+};
+
 /**
  * Complete video teardown protocol to release hardware/GPU decoder buffers.
  * @param {HTMLVideoElement | null} video
  */
 export const teardownVideo = (video) => {
+  cancelDeferredVideoMount();
   if (!video) return;
 
   try {
@@ -138,9 +182,9 @@ export const teardownVideo = (video) => {
 };
 
 /**
- * Mount hero media (static WebP poster + progressive WebM video).
- * Handles autoplay rejections gracefully, respects reduced motion,
- * and guards against mounting non-ready video assets (videoReady === true).
+ * Mount hero media using a two-stage phased mount:
+ * Stage 1: Eager static poster mount for instant paint without network contention.
+ * Stage 2: Deferred WebM video creation and mount to protect LCP.
  *
  * @param {HTMLElement} container - Stage element to mount media into
  * @param {object} config - Media configuration
@@ -154,6 +198,8 @@ export const teardownVideo = (video) => {
  */
 export const mountHeroMedia = (container, config = {}) => {
   if (!container) return { posterImg: null, video: null };
+
+  cancelDeferredVideoMount();
 
   // Teardown any existing video currently inside container
   const existingVideo = container.querySelector('video');
@@ -177,49 +223,89 @@ export const mountHeroMedia = (container, config = {}) => {
     container.appendChild(picture);
   }
 
-  // Hero Video Asset 404 Prevention:
-  // Only attempt to mount the <video> element if video URL is present, videoReady is strictly true,
-  // and the user has not requested reduced motion.
   const videoUrl = config.video || config.videoSrc;
   if (!config.videoReady || !videoUrl || prefersReducedMotion()) {
     return { posterImg, video: null };
   }
 
-  const video = document.createElement('video');
-  video.className = 'hero-video';
-  video.autoplay = true;
-  video.loop = true;
-  video.muted = true;
-  video.defaultMuted = true;
-  video.playsInline = true;
-  video.setAttribute('playsinline', '');
-  video.setAttribute('webkit-playsinline', '');
-  video.setAttribute('aria-hidden', 'true');
-  video.preload = 'auto';
-  if (config.poster) {
-    video.poster = config.poster;
-  }
+  const mountVideo = () => {
+    pendingVideoMount = null;
+    if (prefersReducedMotion()) return null;
+    if (typeof container.isConnected === 'boolean' && !container.isConnected) return null;
 
-  const source = document.createElement('source');
-  source.src = videoUrl;
-  source.type = config.videoType || 'video/webm';
-  video.appendChild(source);
+    const currentVideo = container.querySelector('video');
+    if (currentVideo) {
+      teardownVideo(currentVideo);
+    }
 
-  // Transition video opacity when playing to prevent black frames
-  video.addEventListener('playing', () => {
-    video.classList.add('is-playing');
-  }, { once: true });
+    const video = document.createElement('video');
+    video.className = 'hero-video';
+    video.autoplay = true;
+    video.loop = true;
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+    video.setAttribute('aria-hidden', 'true');
+    video.disablePictureInPicture = true;
+    video.setAttribute('disablepictureinpicture', '');
+    video.setAttribute('disableremoteplayback', '');
+    video.preload = 'auto';
+    if (config.poster) {
+      video.poster = config.poster;
+    }
 
-  container.appendChild(video);
+    const source = document.createElement('source');
+    source.src = videoUrl;
+    source.type = config.videoType || 'video/webm';
+    video.appendChild(source);
 
-  const playPromise = video.play();
-  if (playPromise !== undefined) {
-    playPromise.catch(() => {
-      // Autoplay blocked by browser policy (NotAllowedError) or Low Power Mode.
-      // Gracefully teardown the video and retain the pristine static poster.
+    const handleMediaError = () => {
       teardownVideo(video);
-    });
+    };
+    video.addEventListener('error', handleMediaError, { once: true });
+    source.addEventListener('error', handleMediaError, { once: true });
+
+    video.addEventListener('playing', () => {
+      video.classList.add('is-playing');
+    }, { once: true });
+
+    container.appendChild(video);
+
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        teardownVideo(video);
+      });
+    }
+
+    return video;
+  };
+
+  const scheduleMount = () => {
+    if (typeof window !== 'undefined' && typeof window.requestIdleCallback === 'function') {
+      const id = window.requestIdleCallback(() => mountVideo(), { timeout: 1500 });
+      pendingVideoMount = { type: 'idle', id };
+    } else if (typeof window !== 'undefined') {
+      const id = window.setTimeout(() => mountVideo(), 300);
+      pendingVideoMount = { type: 'timer', id };
+    } else {
+      mountVideo();
+    }
+  };
+
+  if (typeof document !== 'undefined' && document.readyState === 'complete') {
+    scheduleMount();
+  } else if (typeof window !== 'undefined') {
+    const onLoad = () => {
+      scheduleMount();
+    };
+    window.addEventListener('load', onLoad, { once: true });
+    pendingVideoMount = { type: 'listener', fn: onLoad };
+  } else {
+    mountVideo();
   }
 
-  return { posterImg, video };
+  return { posterImg, video: null };
 };
