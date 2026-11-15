@@ -8,15 +8,40 @@ export const CATEGORY_ICONS = {
   bookmark: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`
 };
 
-export const LOGO_SVG = `<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M16 2L28 9V23L16 30L4 23V9L16 2Z" fill="currentColor" opacity="0.15"/>
-  <path d="M16 2L28 9V23L16 30L4 23V9L16 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-  <path d="M16 8L22 11.5V18.5L16 22L10 18.5V11.5L16 8Z" fill="currentColor"/>
+export const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="FRADANA DEX">
+  <!-- Primary Structural Elements -->
+  <g fill="currentColor">
+    <path d="M 46 16 L 62 32 L 58 36 L 56 36 L 54 38 L 55 39 L 32 62 L 16 46 L 16 42 L 32 58 L 45 45 L 47 45 L 51 41 L 51 39 L 58 32 L 46 20 Z"/>
+    <path d="M 32 9 L 38 15 L 35 15 L 32 12 L 29 15 L 26 15 Z"/>
+    <path d="M 8 32 L 13 27 L 13 29.5 L 10.5 32 L 13 34.5 L 13 37 Z"/>
+    <path d="M 56 32 L 51 27 L 51 29.5 L 53.5 32 L 51 34.5 L 51 37 Z"/>
+    <path d="M 21.42 20 A 16 16 0 1 1 22 44.49 L 22 40.31 A 13 13 0 0 0 35.5 44.52 L 35.5 42.64 A 11.2 11.2 0 0 0 42.77 35.09 L 44.5 35.58 A 13 13 0 0 0 34.34 19.21 L 34.2 20 Z"/>
+    <path d="M 36.48 21.52 A 11.4 11.4 0 0 1 37.5 41.99 L 37.5 38.08 A 8.2 8.2 0 0 0 33.96 24.04 Z"/>
+    <path d="M 22 36 L 24.84 36 A 8.2 8.2 0 0 0 35.5 39.42 L 35.5 42.64 A 11.2 11.2 0 0 1 22 37.04 Z"/>
+    <path d="M 26.83 32.89 L 31.3 34.09 L 29.05 36.34 A 5.25 5.25 0 0 0 26.83 32.89 Z"/>
+    <path d="M 28.64 27.97 L 29.84 32.44 L 26.76 31.61 A 5.25 5.25 0 0 0 28.64 27.97 Z"/>
+    <path d="M 33.82 27.07 L 30.54 30.35 L 29.72 27.27 A 5.25 5.25 0 0 0 33.82 27.07 Z"/>
+    <path d="M 37.17 31.11 L 32.7 29.91 L 34.95 27.66 A 5.25 5.25 0 0 0 37.17 31.11 Z"/>
+    <path d="M 35.36 36.03 L 34.16 31.56 L 37.24 32.39 A 5.25 5.25 0 0 0 35.36 36.03 Z"/>
+    <path d="M 30.18 36.93 L 33.46 33.65 L 34.28 36.73 A 5.25 5.25 0 0 0 30.18 36.93 Z"/>
+  </g>
+  <!-- Operator Accent Elements -->
+  <g fill="var(--operator-accent, #D01E25)">
+    <path d="M 32 2 L 44 14 L 44 18 L 32 6 L 19 19 L 17 19 L 13 23 L 13 25 L 6 32 L 16 42 L 16 46 L 9 39 L 10 38 L 8 36 L 6 36 L 2 32 Z"/>
+    <path d="M 32 55 L 38 49 L 35 49 L 32 52 L 29 49 L 26 49 Z"/>
+    <path d="M 19 22 L 34 22 L 30 26 L 15 26 Z"/>
+    <path d="M 16 28 L 20 28 L 20 29 L 16 33 Z"/>
+    <path d="M 20 30 L 27 30 L 23 34 L 16 34 Z"/>
+    <path d="M 16 36 L 20 36 L 20 44 L 16 40 Z"/>
+  </g>
 </svg>`;
 
-export const FOOTER_WINGS_SVG = `<svg viewBox="0 0 64 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-  <path d="M32 28L20 16L4 20L0 16L16 8L32 16L48 8L64 16L60 20L44 16L32 28Z" opacity="0.4"/>
-  <path d="M32 22L22 14L10 17L8 14L20 8L32 14L44 8L56 14L54 17L42 14L32 22Z"/>
+export const FOOTER_WINGS_SVG = `<svg viewBox="0 0 48 16" width="48" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M24 2L28 8L24 14L20 8L24 2Z" fill="var(--operator-accent, #D01E25)"/>
+  <path d="M14 6L16 8L14 10L12 8L14 6Z" fill="currentColor" opacity="0.4"/>
+  <path d="M34 6L36 8L34 10L32 8L34 6Z" fill="currentColor" opacity="0.4"/>
+  <line x1="2" y1="8" x2="10" y2="8" stroke="currentColor" stroke-width="1" opacity="0.2"/>
+  <line x1="38" y1="8" x2="46" y2="8" stroke="currentColor" stroke-width="1" opacity="0.2"/>
 </svg>`;
 
 export const CLOSE_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';

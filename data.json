@@ -4,6 +4,22 @@
     "tagline": "A personal collection of games, manhwa, movies, series, and music.",
     "quote": "Living a life surrounded by stories I love.",
     "location": "Solo, ID",
+    "bio": "I build tools for my own use and keep this dex as a personal log of the games, manhwa, films, and music I spend time with. Based in Solo, Indonesia.",
+    "currently": "Reading Sakamoto Days · playing Kingdom Come: Deliverance & Arknights · aquascaping & keeping a leopard gecko.",
+    "links": [
+      {
+        "label": "GitHub (@afif25fradana)",
+        "url": "https://github.com/afif25fradana"
+      },
+      {
+        "label": "Steam",
+        "url": "https://steamcommunity.com/id/Fradana/"
+      },
+      {
+        "label": "Last.fm",
+        "url": "https://www.last.fm/user/Fradana"
+      }
+    ],
     "heroImage": "Asset/Profile/wisadel-poster.webp",
     "operators": {
       "wisadel": {
@@ -21,8 +37,8 @@
         "id": "shu",
         "displayName": "SHU",
         "code": "ID: SHU-012",
-        "tagline": "Cultivating stories and sound from across the realm.",
-        "quote": "Spring plowing, autumn harvest; every tale finds its soil.",
+        "tagline": "A quiet archive of games, manhwa, films, and music.",
+        "quote": "Gathered slowly, kept for good company.",
         "video": "Asset/Profile/shu-bg-short.webm",
         "videoReady": true,
         "poster": "Asset/Profile/shu-poster.webp",

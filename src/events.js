@@ -1,5 +1,6 @@
 import { openDetailModal } from './modal.js';
 import { prefersReducedMotion } from './motion.js';
+import { reobserveCards } from './animations.js';
 import { toggleOperator, mountHeroMedia, teardownVideo, getInitialOperator } from './operator.js';
 
 const OPERATOR_DEFAULTS = {
@@ -18,8 +19,8 @@ const OPERATOR_DEFAULTS = {
     id: 'shu',
     displayName: 'SHU',
     code: 'ID: SHU-012',
-    tagline: 'Cultivating stories and sound from across the realm.',
-    quote: 'Spring plowing, autumn harvest; every tale finds its soil.',
+    tagline: 'A quiet archive of games, manhwa, films, and music.',
+    quote: 'Gathered slowly, kept for good company.',
     video: 'Asset/Profile/shu-bg-short.webm',
     videoReady: true,
     poster: 'Asset/Profile/shu-poster.webp',
@@ -80,6 +81,11 @@ export function initEvents(actions, profileConfig = null) {
         target = document.querySelector(trigger.getAttribute('data-scroll-to'));
       } catch {}
       if (target) {
+        if (target.id === 'collection-section') {
+          target.classList.add('revealed');
+          reobserveCards();
+          target.querySelectorAll('dex-card').forEach(c => c.classList.add('card-visible'));
+        }
         target.scrollIntoView({
           behavior: prefersReducedMotion() ? 'instant' : 'smooth'
         });
@@ -112,6 +118,11 @@ export function initEvents(actions, profileConfig = null) {
         } catch {}
         if (target) {
           e.preventDefault();
+          if (target.id === 'collection-section') {
+            target.classList.add('revealed');
+            reobserveCards();
+            target.querySelectorAll('dex-card').forEach(c => c.classList.add('card-visible'));
+          }
           target.scrollIntoView({
             behavior: prefersReducedMotion() ? 'instant' : 'smooth'
           });
@@ -157,7 +168,12 @@ export function initEvents(actions, profileConfig = null) {
 
   document.addEventListener('action-click', () => {
     const target = document.querySelector('#collection-section');
-    if (target) target.scrollIntoView({ behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
+    if (target) {
+      target.classList.add('revealed');
+      reobserveCards();
+      target.querySelectorAll('dex-card').forEach(c => c.classList.add('card-visible'));
+      target.scrollIntoView({ behavior: prefersReducedMotion() ? 'instant' : 'smooth' });
+    }
   });
 
   document.addEventListener('keydown', (e) => {

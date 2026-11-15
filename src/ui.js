@@ -14,7 +14,6 @@ import {
   MENU_ICON_SVG
 } from './icons.js';
 
-export const CARD_ROTATIONS = [-3, 2, -1, 3, -1, 2, -2, 1, -2, 2, -1, 2];
 export const NAV_LINKS = [
   { label: 'Home', href: '#hero-section' },
   { label: 'Last.fm', href: '#lastfm-section' },
@@ -144,7 +143,6 @@ export function renderHero(profile, socials) {
   hero.innerHTML = `
     <div class="hero-left">
       <div class="hero-social-rail">${socialRailHTML}</div>
-      <div class="hero-eyebrow">MEDIA COLLECTION</div>
       <h1 class="hero-headline">WELCOME TO<br>MY <span class="hero-headline-accent">PERSONAL</span> DEX</h1>
       <p class="hero-bio" id="heroBio">${esc(opConfig.tagline || profile?.tagline || '')}</p>
       <div class="hero-cta-row">
@@ -160,7 +158,6 @@ export function renderHero(profile, socials) {
     </div>
     <div class="hero-right">
       <div class="hero-illustration" id="heroIllustration"></div>
-      <span class="hero-deco-number">01</span>
       <a class="hero-scroll-down" href="#lastfm-section" aria-label="Scroll down to Last.fm section">
         <span class="hero-scroll-text">SCROLL DOWN</span>
         <svg class="hero-scroll-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
@@ -187,13 +184,11 @@ export function renderHero(profile, socials) {
 }
 
 export function createCard(item, index, cat) {
-  const rotation = CARD_ROTATIONS[index % CARD_ROTATIONS.length];
   const card = document.createElement('dex-card');
 
   card.className = 'card-will-animate';
   card.setAttribute('title', item.title || '');
   card.setAttribute('subtitle', item.subtitle || '');
-  card.setAttribute('rotation', `${rotation}deg`);
   card.setAttribute('category', cat?.id || item.categoryId || '');
   card.style.setProperty('--delay', `${index * 50}ms`);
 
@@ -487,10 +482,37 @@ function buildDexOverview(categories, profile) {
     : 'AUG 2026';
   const curatorLocation = (profile?.location || 'SOLO, ID').toUpperCase();
 
+  const bioText = profile?.bio || 'I build tools for my own use and keep this dex as a personal log of the games, manhwa, films, and music I spend time with. Based in Solo, Indonesia.';
+  const currentlyText = profile?.currently || 'Reading Sakamoto Days · playing Kingdom Come: Deliverance & Arknights · aquascaping & keeping a leopard gecko.';
+  const links = Array.isArray(profile?.links) && profile.links.length > 0
+    ? profile.links
+    : [
+        { label: 'GitHub (@afif25fradana)', url: 'https://github.com/afif25fradana' },
+        { label: 'Steam', url: 'https://steamcommunity.com/id/Fradana/' },
+        { label: 'Last.fm', url: 'https://www.last.fm/user/Fradana' }
+      ];
+
+  const bioCard = h('div', { className: 'overview-bio-card' },
+    h('p', { className: 'overview-bio-text' }, bioText),
+    h('div', { className: 'overview-currently' },
+      h('span', { className: 'overview-currently-label' }, 'CURRENTLY // '),
+      h('span', { className: 'overview-currently-text' }, currentlyText)
+    ),
+    h('div', { className: 'overview-links' },
+      ...links.map(link => h('a', {
+        href: sanitizeUrl(link.url),
+        className: 'overview-link',
+        target: '_blank',
+        rel: 'noopener noreferrer'
+      }, `${link.label} ↗`))
+    )
+  );
+
   return h('div', { className: 'overview-column', id: 'dex-overview' },
     h('div', { className: 'overview-header' },
       h('h2', { className: 'overview-heading' }, 'DEX OVERVIEW')
     ),
+    bioCard,
     h('div', { className: 'overview-grid' },
       h('div', { className: 'overview-stat' },
         h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' }),
@@ -533,7 +555,7 @@ export function renderLastFmSection(profile, lastfmConfig) {
     <div class="lastfm-bento-grid">
       <div class="lastfm-player-card">
         <div class="lastfm-card-eyebrow-row">
-          <span class="lastfm-card-eyebrow">// NOW PLAYING</span>
+          <span class="lastfm-card-eyebrow">NOW PLAYING</span>
           <span id="lastfmStatusBadge" class="lastfm-badge">STANDBY</span>
         </div>
         <div class="lastfm-stage-container">
@@ -551,8 +573,8 @@ export function renderLastFmSection(profile, lastfmConfig) {
                 <stop offset="100%" stop-color="#000000" stop-opacity="0.3"/>
               </radialGradient>
               <linearGradient id="lastfmPlinthGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#202026"/>
-                <stop offset="100%" stop-color="#0A0A0C"/>
+                <stop offset="0%" stop-color="var(--turntable-plinth-start, #202026)"/>
+                <stop offset="100%" stop-color="var(--turntable-plinth-end, #0A0A0C)"/>
               </linearGradient>
               <linearGradient id="lastfmMetalShine" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stop-color="#E8E8E8"/>
@@ -567,13 +589,13 @@ export function renderLastFmSection(profile, lastfmConfig) {
               </clipPath>
             </defs>
 
-            <rect x="12" y="16" width="300" height="300" rx="8" fill="#000000" opacity="0.8"/>
+            <rect x="12" y="16" width="300" height="300" rx="8" fill="var(--turntable-plinth-shadow, rgba(0, 0, 0, 0.8))"/>
             <rect x="8" y="8" width="304" height="304" rx="8" fill="url(#lastfmPlinthGrad)"/>
             <rect x="10" y="10" width="300" height="300" rx="6" fill="none" stroke="var(--turntable-plinth-stroke)" stroke-width="1"/>
 
             <g clip-path="url(#lastfmPlinthClip)">
               <polygon points="8,8 70,8 8,70" fill="var(--turntable-accent)"/>
-              <polygon points="76,8 90,8 8,90 8,76" fill="#000000" opacity="0.6"/>
+              <polygon points="76,8 90,8 8,90 8,76" fill="var(--turntable-plinth-stripe-secondary, rgba(0, 0, 0, 0.6))"/>
               <line x1="8" y1="18" x2="294" y2="18" stroke="var(--turntable-accent)" stroke-width="1.5" stroke-dasharray="12 6" opacity="0.4"/>
             </g>
 
@@ -604,8 +626,8 @@ export function renderLastFmSection(profile, lastfmConfig) {
 
               <circle cx="150" cy="160" r="48" fill="#0C0C0C" stroke="var(--turntable-accent)" stroke-width="2"/>
               <circle cx="150" cy="160" r="46" fill="#1A1A20"/>
-              <text x="150" y="148" text-anchor="middle" font-family="'Anton', Impact, sans-serif" font-size="10" fill="var(--turntable-accent-text)" letter-spacing="1">MEDIA-DEX</text>
-              <text x="150" y="172" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace" font-size="6" fill="#FFFFFF" opacity="0.6">HI-FI STEREO</text>
+              <text x="150" y="148" text-anchor="middle" font-family="'Anton', Impact, sans-serif" font-size="11" fill="var(--turntable-label-text, var(--turntable-accent-text))" letter-spacing="1">MEDIA-DEX</text>
+              <text x="150" y="172" text-anchor="middle" font-family="'JetBrains Mono', Consolas, monospace" font-size="11" fill="#FFFFFF" opacity="0.6">HI-FI STEREO</text>
 
               <image id="lastfmVinylArt" x="104" y="114" width="92" height="92" clip-path="url(#lastfmLabelClip)" preserveAspectRatio="xMidYMid slice" href=""/>
 
@@ -641,12 +663,12 @@ export function renderLastFmSection(profile, lastfmConfig) {
             </g>
 
             <circle id="lastfmPowerLed" cx="290" cy="292" r="3.5" fill="var(--turntable-led)" stroke="#000000" stroke-width="1"/>
-            <text x="24" y="296" font-size="8" font-family="'JetBrains Mono', Consolas, monospace" font-weight="700" fill="var(--turntable-accent-text)" letter-spacing="1">33 1/3 RPM // STEREO AUDIO</text>
+            <text x="24" y="296" font-size="11" font-family="'JetBrains Mono', Consolas, monospace" font-weight="700" fill="var(--turntable-plinth-text, var(--turntable-accent-text))" letter-spacing="1">33 1/3 RPM // STEREO AUDIO</text>
             </svg>
           </div>
         </div>
         <div class="lastfm-track-info-block">
-          <h3 id="lastfmTrackTitle" class="lastfm-track-title">SCANNING FREQUENCY...</h3>
+          <h3 id="lastfmTrackTitle" class="lastfm-track-title">LOADING TRACK...</h3>
           <div id="lastfmTrackMeta" class="lastfm-track-meta">
             <div class="lastfm-meta-row"><span class="lastfm-meta-label">ARTIST //</span> <span id="lastfmTrackArtist" class="lastfm-meta-val">STANDBY</span></div>
             <div class="lastfm-meta-row"><span class="lastfm-meta-label">ALBUM //</span> <span id="lastfmTrackAlbum" class="lastfm-meta-val">STANDBY</span></div>
@@ -666,7 +688,7 @@ export function renderLastFmSection(profile, lastfmConfig) {
 
       <div class="lastfm-dossier-card">
         <div class="lastfm-card-eyebrow-row">
-          <span class="lastfm-card-eyebrow">// LISTENING STATS</span>
+          <span class="lastfm-card-eyebrow">LISTENING LOG</span>
           <span id="lastfmMonthlyScrobbles" class="lastfm-scrobbles-chip">LIFETIME // 0 SCROBBLES</span>
         </div>
         <div class="lastfm-dossier-header">
@@ -689,13 +711,13 @@ export function renderLastFmSection(profile, lastfmConfig) {
         </div>
         <div class="lastfm-rotation-columns">
           <div class="lastfm-rotation-col">
-            <div class="lastfm-col-title">// TOP ARTISTS</div>
+            <div class="lastfm-col-title">TOP ARTISTS</div>
             <div id="lastfmTopArtistsList" class="lastfm-rank-list">
               <div class="lastfm-rank-item skeleton">LOADING ARCHIVE...</div>
             </div>
           </div>
           <div class="lastfm-rotation-col">
-            <div class="lastfm-col-title">// TOP TRACKS</div>
+            <div class="lastfm-col-title">TOP TRACKS</div>
             <div id="lastfmTopTracksList" class="lastfm-rank-list">
               <div class="lastfm-rank-item skeleton">LOADING ARCHIVE...</div>
             </div>
@@ -717,7 +739,7 @@ export function renderFooter(profile, socials) {
   const ownerName = esc((profile?.name || 'GUEST').toUpperCase());
   footer.innerHTML = `
     <div class="footer-inner">
-      <span class="footer-left">© ${year} ${ownerName} DEX // ALL RIGHTS RESERVED</span>
+      <span class="footer-left">© ${year} ${ownerName} // SOLO, ID</span>
       <span class="footer-center">${FOOTER_WINGS_SVG}</span>
       <div class="footer-right-group">
         <span class="footer-archive-tag">PERSONAL MEDIA ARCHIVE</span>

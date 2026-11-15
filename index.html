@@ -29,8 +29,24 @@
         if (themeMeta) themeMeta.setAttribute('content', isShu ? '#F5F2EB' : '#090A0D');
         var schemeMeta = document.querySelector('meta[name="color-scheme"]');
         if (schemeMeta) schemeMeta.setAttribute('content', isShu ? 'light' : 'dark');
+
+        var posterHref = isShu ? 'Asset/Profile/shu-poster.webp' : 'Asset/Profile/wisadel-poster.webp';
+        var preloadLink = document.createElement('link');
+        preloadLink.rel = 'preload';
+        preloadLink.as = 'image';
+        preloadLink.type = 'image/webp';
+        preloadLink.href = posterHref;
+        preloadLink.setAttribute('fetchpriority', 'high');
+        document.head.appendChild(preloadLink);
       } catch (e) {
         document.documentElement.setAttribute('data-operator', 'wisadel');
+        var fallbackLink = document.createElement('link');
+        fallbackLink.rel = 'preload';
+        fallbackLink.as = 'image';
+        fallbackLink.type = 'image/webp';
+        fallbackLink.href = 'Asset/Profile/wisadel-poster.webp';
+        fallbackLink.setAttribute('fetchpriority', 'high');
+        document.head.appendChild(fallbackLink);
       }
     })();
   </script>
@@ -44,7 +60,6 @@
   <link rel="stylesheet" href="src/styles/tokens.css">
   <link rel="stylesheet" href="src/styles/base.css">
   <link rel="stylesheet" href="src/styles/sections.css">
-  <link rel="preload" href="Asset/Profile/wisadel-poster.webp" as="image" type="image/webp" fetchpriority="high">
 </head>
 <body>
   <a href="#app" class="skip-link">Skip to content</a>
@@ -118,7 +133,7 @@
         <div class="collection-banner">
           <h2 class="collection-title">COLLECTION DEX</h2>
         </div>
-        <span class="collection-accent">ARCHIVE // ALL CHANNELS</span>
+        <span class="collection-accent">GAMES, MANHWA, FILMS &amp; MUSIC</span>
       </div>
       <div class="collection-toolbar" id="collection-toolbar" role="toolbar" aria-label="Collection filters and sorting">
         <div class="category-tabs-group" id="categoryTabs" role="tablist" aria-label="Category filters"></div>

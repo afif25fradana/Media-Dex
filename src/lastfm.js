@@ -64,7 +64,7 @@ export async function initLastFm(lastfmConfig = {}) {
       elements.badge.classList.remove('badge-live');
     }
     if (elements.title) {
-      elements.title.textContent = 'RADIO STANDBY';
+      elements.title.textContent = 'OFFLINE / STANDBY';
     }
     if (elements.artist) {
       elements.artist.textContent = 'STANDBY';
@@ -99,6 +99,18 @@ export async function initLastFm(lastfmConfig = {}) {
       elements.trackLink.setAttribute('tabindex', '-1');
       elements.trackLink.removeAttribute('target');
     }
+    const hasRenderedArtists = elements.topArtistsList &&
+      elements.topArtistsList.children.length > 0 &&
+      !elements.topArtistsList.querySelector('.skeleton');
+    if (elements.topArtistsList && !hasRenderedArtists) {
+      elements.topArtistsList.innerHTML = '<div class="lastfm-rank-item"><span class="lastfm-rank-num">--</span><span class="lastfm-rank-name">STANDBY</span><span class="lastfm-rank-count">0 SCROBBLES</span></div>';
+    }
+    const hasRenderedTracks = elements.topTracksList &&
+      elements.topTracksList.children.length > 0 &&
+      !elements.topTracksList.querySelector('.skeleton');
+    if (elements.topTracksList && !hasRenderedTracks) {
+      elements.topTracksList.innerHTML = '<div class="lastfm-rank-item"><span class="lastfm-rank-num">--</span><span class="lastfm-rank-name">STANDBY</span><span class="lastfm-rank-count">0 SCROBBLES</span></div>';
+    }
     updateProfileLink();
   };
 
@@ -117,6 +129,14 @@ export async function initLastFm(lastfmConfig = {}) {
   let hasValidTrack = false;
   let inFlightTrack = false;
   let lastFetchTime = 0;
+  let consecutiveErrors = 0;
+
+  const handleFetchError = () => {
+    consecutiveErrors++;
+    if (consecutiveErrors >= 2 || !hasValidTrack) {
+      setStandby();
+    }
+  };
 
   const fetchTrack = async () => {
     if (inFlightTrack) return;
@@ -125,7 +145,7 @@ export async function initLastFm(lastfmConfig = {}) {
       const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(username)}&api_key=${encodeURIComponent(apiKey)}&format=json&limit=1`;
       const res = await fetch(url, { signal: AbortSignal.timeout(6000) });
       if (!res.ok) {
-        if (!hasValidTrack) setStandby();
+        handleFetchError();
         return;
       }
 
@@ -135,7 +155,7 @@ export async function initLastFm(lastfmConfig = {}) {
         track = track[0];
       }
       if (!track) {
-        if (!hasValidTrack) setStandby();
+        handleFetchError();
         return;
       }
 
@@ -213,7 +233,7 @@ export async function initLastFm(lastfmConfig = {}) {
         }
         if (elements.eq) elements.eq.classList.add('is-active');
         if (elements.led) elements.led.classList.add('is-live');
-        if (elements.timeLabel) elements.timeLabel.textContent = 'TRANSMISSION //';
+        if (elements.timeLabel) elements.timeLabel.textContent = 'STATUS //';
         if (elements.time) elements.time.textContent = 'PLAYING NOW';
       } else {
         if (elements.recordGroup) elements.recordGroup.classList.remove('is-playing');
@@ -230,10 +250,9 @@ export async function initLastFm(lastfmConfig = {}) {
 
       updateProfileLink();
       hasValidTrack = true;
+      consecutiveErrors = 0;
     } catch {
-      if (!hasValidTrack) {
-        setStandby();
-      }
+      handleFetchError();
     } finally {
       inFlightTrack = false;
       lastFetchTime = Date.now();
@@ -379,6 +398,11 @@ export async function initLastFm(lastfmConfig = {}) {
         elements.stage.click();
       }
     };
+  }
+
+  if (typeof window !== 'undefined' && !window.__lastFmOfflineBound) {
+    window.__lastFmOfflineBound = true;
+    window.addEventListener('offline', setStandby);
   }
 
   if (!window.__lastFmPollingStarted) {

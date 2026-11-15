@@ -17,8 +17,8 @@
   /* Section rhythm */
   --nav-h: 64px;
   --gut: 80px;
-  --padt: 120px;
-  --padb: 72px;
+  --padt: 3.5rem;
+  --padb: 3.5rem;
   --hpadb: 64px;
 
   /* Global scroll padding to protect all anchor targets from sticky navbar */
@@ -47,8 +47,8 @@
   :root {
     --nav-h: 56px;
     --gut: 24px;
-    --padt: 96px;
-    --padb: 48px;
+    --padt: 2.5rem;
+    --padb: 2.5rem;
     --hpadb: 24px;
   }
 }
@@ -76,7 +76,7 @@
   /* Inks (Text & Glyphs) */
   --ink-primary: #F2F0EB;
   --ink-secondary: #A6A49F;
-  --ink-muted: #707078;
+  --ink-muted: #888891;
   --ink-inverse: #FAF8F2;
 
   /* Accents */
@@ -93,9 +93,9 @@
   --operator-vermilion-text: #FF666A;
 
   /* Hairlines & Borders */
-  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.12);
   --border-default: rgba(255, 255, 255, 0.14);
-  --border-strong: rgba(255, 255, 255, 0.28);
+  --border-strong: rgba(255, 255, 255, 0.36);
   --border-accent: rgba(208, 30, 37, 0.60);
 
   /* Elevation */
@@ -116,6 +116,12 @@
   --hero-slot-bg: #090A0D;
 
   /* Vinyl Turntable Theming (Tactical Hi-Fi Red) */
+  --turntable-plinth-start: #202026;
+  --turntable-plinth-end: #0A0A0C;
+  --turntable-plinth-shadow: rgba(0, 0, 0, 0.8);
+  --turntable-plinth-stripe-secondary: rgba(0, 0, 0, 0.6);
+  --turntable-plinth-text: #FF4D52;
+  --turntable-label-text: #FF4D52;
   --turntable-accent: #D01E25;
   --turntable-accent-dark: #A5141A;
   --turntable-accent-text: #FF4D52;
@@ -192,7 +198,7 @@
   --operator-vermilion-text: #B63925;   /* Calibrated vermilion text (5.22:1 AA on canvas) */
 
   /* Hairlines & Borders */
-  --border-subtle: rgba(26, 28, 26, 0.08);
+  --border-subtle: rgba(26, 28, 26, 0.12);
   --border-default: #D5CEBF;            /* Subtle parchment boundary */
   --border-strong: rgba(26, 28, 26, 0.24);
   --border-accent: rgba(31, 78, 121, 0.55);
@@ -214,13 +220,19 @@
   --hero-watermark: rgba(26, 28, 26, 0.05);
   --hero-slot-bg: #F5F2EB;
 
-  /* Turntable Mappings for Shu */
-  --turntable-accent: var(--operator-accent-tertiary); /* Vermilion #B63925 */
-  --turntable-accent-dark: #912B1B;
-  --turntable-accent-text: var(--operator-vermilion-text); /* #B63925 */
-  --turntable-accent-strobe: rgba(182, 57, 37, 0.60);
-  --turntable-led: var(--operator-accent);               /* Cobalt River Blue #1F4E79 */
-  --turntable-led-glow: #3A7CBD;
+  /* Calibrated plinth gradient and turntable tokens for Shu */
+  --turntable-plinth-start: #EDE8DC;
+  --turntable-plinth-end: #EAE4D6;
+  --turntable-plinth-shadow: rgba(26, 28, 26, 0.12);
+  --turntable-plinth-stripe-secondary: rgba(26, 28, 26, 0.15);
+  --turntable-plinth-text: var(--operator-accent-text);
+  --turntable-label-text: #FAF8F2;
+  --turntable-accent: var(--operator-accent);
+  --turntable-accent-dark: var(--operator-accent-dark);
+  --turntable-accent-text: var(--operator-accent-text);
+  --turntable-accent-strobe: rgba(197, 155, 39, 0.75);
+  --turntable-led: var(--operator-accent-secondary);
+  --turntable-led-glow: #E5BE52;
   --turntable-plinth-stroke: rgba(26, 28, 26, 0.12);
 
 

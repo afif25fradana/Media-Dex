@@ -96,10 +96,10 @@ function getActiveTheme() {
 
 export function initHalftoneBackground() {
   const canvas = document.getElementById('bg-halftone-canvas');
-  if (!canvas) return;
+  if (!canvas) return () => {};
 
   const ctx = canvas.getContext('2d', { alpha: false });
-  if (!ctx) return;
+  if (!ctx) return () => {};
 
   const perlin = new PerlinNoise3D(2026);
 
@@ -170,7 +170,7 @@ export function initHalftoneBackground() {
     if (ripples.length > 6) ripples.shift();
   }
 
-  window.addEventListener('mousemove', (e) => {
+  const handleMouseMove = (e) => {
     mouse.active = true;
     const curX = e.clientX;
     const curY = e.clientY;
@@ -183,13 +183,17 @@ export function initHalftoneBackground() {
     mouse.lastY = curY;
     mouse.x = curX;
     mouse.y = curY;
-  }, { passive: true });
+  };
+  window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-  window.addEventListener('mousedown', (e) => {
-    // Only trigger ripple if clicking on page content rather than interactive inputs
-    if (e.target.closest('button, a, input, select, textarea')) return;
+  const handleMouseDown = (e) => {
+    const isInteractive = typeof e.composedPath === 'function'
+      ? e.composedPath().some(el => el.matches && el.matches('button, a, input, select, textarea, dex-card, dex-empty-state'))
+      : Boolean(e.target && e.target.closest && e.target.closest('button, a, input, select, textarea, dex-card, dex-empty-state'));
+    if (isInteractive) return;
     addRipple(e.clientX, e.clientY);
-  }, { passive: true });
+  };
+  window.addEventListener('mousedown', handleMouseDown, { passive: true });
 
   const BASE_NOISE_SCALE = 0.0028;
 
@@ -351,14 +355,15 @@ export function initHalftoneBackground() {
   }
 
   // Subscribe to operatorchange event to switch theme & trigger immediate repaint
-  window.addEventListener('operatorchange', (e) => {
+  const handleOperatorChange = (e) => {
     const op = e.detail && e.detail.operator;
     currentTheme = (op === 'shu') ? THEMES.shu : THEMES.wisadel;
     drawFrame(simTime || 1.0);
-  });
+  };
+  window.addEventListener('operatorchange', handleOperatorChange);
 
   let resizeRaf = null;
-  window.addEventListener('resize', () => {
+  const handleResize = () => {
     if (resizeRaf) return;
     resizeRaf = requestAnimationFrame(() => {
       resizeRaf = null;
@@ -367,7 +372,8 @@ export function initHalftoneBackground() {
         drawFrame(simTime || 1.0);
       }
     });
-  }, { passive: true });
+  };
+  window.addEventListener('resize', handleResize, { passive: true });
 
   const handleMotionChange = () => {
     if (prefersReducedMotion()) {
@@ -409,4 +415,25 @@ export function initHalftoneBackground() {
 
   resize();
   start();
+
+  return function teardown() {
+    stop();
+    if (resizeRaf) {
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = null;
+    }
+    window.removeEventListener('mousemove', handleMouseMove);
+    window.removeEventListener('mousedown', handleMouseDown);
+    window.removeEventListener('operatorchange', handleOperatorChange);
+    window.removeEventListener('resize', handleResize);
+    if (motionQuery) {
+      if (typeof motionQuery.removeEventListener === 'function') {
+        motionQuery.removeEventListener('change', handleMotionChange);
+      } else if (typeof motionQuery.removeListener === 'function') {
+        motionQuery.removeListener(handleMotionChange);
+      }
+    }
+    window.removeEventListener('motionpreferencechange', handleMotionChange);
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+  };
 }

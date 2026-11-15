@@ -4,20 +4,12 @@
  * and resilient cross-platform video/poster hero mounting with GPU teardown.
  */
 
+import { prefersReducedMotion } from './motion.js';
+
+export { prefersReducedMotion };
 export const STORAGE_KEY = 'media-dex-operator';
 export const DEFAULT_OPERATOR = 'wisadel';
 export const VALID_OPERATORS = Object.freeze(['wisadel', 'shu']);
-
-/**
- * Check if user has requested reduced motion.
- * @returns {boolean}
- */
-export const prefersReducedMotion = () => {
-  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-    return false;
-  }
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
 
 let motionMqlCleanup = null;
 
@@ -169,8 +161,16 @@ export const cancelDeferredVideoMount = () => {
  * @param {HTMLVideoElement | null} video
  */
 export const teardownVideo = (video) => {
-  cancelDeferredVideoMount();
-  if (!video) return;
+  if (!video || video._isTornDown) return;
+  video._isTornDown = true;
+
+  if (video._handleMediaError) {
+    video.removeEventListener('error', video._handleMediaError);
+  }
+  const source = video.querySelector('source');
+  if (source && source._handleMediaError) {
+    source.removeEventListener('error', source._handleMediaError);
+  }
 
   try {
     video.pause();
@@ -280,6 +280,8 @@ export const mountHeroMedia = (container, config = {}) => {
     const handleMediaError = () => {
       teardownVideo(video);
     };
+    video._handleMediaError = handleMediaError;
+    source._handleMediaError = handleMediaError;
     video.addEventListener('error', handleMediaError, { once: true });
     source.addEventListener('error', handleMediaError, { once: true });
 
@@ -291,7 +293,8 @@ export const mountHeroMedia = (container, config = {}) => {
 
     const playPromise = video.play();
     if (playPromise !== undefined) {
-      playPromise.catch(() => {
+      playPromise.catch((err) => {
+        if (err && err.name === 'AbortError') return;
         teardownVideo(video);
       });
     }

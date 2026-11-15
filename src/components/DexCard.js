@@ -28,7 +28,7 @@ sheet.replaceSync(`
     opacity: 1;
     transform: translateY(0) translateZ(0);
     transition: opacity 80ms step-start var(--delay),
-                transform 340ms cubic-bezier(0.15, 0.85, 0.35, 1.15) var(--delay);
+                transform 340ms var(--ease-snap, cubic-bezier(0.1, 0.9, 0.2, 1)) var(--delay);
   }
   :host(.card-ready) {
     opacity: 1;
@@ -253,7 +253,7 @@ template.innerHTML = `
 
 export class DexCard extends HTMLElement {
   static get observedAttributes() {
-    return ['title', 'subtitle', 'image-src', 'rotation', 'category'];
+    return ['title', 'subtitle', 'image-src', 'category'];
   }
 
   constructor() {
@@ -295,8 +295,6 @@ export class DexCard extends HTMLElement {
     const title = this.getAttribute('title') || '';
     const subtitle = this.getAttribute('subtitle') || '';
     const imageSrc = this.getAttribute('image-src') || '';
-
-    this.style.setProperty('--rotation', '0deg');
 
     this.titleEl.textContent = title;
     this.subtitleEl.textContent = subtitle;
