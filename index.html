@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PERSONAL DEX: My Media Collection</title>
-  <meta name="description" content="A curated personal media archive of favorite games, manhwa, movies, TV series, and music, inspired by Arknights operators Wisadel and Shu.">
-  <meta property="og:title" content="PERSONAL DEX: My Media Collection">
-  <meta property="og:description" content="A curated personal media archive of favorite games, manhwa, movies, TV series, and music, inspired by Arknights operators Wisadel and Shu.">
+  <title>Media-Dex: Personal Media &amp; Listening Archive</title>
+  <meta name="description" content="A personal media catalog and live Last.fm listening archive for games, manhwa, movies, series, and music.">
+  <meta property="og:title" content="Media-Dex: Personal Media &amp; Listening Archive">
+  <meta property="og:description" content="A personal media catalog and live Last.fm listening archive for games, manhwa, movies, series, and music.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="Asset/Profile/Wisadel_Skin.webp">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="PERSONAL DEX: My Media Collection">
-  <meta name="twitter:description" content="A curated personal media archive of favorite games, manhwa, movies, TV series, and music, inspired by Arknights operators Wisadel and Shu.">
+  <meta name="twitter:title" content="Media-Dex: Personal Media &amp; Listening Archive">
+  <meta name="twitter:description" content="A personal media catalog and live Last.fm listening archive for games, manhwa, movies, series, and music.">
   <meta name="twitter:image" content="Asset/Profile/Wisadel_Skin.webp">
   <meta name="theme-color" content="#090A0D">
   <meta name="color-scheme" content="dark">
@@ -73,7 +73,7 @@
 
   <noscript>
     <div style="position: fixed; inset: 0; z-index: 10000; background: #0C0C0C; color: #F0ECE2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem; padding: 2rem; text-align: center; font-family: 'Segoe UI', Arial, sans-serif;">
-      <span style="font-family: 'Anton', Impact, sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); letter-spacing: 0.05em; text-transform: uppercase; color: #FF3333;">System Error</span>
+      <span style="font-family: 'Anton', Impact, sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); letter-spacing: 0.05em; text-transform: uppercase; color: #FF3333;">JavaScript Required</span>
       <span style="font-size: 0.95rem; max-width: 36ch; line-height: 1.6;">This dex is rendered in your browser, so it needs JavaScript to display the collection. Please enable JavaScript and reload.</span>
     </div>
   </noscript>
@@ -92,9 +92,9 @@
         loader.removeAttribute('aria-hidden');
         loader.innerHTML =
           '<div class="loading-error">' +
-            '<h2 class="loading-error-title">System Error</h2>' +
+            '<h2 class="loading-error-title">Unable to load collection</h2>' +
             '<p class="loading-error-msg">The dex could not be loaded. Check your connection and try again.</p>' +
-            '<button class="error-retry" id="watchdog-retry-btn">RETRY CONNECTION</button>' +
+            '<button class="error-retry" id="watchdog-retry-btn">TRY AGAIN</button>' +
           '</div>';
         var retryBtn = document.getElementById('watchdog-retry-btn');
         if (retryBtn) {

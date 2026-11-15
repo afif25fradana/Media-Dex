@@ -1,4 +1,4 @@
-import { openDetailModal } from './modal.js';
+import { openDetailModal, openProfileModal } from './modal.js';
 import { prefersReducedMotion } from './motion.js';
 import { reobserveCards } from './animations.js';
 import { toggleOperator, mountHeroMedia, teardownVideo, getInitialOperator } from './operator.js';
@@ -28,7 +28,8 @@ const OPERATOR_DEFAULTS = {
   }
 };
 
-export function initEvents(actions, profileConfig = null) {
+export function initEvents(actions, profile = null, socials = null) {
+  const profileConfig = profile;
   let navScrollTimeout;
 
   document.addEventListener('click', (e) => {
@@ -36,6 +37,13 @@ export function initEvents(actions, profileConfig = null) {
     if (opTrigger) {
       e.preventDefault();
       toggleOperator();
+      return;
+    }
+
+    const profileTrigger = e.target.closest('[data-action="open-profile-modal"]');
+    if (profileTrigger) {
+      e.preventDefault();
+      openProfileModal(profile, socials);
       return;
     }
 

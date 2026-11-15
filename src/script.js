@@ -94,7 +94,7 @@ const init = async () => {
     initEvents({
       openMenu,
       closeMenu
-    }, data.profile);
+    }, data.profile, data.socials);
 
     dismissLoading(() => {
       triggerPageEntrance();

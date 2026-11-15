@@ -179,4 +179,49 @@ test('index.html platform meta tags and head bootstrap operator synchronization'
   assert.match(head, /'light'|"light"/, 'Bootstrap script must define light color-scheme');
 });
 
+test('NAV_LINKS contains exactly 4 navigation items and prunes About / #dex-overview', async () => {
+  const uiSource = fs.readFileSync(path.join(rootDir, 'src/ui.js'), 'utf8');
+  const navLinksMatch = uiSource.match(/export\s+const\s+NAV_LINKS\s*=\s*\[[\s\S]*?\];/);
+  assert.ok(navLinksMatch, 'NAV_LINKS declaration must exist in src/ui.js');
+  const mod = await import(`data:text/javascript;base64,${Buffer.from(navLinksMatch[0]).toString('base64')}`);
+  const { NAV_LINKS } = mod;
+
+  assert.equal(NAV_LINKS.length, 4, 'NAV_LINKS must contain exactly 4 navigation entries');
+  const labels = NAV_LINKS.map(l => l.label);
+  const hrefs = NAV_LINKS.map(l => l.href);
+
+  assert.ok(labels.includes('Home'), 'NAV_LINKS must include Home');
+  assert.ok(labels.includes('Last.fm'), 'NAV_LINKS must include Last.fm');
+  assert.ok(labels.includes('Collection'), 'NAV_LINKS must include Collection');
+  assert.ok(labels.includes('Recently Added'), 'NAV_LINKS must include Recently Added');
+
+  assert.ok(!labels.includes('About'), 'NAV_LINKS must not contain About');
+  assert.ok(!hrefs.includes('#dex-overview'), 'NAV_LINKS must not contain #dex-overview');
+});
+
+test('openProfileModal is exported as a function from src/modal.js', async () => {
+  const modalModule = await import('../src/modal.js');
+  assert.equal(typeof modalModule.openProfileModal, 'function', 'openProfileModal must be exported from src/modal.js');
+});
+
+test('data.json profile contains required bio, currently, location, and avatar fields', () => {
+  const raw = fs.readFileSync(path.join(rootDir, 'data.json'), 'utf8');
+  const data = JSON.parse(raw);
+  const { profile } = data;
+
+  assert.ok(profile, 'profile must exist in data.json');
+  assert.equal(typeof profile.avatar, 'string', 'profile.avatar must be a string');
+  assert.ok(profile.avatar.trim().length > 0, 'profile.avatar must not be empty');
+
+  assert.equal(typeof profile.bio, 'string', 'profile.bio must be a string');
+  assert.ok(profile.bio.trim().length > 0, 'profile.bio must not be empty');
+
+  assert.equal(typeof profile.currently, 'string', 'profile.currently must be a string');
+  assert.ok(profile.currently.trim().length > 0, 'profile.currently must not be empty');
+
+  assert.equal(typeof profile.location, 'string', 'profile.location must be a string');
+  assert.ok(profile.location.trim().length > 0, 'profile.location must not be empty');
+});
+
+
 

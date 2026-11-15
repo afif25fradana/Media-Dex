@@ -1144,58 +1144,6 @@ dex-empty-state {
   color: var(--ink-primary);
 }
 
-.overview-bio-card {
-  background: var(--bg-surface-subtle);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-card);
-  padding: 1.1rem 1.25rem;
-  margin-bottom: 1rem;
-}
-
-.overview-bio-text {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: var(--ink-secondary);
-  margin-bottom: 0.65rem;
-}
-
-.overview-currently {
-  font-size: 0.82rem;
-  line-height: 1.45;
-  color: var(--ink-muted);
-  margin-bottom: 0.75rem;
-}
-
-.overview-currently-label {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--operator-accent-text);
-  letter-spacing: 0.05em;
-  font-weight: 600;
-}
-
-.overview-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem 1.2rem;
-}
-
-.overview-link {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--ink-secondary);
-  text-decoration: none;
-  transition: color var(--ease-snap), transform var(--ease-snap);
-  display: inline-flex;
-  align-items: center;
-}
-
-.overview-link:hover,
-.overview-link:focus-visible {
-  color: var(--operator-accent-text);
-  transform: translateY(-1px);
-}
-
 .overview-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1964,6 +1912,221 @@ dex-empty-state {
 }
 
 /* ==========================================================================
+   CURATOR PROFILE MODAL
+   ========================================================================== */
+.dex-modal--profile {
+  width: min(480px, 100%);
+}
+
+.dex-modal-body--profile {
+  padding: 2rem 1.75rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.profile-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.profile-avatar-slot {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface-subtle);
+  contain: layout paint;
+  flex-shrink: 0;
+}
+
+.profile-avatar-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--operator-accent-text);
+  background: var(--bg-surface-subtle);
+  user-select: none;
+}
+
+.profile-avatar-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.profile-modal-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.profile-modal-badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.profile-modal-handle {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  color: var(--operator-accent-text);
+  font-weight: 600;
+}
+
+.profile-modal-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.45rem;
+  background: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-chip);
+  color: var(--ink-secondary);
+}
+
+.profile-modal-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink-primary);
+  line-height: 1.2;
+}
+
+.profile-modal-tagline {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--ink-secondary);
+}
+
+.profile-modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile-modal-bio {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--ink-primary);
+}
+
+.profile-modal-currently {
+  background: var(--bg-surface-subtle);
+  border-left: 3px solid var(--operator-accent);
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-chip);
+}
+
+.profile-currently-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--operator-accent-text);
+}
+
+.profile-currently-text {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--ink-secondary);
+  margin-top: 0.2rem;
+}
+
+.profile-section-title {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.profile-modal-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+}
+
+.profile-modal-link {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-primary);
+  background: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-chip);
+  padding: 0.35rem 0.65rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: border-color var(--dur-fast) ease, color var(--dur-fast) ease, transform var(--dur-fast) ease;
+}
+
+.profile-modal-link:hover,
+.profile-modal-link:focus-visible {
+  color: var(--operator-accent-text);
+  border-color: var(--operator-accent);
+  transform: translateY(-1px);
+}
+
+.profile-social-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.profile-social-chip {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--ink-secondary);
+  background: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-chip);
+  padding: 0.35rem 0.65rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: border-color var(--dur-fast) ease, color var(--dur-fast) ease, transform var(--dur-fast) ease;
+}
+
+.profile-social-chip:hover,
+.profile-social-chip:focus-visible {
+  color: var(--operator-accent-text);
+  border-color: var(--operator-accent);
+  transform: translateY(-1px);
+}
+
+.profile-social-chip-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.profile-social-chip-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ==========================================================================
    LOADING ERROR
    ========================================================================== */
 .loading-error {
@@ -2312,8 +2475,10 @@ dex-empty-state {
   .btn-secondary:hover,
   .view-all-link:hover svg,
   .dex-modal-close:hover,
-  .overview-link:hover,
-  .overview-link:focus-visible {
+  .profile-modal-link:hover,
+  .profile-modal-link:focus-visible,
+  .profile-social-chip:hover,
+  .profile-social-chip:focus-visible {
     transform: none !important;
     transition: none !important;
   }

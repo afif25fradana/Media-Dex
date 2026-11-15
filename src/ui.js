@@ -18,8 +18,7 @@ export const NAV_LINKS = [
   { label: 'Home', href: '#hero-section' },
   { label: 'Last.fm', href: '#lastfm-section' },
   { label: 'Collection', href: '#collection-section' },
-  { label: 'Recently Added', href: '#recent-overview' },
-  { label: 'About', href: '#dex-overview' }
+  { label: 'Recently Added', href: '#recent-overview' }
 ];
 
 // Hyperscript-like helper for DOM generation (restricts raw markup strictly to static SVG nodes)
@@ -150,9 +149,17 @@ export function renderHero(profile, socials) {
           EXPLORE DEX
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
-        <button class="btn-secondary" data-scroll-to="#dex-overview" aria-label="OVERVIEW: View collection metrics">
+        <button type="button"
+                class="btn-secondary"
+                id="heroProfileBtn"
+                data-action="open-profile-modal"
+                aria-haspopup="dialog"
+                aria-label="OVERVIEW: View profile and links">
           OVERVIEW
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
         </button>
       </div>
     </div>
@@ -482,55 +489,28 @@ function buildDexOverview(categories, profile) {
     : 'AUG 2026';
   const curatorLocation = (profile?.location || 'SOLO, ID').toUpperCase();
 
-  const bioText = profile?.bio || 'I build tools for my own use and keep this dex as a personal log of the games, manhwa, films, and music I spend time with. Based in Solo, Indonesia.';
-  const currentlyText = profile?.currently || 'Reading Sakamoto Days · playing Kingdom Come: Deliverance & Arknights · aquascaping & keeping a leopard gecko.';
-  const links = Array.isArray(profile?.links) && profile.links.length > 0
-    ? profile.links
-    : [
-        { label: 'GitHub (@afif25fradana)', url: 'https://github.com/afif25fradana' },
-        { label: 'Steam', url: 'https://steamcommunity.com/id/Fradana/' },
-        { label: 'Last.fm', url: 'https://www.last.fm/user/Fradana' }
-      ];
-
-  const bioCard = h('div', { className: 'overview-bio-card' },
-    h('p', { className: 'overview-bio-text' }, bioText),
-    h('div', { className: 'overview-currently' },
-      h('span', { className: 'overview-currently-label' }, 'CURRENTLY // '),
-      h('span', { className: 'overview-currently-text' }, currentlyText)
-    ),
-    h('div', { className: 'overview-links' },
-      ...links.map(link => h('a', {
-        href: sanitizeUrl(link.url),
-        className: 'overview-link',
-        target: '_blank',
-        rel: 'noopener noreferrer'
-      }, `${link.label} ↗`))
-    )
-  );
-
   return h('div', { className: 'overview-column', id: 'dex-overview' },
     h('div', { className: 'overview-header' },
       h('h2', { className: 'overview-heading' }, 'DEX OVERVIEW')
     ),
-    bioCard,
     h('div', { className: 'overview-grid' },
       h('div', { className: 'overview-stat' },
-        h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' }),
+        h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' }),
         h('span', { className: 'overview-stat-number' }, totalEntries),
         h('span', { className: 'overview-stat-label' }, 'TOTAL ENTRIES')
       ),
       h('div', { className: 'overview-stat' },
-        h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>' }),
+        h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>' }),
         h('span', { className: 'overview-stat-number' }, categoryCount),
         h('span', { className: 'overview-stat-label' }, 'CATEGORIES')
       ),
       h('div', { className: 'overview-stat' },
-        h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' }),
+        h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' }),
         h('span', { className: 'overview-stat-number' }, latestDateStr),
         h('span', { className: 'overview-stat-label' }, 'LATEST ADDED')
       ),
       h('div', { className: 'overview-stat' },
-        h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' }),
+        h('div', { className: 'overview-stat-icon', svgMarkup: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' }),
         h('span', { className: 'overview-stat-number' }, curatorLocation),
         h('span', { className: 'overview-stat-label' }, 'LOCATION')
       )
