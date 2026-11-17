@@ -1,5 +1,8 @@
 # Media-Dex
 
+[![Deploy](https://github.com/afif25fradana/Media-Dex/actions/workflows/deploy.yml/badge.svg)](https://github.com/afif25fradana/Media-Dex/actions/workflows/deploy.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 A personal media catalog and live Last.fm listening archive for favorite games, manga, manhwa, movies, series, and music. Built with zero-build vanilla web standards, inspired by Arknights operators Wisadel and Shu.
 
 **Live Demo:** [https://afif25fradana.github.io/Media-Dex/](https://afif25fradana.github.io/Media-Dex/)
@@ -45,9 +48,24 @@ node --test tests/dex.test.mjs
 
 ---
 
+## Architecture & Storage
+
+- **Catalog Data**: Loaded directly from `data.json` into an in-memory deduping fetch cache (`src/store.js`) with zero database server requirements.
+- **Client Persistence**: Active operator theme (Wisadel / Shu) and optional personal Last.fm API keys persist locally in `localStorage`.
+- **Security Sanitization**: Dynamic URLs validated via `sanitizeUrl()`, and catalog strings HTML-entity escaped via `esc()`.
+- **Zero Build**: Standard ES6 modules running directly in modern browsers without bundlers or compilers.
+
+---
+
 ## Showcase
 
 <p align="center">
   <img src="Asset/showcase-hero-wisadel.gif" alt="Media-Dex Hero Section (Wisadel)" width="49%" />
   <img src="Asset/showcase-hero-shu.gif" alt="Media-Dex Hero Section (Shu)" width="49%" />
 </p>
+
+---
+
+## License
+
+Distributed under the MIT License. See [LICENSE](LICENSE) for details.
