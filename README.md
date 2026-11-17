@@ -9,6 +9,15 @@ A personal media catalog and live Last.fm listening archive for favorite games, 
 
 ---
 
+## Showcase
+
+<p align="center">
+  <img src="Asset/showcase-hero-wisadel.gif" alt="Media-Dex Hero Section (Wisadel)" width="49%" />
+  <img src="Asset/showcase-hero-shu.gif" alt="Media-Dex Hero Section (Shu)" width="49%" />
+</p>
+
+---
+
 ## About
 
 This is my personal media dex for tracking played games, reading list, watchlist, and repeat playlists, with all entries maintained by hand in `data.json`.
@@ -54,15 +63,6 @@ node --test tests/dex.test.mjs
 - **Client Persistence**: Active operator theme (Wisadel / Shu) and optional personal Last.fm API keys persist locally in `localStorage`.
 - **Security Sanitization**: Dynamic URLs validated via `sanitizeUrl()`, and catalog strings HTML-entity escaped via `esc()`.
 - **Zero Build**: Standard ES6 modules running directly in modern browsers without bundlers or compilers.
-
----
-
-## Showcase
-
-<p align="center">
-  <img src="Asset/showcase-hero-wisadel.gif" alt="Media-Dex Hero Section (Wisadel)" width="49%" />
-  <img src="Asset/showcase-hero-shu.gif" alt="Media-Dex Hero Section (Shu)" width="49%" />
-</p>
 
 ---
 
