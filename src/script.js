@@ -31,7 +31,7 @@ const init = async () => {
     renderLastFmSection(data.profile, data.lastfm);
     renderCollection(data.categories);
     renderRecentlyAdded(data.categories, data.profile);
-    renderFooter(data.profile, data.socials);
+    renderFooter(data.profile);
 
     window.__dexBooted = true;
     if (window.__dexWatchdogTimer) {
@@ -62,32 +62,47 @@ const init = async () => {
     const closeBtn = document.getElementById('mobile-menu-close');
     const appEl = document.getElementById('app');
     const headerEl = document.querySelector('.site-header');
+    const footerEl = document.getElementById('site-footer');
 
     let lastFocusedEl = null;
+    let menuFocusTimer = null;
 
     function openMenu() {
+      if (menuFocusTimer !== null) {
+        clearTimeout(menuFocusTimer);
+        menuFocusTimer = null;
+      }
       lastFocusedEl = document.activeElement;
       if (appEl) appEl.inert = true;
       if (headerEl) headerEl.inert = true;
+      if (footerEl) footerEl.inert = true;
       menu.removeAttribute('inert');
       menu.classList.add('menu-open');
       menu.setAttribute('aria-hidden', 'false');
       menuTriggers.forEach(btn => btn.setAttribute('aria-expanded', 'true'));
-      setTimeout(() => closeBtn && closeBtn.focus(), 100);
+      menuFocusTimer = setTimeout(() => {
+        menuFocusTimer = null;
+        if (closeBtn) closeBtn.focus();
+      }, 100);
     }
 
     function closeMenu() {
+      if (menuFocusTimer !== null) {
+        clearTimeout(menuFocusTimer);
+        menuFocusTimer = null;
+      }
       menu.classList.remove('menu-open');
       menu.setAttribute('aria-hidden', 'true');
       menu.setAttribute('inert', '');
       if (appEl) appEl.inert = false;
       if (headerEl) headerEl.inert = false;
+      if (footerEl) footerEl.inert = false;
       menuTriggers.forEach(btn => btn.setAttribute('aria-expanded', 'false'));
       const mobileBtn = document.getElementById('navbar-menu-btn');
       const desktopBtn = document.getElementById('navbar-menu-desktop-btn');
       const fallbackTarget = (mobileBtn && mobileBtn.offsetParent !== null) ? mobileBtn : (desktopBtn || mobileBtn);
       const target = lastFocusedEl && lastFocusedEl.isConnected ? lastFocusedEl : fallbackTarget;
-      if (target && target.focus) target.focus();
+      if (target && target.focus) target.focus({ preventScroll: true });
       lastFocusedEl = null;
     }
 
@@ -112,14 +127,17 @@ const init = async () => {
     const loader = document.getElementById('loading-screen');
     if (loader) {
       loader.innerHTML = `
-        <div class="loading-error">
+        <div class="loading-error" role="alert">
           <h2 class="loading-error-title">System Error</h2>
           <p class="loading-error-msg">Failed to load the dex data. Check your connection and try again.</p>
-          <button class="error-retry" id="error-retry-btn">RETRY CONNECTION</button>
+          <button type="button" class="error-retry" id="error-retry-btn">RETRY CONNECTION</button>
         </div>
       `;
       const retryBtn = document.getElementById('error-retry-btn');
-      if (retryBtn) retryBtn.addEventListener('click', () => window.location.reload());
+      if (retryBtn) {
+        retryBtn.addEventListener('click', () => window.location.reload());
+        retryBtn.focus();
+      }
     }
   }
 };

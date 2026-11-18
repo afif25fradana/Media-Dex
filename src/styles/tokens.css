@@ -178,7 +178,7 @@
   /* Inks (Sumi-e Charcoal & Calibrated Washes) */
   --ink-primary: #1A1C1A;               /* Deep sumi-e charcoal (15.33:1 on canvas) */
   --ink-secondary: #555B54;             /* Mid charcoal wash (6.24:1 on canvas) */
-  --ink-muted: #646B62;                 /* Calibrated caption ink (4.92:1 on canvas, 4.5:1 on surface) */
+  --ink-muted: #585F56;                 /* Calibrated caption ink (5.90:1 on canvas, 5.39:1 on surface, 4.97:1 on subtle) */
   --ink-faint: #7E857C;                 /* Decorative / non-text glyphs (3.39:1) */
   --ink-inverse: #FAF8F2;               /* Inverted ink on dark/solid accents (8.16:1 on Cobalt River) */
 

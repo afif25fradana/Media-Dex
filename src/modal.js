@@ -4,7 +4,6 @@ import { prefersReducedMotion } from './motion.js';
 
 let activeModal = null;
 let activeCloseCleanup = null;
-let activeCloseFn = null;
 
 function formatDate(dateAdded) {
   if (!dateAdded) return '';
@@ -13,12 +12,86 @@ function formatDate(dateAdded) {
   return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 }
 
-export function closeDetailModal() {
-  if (typeof activeCloseFn === 'function') {
-    activeCloseFn();
-  } else if (typeof activeCloseCleanup === 'function') {
-    activeCloseCleanup();
+export function resolveAvatarUrl(raw) {
+  const value = typeof raw === 'string' && raw.trim() ? raw.trim() : 'Asset/Profile/wisadel-poster.webp';
+  if (/^https?:\/\//i.test(value)) {
+    return sanitizeUrl(value);
   }
+  if (/^\/\/|^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(value)) {
+    return '#';
+  }
+  return encodeAssetPath(value);
+}
+
+function mountModal(dialog, { restoreFocus }) {
+  const previouslyFocused = document.activeElement;
+
+  document.body.appendChild(dialog);
+  const currentScrollY = window.scrollY;
+  dialog.showModal();
+  if (window.scrollY !== currentScrollY) {
+    window.scrollTo({ top: currentScrollY, behavior: 'instant' });
+  }
+  activeModal = dialog;
+  const closeBtn = dialog.querySelector('.dex-modal-close');
+  if (closeBtn) closeBtn.focus();
+
+  let isClosing = false;
+  let closeTimerId = null;
+  let pointerDownInside = false;
+
+  const finish = () => {
+    if (closeTimerId !== null) {
+      clearTimeout(closeTimerId);
+      closeTimerId = null;
+    }
+    activeCloseCleanup = null;
+    if (dialog.open) {
+      dialog.close();
+    }
+    dialog.remove();
+    if (activeModal === dialog) {
+      activeModal = null;
+    }
+    restoreFocus(previouslyFocused);
+  };
+
+  const close = () => {
+    if (isClosing) return;
+    isClosing = true;
+    dialog.classList.remove('is-open');
+    activeCloseCleanup = finish;
+    if (prefersReducedMotion()) {
+      finish();
+    } else {
+      closeTimerId = setTimeout(finish, 200);
+    }
+  };
+
+  dialog.addEventListener('cancel', (e) => {
+    e.preventDefault();
+    close();
+  });
+
+  dialog.addEventListener('pointerdown', (e) => {
+    pointerDownInside = Boolean(e.target.closest('.dex-modal'));
+  });
+
+  dialog.addEventListener('click', (e) => {
+    if (pointerDownInside) {
+      pointerDownInside = false;
+      return;
+    }
+    if (!e.target.closest('.dex-modal')) {
+      close();
+    }
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', close);
+
+  requestAnimationFrame(() => {
+    dialog.classList.add('is-open');
+  });
 }
 
 export function openDetailModal(item) {
@@ -28,7 +101,6 @@ export function openDetailModal(item) {
   }
   if (activeModal) return;
 
-  const previouslyFocused = document.activeElement;
   const title = item.title || 'Unknown';
   const subtitle = item.subtitle || '';
   const category = item.categoryTitle || '';
@@ -49,7 +121,7 @@ export function openDetailModal(item) {
 
   dialog.innerHTML = `
     <div class="dex-modal">
-      <button class="dex-modal-close" aria-label="Close details">${CLOSE_ICON_SVG}</button>
+      <button type="button" class="dex-modal-close" aria-label="Close details">${CLOSE_ICON_SVG}</button>
       ${coverHTML}
       <div class="dex-modal-body">
         ${category ? `<span class="dex-modal-tag">${esc(category)}</span>` : ''}
@@ -63,72 +135,16 @@ export function openDetailModal(item) {
     </div>
   `;
 
-  document.body.appendChild(dialog);
-  const currentScrollY = window.scrollY;
-  dialog.showModal();
-  if (window.scrollY !== currentScrollY) {
-    window.scrollTo({ top: currentScrollY, behavior: 'instant' });
-  }
-  activeModal = dialog;
-  const closeBtn = dialog.querySelector('.dex-modal-close');
-  if (closeBtn) closeBtn.focus();
-
-  let isClosing = false;
-  let closeTimerId = null;
-
-  const finish = () => {
-    if (closeTimerId !== null) {
-      clearTimeout(closeTimerId);
-      closeTimerId = null;
-    }
-    activeCloseCleanup = null;
-    activeCloseFn = null;
-    if (dialog.open) {
-      dialog.close();
-    }
-    dialog.remove();
-    if (activeModal === dialog) {
-      activeModal = null;
-    }
-    if (previouslyFocused) {
+  mountModal(dialog, {
+    restoreFocus: (previouslyFocused) => {
+      if (!previouslyFocused || !previouslyFocused.isConnected) return;
       if (previouslyFocused.shadowRoot) {
         const inner = previouslyFocused.shadowRoot.querySelector('.card') || previouslyFocused;
-        if (inner && inner.focus) inner.focus({ preventScroll: true });
-      } else if (previouslyFocused.focus) {
+        if (inner && typeof inner.focus === 'function') inner.focus({ preventScroll: true });
+      } else if (typeof previouslyFocused.focus === 'function') {
         previouslyFocused.focus({ preventScroll: true });
       }
     }
-  };
-
-  const close = () => {
-    if (isClosing) return;
-    isClosing = true;
-    dialog.classList.remove('is-open');
-
-    activeCloseCleanup = finish;
-    if (prefersReducedMotion()) {
-      finish();
-    } else {
-      closeTimerId = setTimeout(finish, 200);
-    }
-  };
-
-  activeCloseFn = close;
-
-  dialog.addEventListener('cancel', (e) => {
-    e.preventDefault();
-    close();
-  });
-
-  dialog.addEventListener('click', (e) => {
-    if (!e.target.closest('.dex-modal')) {
-      close();
-    }
-  });
-  if (closeBtn) closeBtn.addEventListener('click', close);
-
-  requestAnimationFrame(() => {
-    dialog.classList.add('is-open');
   });
 }
 
@@ -137,46 +153,47 @@ export function openProfileModal(profile, socials) {
   if (activeCloseCleanup) activeCloseCleanup();
   if (activeModal) return;
 
-  const previouslyFocused = document.activeElement;
   const name = profile.name || 'Curator';
   const handle = profile.handle || '';
   const tagline = profile.tagline || '';
   const bio = profile.bio || '';
   const currently = profile.currently || '';
-  const location = profile.location || 'Solo, ID';
+  const location = profile.location || '';
   const links = Array.isArray(profile.links) ? profile.links : [];
   const socialList = Array.isArray(socials) ? socials : [];
   const initialLetter = esc((name.charAt(0) || 'F').toUpperCase());
-  const avatarSrc = profile.avatar || 'Asset/Profile/wisadel-poster.webp';
-  const formattedAvatar = /^https?:\/\//i.test(avatarSrc) ? avatarSrc : encodeAssetPath(avatarSrc);
+  const safeAvatar = resolveAvatarUrl(profile.avatar);
 
   const dialog = document.createElement('dialog');
   dialog.className = 'dex-modal-dialog dex-modal-dialog--profile';
   dialog.setAttribute('aria-labelledby', 'profile-modal-name');
   if (tagline) dialog.setAttribute('aria-describedby', 'profile-modal-tagline');
 
+  const avatarImgHTML = safeAvatar !== '#'
+    ? `<img class="profile-avatar-img"
+           src="${esc(safeAvatar)}"
+           alt="Curator avatar for ${esc(name)}"
+           width="72"
+           height="72"
+           loading="eager"
+           referrerpolicy="no-referrer" />`
+    : '';
+
   dialog.innerHTML = `
     <div class="dex-modal dex-modal--profile">
-      <button class="dex-modal-close" aria-label="Close profile">${CLOSE_ICON_SVG}</button>
+      <button type="button" class="dex-modal-close" aria-label="Close profile">${CLOSE_ICON_SVG}</button>
       <div class="dex-modal-body dex-modal-body--profile">
         <div class="profile-modal-header">
           <div class="profile-avatar-slot">
             <div class="profile-avatar-fallback" aria-hidden="true">
               <span>${initialLetter}</span>
             </div>
-            <img class="profile-avatar-img"
-                 src="${esc(sanitizeUrl(formattedAvatar))}"
-                 alt="Curator avatar for ${esc(name)}"
-                 width="72"
-                 height="72"
-                 loading="eager"
-                 referrerpolicy="no-referrer"
-                 onerror="this.style.display='none'" />
+            ${avatarImgHTML}
           </div>
           <div class="profile-modal-identity">
             <div class="profile-modal-badges">
               ${handle ? `<span class="profile-modal-handle">${esc(handle)}</span>` : ''}
-              <span class="profile-modal-badge">${esc(location.toUpperCase())}</span>
+              ${location ? `<span class="profile-modal-badge">${esc(location.toUpperCase())}</span>` : ''}
             </div>
             <h2 id="profile-modal-name" class="profile-modal-name">${esc(name)}</h2>
             ${tagline ? `<p id="profile-modal-tagline" class="profile-modal-tagline">${esc(tagline)}</p>` : ''}
@@ -222,78 +239,24 @@ export function openProfileModal(profile, socials) {
     </div>
   `;
 
-  document.body.appendChild(dialog);
-  const currentScrollY = window.scrollY;
-  dialog.showModal();
-  if (window.scrollY !== currentScrollY) {
-    window.scrollTo({ top: currentScrollY, behavior: 'instant' });
+  const avatarImg = dialog.querySelector('.profile-avatar-img');
+  if (avatarImg) {
+    avatarImg.addEventListener('error', () => {
+      avatarImg.style.display = 'none';
+    }, { once: true });
+    if (avatarImg.complete && avatarImg.naturalWidth === 0) {
+      avatarImg.style.display = 'none';
+    }
   }
-  activeModal = dialog;
-  const closeBtn = dialog.querySelector('.dex-modal-close');
-  if (closeBtn) closeBtn.focus();
 
-  let isClosing = false;
-  let closeTimerId = null;
-  let pointerDownInside = false;
-
-  const finish = () => {
-    if (closeTimerId !== null) {
-      clearTimeout(closeTimerId);
-      closeTimerId = null;
+  mountModal(dialog, {
+    restoreFocus: (previouslyFocused) => {
+      if (previouslyFocused && previouslyFocused.isConnected && typeof previouslyFocused.focus === 'function') {
+        previouslyFocused.focus({ preventScroll: true });
+      } else {
+        document.getElementById('heroProfileBtn')?.focus({ preventScroll: true });
+      }
     }
-    activeCloseCleanup = null;
-    activeCloseFn = null;
-    if (dialog.open) {
-      dialog.close();
-    }
-    dialog.remove();
-    if (activeModal === dialog) {
-      activeModal = null;
-    }
-    if (previouslyFocused && previouslyFocused.isConnected && typeof previouslyFocused.focus === 'function') {
-      previouslyFocused.focus({ preventScroll: true });
-    } else {
-      document.getElementById('heroProfileBtn')?.focus({ preventScroll: true });
-    }
-  };
-
-  const close = () => {
-    if (isClosing) return;
-    isClosing = true;
-    dialog.classList.remove('is-open');
-    activeCloseCleanup = finish;
-    if (prefersReducedMotion()) {
-      finish();
-    } else {
-      closeTimerId = setTimeout(finish, 200);
-    }
-  };
-
-  activeCloseFn = close;
-
-  dialog.addEventListener('cancel', (e) => {
-    e.preventDefault();
-    close();
-  });
-
-  dialog.addEventListener('pointerdown', (e) => {
-    pointerDownInside = Boolean(e.target.closest('.dex-modal'));
-  });
-
-  dialog.addEventListener('click', (e) => {
-    if (pointerDownInside) {
-      pointerDownInside = false;
-      return;
-    }
-    if (!e.target.closest('.dex-modal')) {
-      close();
-    }
-  });
-
-  if (closeBtn) closeBtn.addEventListener('click', close);
-
-  requestAnimationFrame(() => {
-    dialog.classList.add('is-open');
   });
 }
 

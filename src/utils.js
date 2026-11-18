@@ -28,10 +28,12 @@ export function esc(str) {
  */
 export function sanitizeUrl(url) {
   if (!url || typeof url !== 'string') return '#';
+  const trimmed = url.trim();
+  if (!trimmed || /["><]/.test(trimmed)) return '#';
   try {
-    const parsed = new URL(url.trim());
+    const parsed = new URL(trimmed);
     const allowedProtocols = ['http:', 'https:', 'mailto:'];
-    if (allowedProtocols.includes(parsed.protocol)) {
+    if (allowedProtocols.includes(parsed.protocol) && !/["><]/.test(parsed.href)) {
       return parsed.href;
     }
   } catch (_) {
@@ -49,7 +51,7 @@ export function sortItemsByDate(items, direction = 'desc') {
   if (!Array.isArray(items)) return [];
   const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
-  return [...items].sort((a, b) => {
+  return items.toSorted((a, b) => {
     let valA = null;
     let valB = null;
 

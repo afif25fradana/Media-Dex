@@ -5,11 +5,42 @@
  */
 
 import { prefersReducedMotion } from './motion.js';
+import { encodeAssetPath } from './utils.js';
 
 export { prefersReducedMotion };
 export const STORAGE_KEY = 'media-dex-operator';
 export const DEFAULT_OPERATOR = 'wisadel';
 export const VALID_OPERATORS = Object.freeze(['wisadel', 'shu']);
+
+export const OPERATOR_DEFAULTS = Object.freeze({
+  wisadel: {
+    id: 'wisadel',
+    displayName: 'WISADEL',
+    code: 'ID: WSD-014',
+    tagline: 'A personal collection of games, manhwa, movies, series, and music.',
+    quote: 'Living a life surrounded by stories I love.',
+    video: 'Asset/Profile/wisadel-bg-fast.webm',
+    videoReady: true,
+    poster: 'Asset/Profile/wisadel-poster.webp',
+    alt: 'Wisadel animated character portrait'
+  },
+  shu: {
+    id: 'shu',
+    displayName: 'SHU',
+    code: 'ID: SHU-012',
+    tagline: 'A quiet archive of games, manhwa, films, and music.',
+    quote: 'Gathered slowly, kept for good company.',
+    video: 'Asset/Profile/shu-bg-short.webm',
+    videoReady: true,
+    poster: 'Asset/Profile/shu-poster.webp',
+    alt: 'Shu animated character portrait'
+  }
+});
+
+const resolveMediaPath = (url) => {
+  if (!url || typeof url !== 'string') return '';
+  return /^https?:\/\//i.test(url) ? url : encodeAssetPath(url);
+};
 
 let motionMqlCleanup = null;
 
@@ -164,6 +195,11 @@ export const teardownVideo = (video) => {
   if (!video || video._isTornDown) return;
   video._isTornDown = true;
 
+  if (video._visibilityObserver) {
+    video._visibilityObserver.disconnect();
+    video._visibilityObserver = null;
+  }
+
   if (video._handleMediaError) {
     video.removeEventListener('error', video._handleMediaError);
   }
@@ -179,10 +215,7 @@ export const teardownVideo = (video) => {
   }
 
   video.removeAttribute('src');
-
-  while (video.firstChild) {
-    video.removeChild(video.firstChild);
-  }
+  video.replaceChildren();
 
   try {
     video.load();
@@ -197,56 +230,47 @@ export const teardownVideo = (video) => {
   }
 };
 
-/**
- * Mount hero media using a two-stage phased mount:
- * Stage 1: Eager static poster mount for instant paint without network contention.
- * Stage 2: Deferred WebM video creation and mount to protect LCP.
- *
- * @param {HTMLElement} container - Stage element to mount media into
- * @param {object} config - Media configuration
- * @param {string} config.poster - Image URL for poster (required for LCP)
- * @param {string} [config.video] - Video URL (alias for videoSrc)
- * @param {string} [config.videoSrc] - WebM video URL
- * @param {boolean} [config.videoReady=false] - Whether video asset is ready
- * @param {string} [config.videoType='video/webm'] - MIME type
- * @param {string} [config.alt='Operator hero illustration'] - Poster alt text
- * @returns {{ posterImg: HTMLImageElement | null, video: HTMLVideoElement | null }}
- */
 export const mountHeroMedia = (container, config = {}) => {
   if (!container) return { posterImg: null, video: null };
 
   cancelDeferredVideoMount();
 
-  // Teardown any existing video currently inside container
   const existingVideo = container.querySelector('video');
   if (existingVideo) {
     teardownVideo(existingVideo);
   }
 
-  container.innerHTML = '';
+  container.replaceChildren();
 
+  const encodedPoster = resolveMediaPath(config.poster);
   let posterImg = null;
-  if (config.poster) {
+  if (encodedPoster) {
     const picture = document.createElement('picture');
     picture.className = 'hero-poster-picture';
     posterImg = document.createElement('img');
+    posterImg.id = 'heroPoster';
     posterImg.className = 'hero-poster';
-    posterImg.src = config.poster;
+    posterImg.src = encodedPoster;
     posterImg.alt = config.alt || 'Operator hero illustration';
     posterImg.loading = 'eager';
     posterImg.decoding = 'async';
+    posterImg.setAttribute('fetchpriority', 'high');
+    posterImg.width = 1920;
+    posterImg.height = 1080;
     picture.appendChild(posterImg);
     container.appendChild(picture);
   }
 
-  const videoUrl = config.video || config.videoSrc;
-  if (!config.videoReady || !videoUrl || prefersReducedMotion()) {
+  const videoUrl = resolveMediaPath(config.video || config.videoSrc);
+  const saveDataEnabled = typeof navigator !== 'undefined' && navigator.connection?.saveData === true;
+  if (!config.videoReady || !videoUrl || prefersReducedMotion() || saveDataEnabled) {
     return { posterImg, video: null };
   }
 
   const mountVideo = () => {
     pendingVideoMount = null;
     if (prefersReducedMotion()) return null;
+    if (typeof navigator !== 'undefined' && navigator.connection?.saveData === true) return null;
     if (typeof container.isConnected === 'boolean' && !container.isConnected) return null;
 
     const currentVideo = container.querySelector('video');
@@ -256,6 +280,8 @@ export const mountHeroMedia = (container, config = {}) => {
 
     const video = document.createElement('video');
     video.className = 'hero-video';
+    video.width = 1920;
+    video.height = 1080;
     video.autoplay = true;
     video.loop = true;
     video.muted = true;
@@ -268,8 +294,8 @@ export const mountHeroMedia = (container, config = {}) => {
     video.setAttribute('disablepictureinpicture', '');
     video.setAttribute('disableremoteplayback', '');
     video.preload = 'auto';
-    if (config.poster) {
-      video.poster = config.poster;
+    if (encodedPoster) {
+      video.poster = encodedPoster;
     }
 
     const source = document.createElement('source');
@@ -297,6 +323,32 @@ export const mountHeroMedia = (container, config = {}) => {
         if (err && err.name === 'AbortError') return;
         teardownVideo(video);
       });
+    }
+
+    if (typeof IntersectionObserver === 'function') {
+      const visibilityObserver = new IntersectionObserver((entries) => {
+        if (video._isTornDown) return;
+        const entry = entries[0];
+        if (!entry) return;
+        if (entry.isIntersecting) {
+          if (video.paused && !prefersReducedMotion()) {
+            const p = video.play();
+            if (p !== undefined) {
+              p.catch((err) => {
+                if (err && err.name !== 'AbortError') teardownVideo(video);
+              });
+            }
+          }
+        } else if (!video.paused) {
+          try {
+            video.pause();
+          } catch {
+            // Ignore pause errors during detachment
+          }
+        }
+      }, { threshold: 0.05 });
+      visibilityObserver.observe(container);
+      video._visibilityObserver = visibilityObserver;
     }
 
     return video;

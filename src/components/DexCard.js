@@ -238,7 +238,7 @@ template.innerHTML = `
     <div class="card-flash" aria-hidden="true"></div>
     <div class="card-cover">
       <div class="skeleton" aria-hidden="true"></div>
-      <img class="card-img" loading="lazy" alt="" />
+      <img class="card-img" loading="lazy" decoding="async" alt="" />
       <div class="card-placeholder" style="display: none;">
         <div class="fallback-bg"></div>
         <span class="card-placeholder-letter"></span>

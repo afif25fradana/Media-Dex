@@ -17,6 +17,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="page-type" content="software">
   <meta name="site-kind" content="gaming">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
   <script>
     (function () {
@@ -54,6 +55,12 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml" sizes="any">
   <link rel="modulepreload" href="src/script.js">
   <link rel="modulepreload" href="src/operator.js">
+  <link rel="modulepreload" href="src/store.js">
+  <link rel="modulepreload" href="src/ui.js">
+  <link rel="modulepreload" href="src/events.js">
+  <link rel="modulepreload" href="src/animations.js">
+  <link rel="modulepreload" href="src/halftoneBg.js">
+  <link rel="modulepreload" href="src/utils.js">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@400;700&family=Fraunces:opsz,wght@9..144,400..700&family=JetBrains+Mono:wght@400;500;700&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -64,7 +71,7 @@
 <body>
   <a href="#app" class="skip-link">Skip to content</a>
 
-  <div id="loading-screen" class="loading-screen" role="status">
+  <div id="loading-screen" class="loading-screen">
     <div class="loading-inner">
       <span class="loading-text">LOADING</span>
       <span class="loading-dots">...</span>
@@ -91,16 +98,17 @@
         loader.classList.remove('dismissed');
         loader.removeAttribute('aria-hidden');
         loader.innerHTML =
-          '<div class="loading-error">' +
+          '<div class="loading-error" role="alert">' +
             '<h2 class="loading-error-title">Unable to load collection</h2>' +
             '<p class="loading-error-msg">The dex could not be loaded. Check your connection and try again.</p>' +
-            '<button class="error-retry" id="watchdog-retry-btn">TRY AGAIN</button>' +
+            '<button type="button" class="error-retry" id="watchdog-retry-btn">TRY AGAIN</button>' +
           '</div>';
         var retryBtn = document.getElementById('watchdog-retry-btn');
         if (retryBtn) {
           retryBtn.addEventListener('click', function () {
             window.location.reload();
           });
+          retryBtn.focus();
         }
       }, 12000);
     });
@@ -108,11 +116,10 @@
 
   <div class="bg-canvas-container" aria-hidden="true">
     <canvas id="bg-halftone-canvas" class="bg-halftone-canvas"></canvas>
-    <div class="bg-canvas-noise"></div>
   </div>
 
   <header class="site-header">
-    <nav id="site-navbar" class="site-navbar" aria-label="Main navigation">
+    <nav id="site-navbar" class="site-navbar" aria-label="Primary">
     </nav>
   </header>
 
@@ -137,7 +144,7 @@
       </div>
       <div class="collection-toolbar" id="collection-toolbar" role="toolbar" aria-label="Collection filters and sorting">
         <div class="category-tabs-group" id="categoryTabs" role="tablist" aria-label="Category filters"></div>
-        <button type="button" class="sort-toggle-btn" id="sortToggleBtn" aria-label="Sort by date added: currently newest first" aria-pressed="false">
+        <button type="button" class="sort-toggle-btn" id="sortToggleBtn" aria-label="DATE: NEWEST, sort by date added" aria-pressed="false">
           <span class="sort-label">DATE: NEWEST</span>
           <span class="sort-icon" aria-hidden="true">↓</span>
         </button>
@@ -149,10 +156,10 @@
     <section id="recent-overview" class="recent-overview-section" aria-label="Recent entries and statistics">
     </section>
 
-    <footer id="site-footer" class="site-footer">
-    </footer>
-
   </main>
+
+  <footer id="site-footer" class="site-footer">
+  </footer>
   <script type="module" src="src/script.js"></script>
 </body>
 </html>

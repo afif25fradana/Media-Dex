@@ -3,7 +3,7 @@ import './components/DexEmptyState.js';
 import { encodeAssetPath, esc, sanitizeUrl, sortItemsByDate } from './utils.js';
 import { reobserveCards } from './animations.js';
 import { prefersReducedMotion } from './motion.js';
-import { getInitialOperator, setOperator, toggleOperator, mountHeroMedia } from './operator.js';
+import { getInitialOperator, mountHeroMedia, OPERATOR_DEFAULTS } from './operator.js';
 
 import {
   SOCIAL_ICONS,
@@ -23,10 +23,12 @@ export const NAV_LINKS = [
 
 // Hyperscript-like helper for DOM generation (restricts raw markup strictly to static SVG nodes)
 export function h(tag, props, ...children) {
-  const el = document.createElement(tag);
+  const el = tag === 'svg'
+    ? document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    : document.createElement(tag);
   if (props) {
     for (const key in props) {
-      if (key === 'className' && props[key]) el.className = props[key];
+      if (key === 'className' && props[key]) el.setAttribute('class', props[key]);
       else if (key === 'svgMarkup' && typeof props[key] === 'string') el.innerHTML = props[key];
       else if (key === 'textContent') el.textContent = props[key];
       else if (key === 'style' && typeof props[key] === 'string') el.style.cssText = props[key];
@@ -121,17 +123,7 @@ export function renderHero(profile, socials) {
   const hero = document.getElementById('hero-section');
   if (!hero) return;
   const currentOp = getInitialOperator();
-  const opConfig = profile?.operators?.[currentOp] || {
-    id: currentOp,
-    displayName: currentOp === 'shu' ? 'SHU' : 'WISADEL',
-    code: currentOp === 'shu' ? 'ID: SHU-012' : 'ID: WSD-014',
-    tagline: profile?.tagline || 'A personal collection of games, manhwa, movies, series, and music.',
-    quote: profile?.quote || 'Living a life surrounded by stories I love.',
-    video: currentOp === 'shu' ? 'Asset/Profile/shu-bg-short.webm' : 'Asset/Profile/wisadel-bg-fast.webm',
-    videoReady: true,
-    poster: currentOp === 'shu' ? 'Asset/Profile/shu-poster.webp' : 'Asset/Profile/wisadel-poster.webp',
-    alt: `${currentOp === 'shu' ? 'Shu' : 'Wisadel'} animated character portrait`
-  };
+  const opConfig = profile?.operators?.[currentOp] || OPERATOR_DEFAULTS[currentOp] || OPERATOR_DEFAULTS.wisadel;
 
   const socialRailHTML = (socials || []).map(s => `
     <a href="${esc(sanitizeUrl(s.url))}" target="_blank" rel="noopener noreferrer" aria-label="${esc(s.label)}" title="${esc(s.label)}">
@@ -145,9 +137,9 @@ export function renderHero(profile, socials) {
       <h1 class="hero-headline">WELCOME TO<br>MY <span class="hero-headline-accent">PERSONAL</span> DEX</h1>
       <p class="hero-bio" id="heroBio">${esc(opConfig.tagline || profile?.tagline || '')}</p>
       <div class="hero-cta-row">
-        <button class="btn-primary" data-scroll-to="#collection-section" aria-label="EXPLORE DEX: Browse collection">
+        <button type="button" class="btn-primary" data-scroll-to="#collection-section" aria-label="EXPLORE DEX: Browse collection">
           EXPLORE DEX
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
         <button type="button"
                 class="btn-secondary"
@@ -167,26 +159,20 @@ export function renderHero(profile, socials) {
       <div class="hero-illustration" id="heroIllustration"></div>
       <a class="hero-scroll-down" href="#lastfm-section" aria-label="Scroll down to Last.fm section">
         <span class="hero-scroll-text">SCROLL DOWN</span>
-        <svg class="hero-scroll-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+        <svg class="hero-scroll-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
       </a>
     </div>
   `;
 
   const heroIllustration = document.getElementById('heroIllustration');
   if (heroIllustration) {
-    const { posterImg } = mountHeroMedia(heroIllustration, {
+    mountHeroMedia(heroIllustration, {
       poster: opConfig.poster || profile?.heroImage || 'Asset/Profile/wisadel-poster.webp',
       video: opConfig.video || opConfig.videoSrc,
       videoSrc: opConfig.video || opConfig.videoSrc,
       videoReady: Boolean(opConfig.videoReady),
       alt: opConfig.alt || `${opConfig.displayName} character portrait`
     });
-    if (posterImg) {
-      posterImg.id = 'heroPoster';
-      posterImg.setAttribute('fetchpriority', 'high');
-      posterImg.setAttribute('width', '600');
-      posterImg.setAttribute('height', '600');
-    }
   }
 }
 
@@ -298,7 +284,7 @@ export function renderCollection(categories) {
       const isAsc = sortDirection === 'asc';
       sortBtn.classList.toggle('is-asc', isAsc);
       sortBtn.setAttribute('aria-pressed', isAsc ? 'true' : 'false');
-      sortBtn.setAttribute('aria-label', `Sort by date added: currently ${isAsc ? 'oldest' : 'newest'} first`);
+      sortBtn.setAttribute('aria-label', `DATE: ${isAsc ? 'OLDEST' : 'NEWEST'}, sort by date added`);
 
       const labelEl = sortBtn.querySelector('.sort-label');
       if (labelEl) labelEl.textContent = isAsc ? 'DATE: OLDEST' : 'DATE: NEWEST';
@@ -434,7 +420,7 @@ export function renderRecentlyAdded(categories, profile) {
 
     let imageHTML;
     if (item.image) {
-      imageHTML = h('img', { src: encodeAssetPath(item.image), alt: '', loading: 'lazy', width: "120", height: "120" });
+      imageHTML = h('img', { src: encodeAssetPath(item.image), alt: '', loading: 'lazy', decoding: 'async', width: "120", height: "120" });
     } else {
       imageHTML = h('div', { className: 'recent-card-image-placeholder', 'aria-hidden': 'true' }, h('span', {}, (item.title || '?').charAt(0)));
     }
@@ -442,8 +428,7 @@ export function renderRecentlyAdded(categories, profile) {
     const card = h('button', {
       type: 'button',
       className: 'recent-card',
-      'data-category': item.categoryId || '',
-      'aria-label': `${item.title || 'Unknown'}${item.subtitle ? ', ' + item.subtitle : ''} (${tagLabel})`
+      'data-category': item.categoryId || ''
     },
       h('div', { className: 'recent-card-image' },
         imageHTML,
@@ -466,7 +451,7 @@ export function renderRecentlyAdded(categories, profile) {
       ),
       h('a', { href: '#collection-section', className: 'view-all-link', 'aria-label': 'VIEW ALL: View collection' },
         'VIEW ALL',
-        h('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', svgMarkup: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>' })
+        h('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'aria-hidden': 'true', svgMarkup: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>' })
       )
     ),
     recentCardsRow
@@ -486,8 +471,8 @@ function buildDexOverview(categories, profile) {
   const latestDate = sorted[0]?.dateAdded ? new Date(sorted[0].dateAdded) : null;
   const latestDateStr = latestDate && !Number.isNaN(latestDate.getTime())
     ? monthYearFormatter.format(latestDate).toUpperCase()
-    : 'AUG 2026';
-  const curatorLocation = (profile?.location || 'SOLO, ID').toUpperCase();
+    : '--';
+  const curatorLocation = (profile?.location || '--').toUpperCase();
 
   return h('div', { className: 'overview-column', id: 'dex-overview' },
     h('div', { className: 'overview-header' },
@@ -539,8 +524,8 @@ export function renderLastFmSection(profile, lastfmConfig) {
           <span id="lastfmStatusBadge" class="lastfm-badge">STANDBY</span>
         </div>
         <div class="lastfm-stage-container">
-          <div class="lastfm-stage" role="button" tabindex="0" aria-label="Open current track on Last.fm" title="Click to open track on Last.fm">
-            <svg class="vinyl-svg" viewBox="0 0 320 320" shape-rendering="geometricPrecision" role="img" aria-label="Hi-Fi Vinyl Turntable">
+          <div class="lastfm-stage">
+            <svg class="vinyl-svg" viewBox="0 0 320 320" shape-rendering="geometricPrecision" aria-hidden="true">
             <defs>
               <radialGradient id="lastfmVinylFace" cx="36%" cy="30%" r="72%">
                 <stop offset="0%" stop-color="#24242A"/>
@@ -645,6 +630,7 @@ export function renderLastFmSection(profile, lastfmConfig) {
             <circle id="lastfmPowerLed" cx="290" cy="292" r="3.5" fill="var(--turntable-led)" stroke="#000000" stroke-width="1"/>
             <text x="24" y="296" font-size="11" font-family="'JetBrains Mono', Consolas, monospace" font-weight="700" fill="var(--turntable-plinth-text, var(--turntable-accent-text))" letter-spacing="1">33 1/3 RPM // STEREO AUDIO</text>
             </svg>
+            <button type="button" class="lastfm-stage-trigger" aria-label="Open current track on Last.fm" title="Click to open track on Last.fm"></button>
           </div>
         </div>
         <div class="lastfm-track-info-block">
@@ -660,7 +646,7 @@ export function renderLastFmSection(profile, lastfmConfig) {
             </div>
             <div class="lastfm-actions">
               <a id="lastfmTrackLink" href="#" target="_blank" rel="noopener noreferrer" class="lastfm-btn lastfm-btn-secondary">TRACK ↗</a>
-              <a id="lastfmProfileLink" href="https://www.last.fm/user/${esc(username)}" target="_blank" rel="noopener noreferrer" class="btn-primary lastfm-btn">PROFILE ↗</a>
+              <a id="lastfmProfileLink" href="https://www.last.fm/user/${esc(encodeURIComponent(username))}" target="_blank" rel="noopener noreferrer" class="btn-primary lastfm-btn">PROFILE ↗</a>
             </div>
           </div>
         </div>
@@ -704,7 +690,7 @@ export function renderLastFmSection(profile, lastfmConfig) {
           </div>
         </div>
         <div class="lastfm-dossier-footer">
-          <a href="https://www.last.fm/user/${esc(username)}/library" target="_blank" rel="noopener noreferrer" class="lastfm-dossier-link">OPEN FULL ARCHIVE ↗</a>
+          <a href="https://www.last.fm/user/${esc(encodeURIComponent(username))}/library" target="_blank" rel="noopener noreferrer" class="lastfm-dossier-link">OPEN FULL ARCHIVE ↗</a>
         </div>
       </div>
     </div>
@@ -712,14 +698,15 @@ export function renderLastFmSection(profile, lastfmConfig) {
 }
 
 
-export function renderFooter(profile, socials) {
+export function renderFooter(profile) {
   const footer = document.getElementById('site-footer');
   if (!footer) return;
   const year = new Date().getFullYear();
   const ownerName = esc((profile?.name || 'GUEST').toUpperCase());
+  const locationSuffix = profile?.location ? ` // ${esc(profile.location.toUpperCase())}` : '';
   footer.innerHTML = `
     <div class="footer-inner">
-      <span class="footer-left">© ${year} ${ownerName} // SOLO, ID</span>
+      <span class="footer-left">© ${year} ${ownerName}${locationSuffix}</span>
       <span class="footer-center">${FOOTER_WINGS_SVG}</span>
       <div class="footer-right-group">
         <span class="footer-archive-tag">PERSONAL MEDIA ARCHIVE</span>

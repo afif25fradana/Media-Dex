@@ -3,7 +3,6 @@ import { prefersReducedMotion } from './motion.js';
 let reobserveReadyTimer = null;
 
 const TIMING = {
-  PAGE_ENTRANCE_STAGGER: 120,
   SCROLL_READY_DELAY: 1000
 };
 
@@ -47,13 +46,6 @@ export function triggerPageEntrance() {
 
   const hero = document.getElementById('hero-section');
   if (hero) hero.classList.add('hero-entrance');
-
-  const sections = document.querySelectorAll('.panel-enter');
-  sections.forEach((el, i) => {
-    if (isInViewport(el)) {
-      setTimeout(() => el.classList.add('revealed'), i * TIMING.PAGE_ENTRANCE_STAGGER);
-    }
-  });
 }
 
 function isInViewport(el) {

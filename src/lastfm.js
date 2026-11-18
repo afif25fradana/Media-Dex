@@ -29,7 +29,7 @@ export async function initLastFm(lastfmConfig = {}) {
     time: document.getElementById('lastfmTrackTime'),
     trackLink: document.getElementById('lastfmTrackLink'),
     led: document.getElementById('lastfmPowerLed'),
-    stage: document.querySelector('.lastfm-stage'),
+    stage: document.querySelector('.lastfm-stage-trigger'),
     totalScrobblesChip: document.getElementById('lastfmMonthlyScrobbles'),
     totalScrobblesVal: document.getElementById('lastfmTotalScrobblesVal'),
     monthlyArtistsVal: document.getElementById('lastfmMonthlyArtistsVal'),
@@ -94,6 +94,7 @@ export async function initLastFm(lastfmConfig = {}) {
       elements.vinylArt.setAttribute('href', '');
     }
     if (elements.trackLink) {
+      elements.trackLink.setAttribute('role', 'link');
       elements.trackLink.setAttribute('aria-disabled', 'true');
       elements.trackLink.removeAttribute('href');
       elements.trackLink.setAttribute('tabindex', '-1');
@@ -143,7 +144,7 @@ export async function initLastFm(lastfmConfig = {}) {
     inFlightTrack = true;
     try {
       const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(username)}&api_key=${encodeURIComponent(apiKey)}&format=json&limit=1`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(6000) });
+      const res = await fetch(url, { signal: AbortSignal.timeout(6000), priority: 'low' });
       if (!res.ok) {
         handleFetchError();
         return;
@@ -173,30 +174,31 @@ export async function initLastFm(lastfmConfig = {}) {
       }
 
       const isStarPlaceholder = coverUrl.includes('2a96cbd8b46e442fc41c2b86b821562f');
-      if (!coverUrl || isStarPlaceholder) {
+      if (isStarPlaceholder) coverUrl = '';
+      if (!coverUrl) {
         try {
           const itunesRes = await fetch(
             `https://itunes.apple.com/search?term=${encodeURIComponent(`${artist} ${title}`)}&entity=song&limit=1`,
-            { signal: AbortSignal.timeout(3500) }
+            { signal: AbortSignal.timeout(3500), priority: 'low' }
           );
           if (itunesRes.ok) {
             const itunesData = await itunesRes.json();
             const match = itunesData.results?.[0];
-            const itArtist = (match?.artistName || '').toLowerCase();
-            const qArtist = artist.toLowerCase();
-            const isMatch = itArtist.includes(qArtist) || qArtist.includes(itArtist);
+            const itArtist = (match?.artistName || '').trim().toLowerCase();
+            const qArtist = artist.trim().toLowerCase();
+            const isMatch = Boolean(itArtist && qArtist) && (itArtist.includes(qArtist) || qArtist.includes(itArtist));
             if (isMatch && match?.artworkUrl100) {
               coverUrl = match.artworkUrl100.replace('100x100bb', '600x600bb');
             }
           }
-        } catch {}
+        } catch (err) {
+          console.debug('iTunes cover lookup failed:', err);
+        }
       }
 
-      if (elements.vinylArt && coverUrl) {
-        const safeCover = sanitizeUrl(coverUrl);
-        if (safeCover && safeCover !== '#') {
-          elements.vinylArt.setAttribute('href', safeCover);
-        }
+      if (elements.vinylArt) {
+        const safeCover = coverUrl ? sanitizeUrl(coverUrl) : '';
+        elements.vinylArt.setAttribute('href', safeCover && safeCover !== '#' ? safeCover : '');
       }
 
       if (elements.title) {
@@ -220,6 +222,7 @@ export async function initLastFm(lastfmConfig = {}) {
       if (elements.trackLink) {
         elements.trackLink.href = trackUrl;
         elements.trackLink.target = '_blank';
+        elements.trackLink.removeAttribute('role');
         elements.trackLink.removeAttribute('aria-disabled');
         elements.trackLink.removeAttribute('tabindex');
       }
@@ -251,7 +254,8 @@ export async function initLastFm(lastfmConfig = {}) {
       updateProfileLink();
       hasValidTrack = true;
       consecutiveErrors = 0;
-    } catch {
+    } catch (err) {
+      console.debug('Last.fm track fetch failed:', err);
       handleFetchError();
     } finally {
       inFlightTrack = false;
@@ -275,7 +279,7 @@ export async function initLastFm(lastfmConfig = {}) {
         elements.topArtistsList.innerHTML = artists.slice(0, 5).map((art, idx) => `
           <div class="lastfm-rank-item">
             <span class="lastfm-rank-num">#0${idx + 1}</span>
-            <a href="${sanitizeUrl(art.url)}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name">${esc(art.name)}</a>
+            <a href="${esc(sanitizeUrl(art.url))}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name">${esc(art.name)}</a>
             <span class="lastfm-rank-count">${Number(art.playcount || 0).toLocaleString('en-US')} PLAYS</span>
           </div>
         `).join('');
@@ -293,7 +297,7 @@ export async function initLastFm(lastfmConfig = {}) {
         elements.topTracksList.innerHTML = tracks.slice(0, 5).map((trk, idx) => `
           <div class="lastfm-rank-item">
             <span class="lastfm-rank-num">#0${idx + 1}</span>
-            <a href="${sanitizeUrl(trk.url)}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name" title="${esc(trk.name)}">${esc(trk.name)}</a>
+            <a href="${esc(sanitizeUrl(trk.url))}" target="_blank" rel="noopener noreferrer" class="lastfm-rank-name" title="${esc(trk.name)}">${esc(trk.name)}</a>
             <span class="lastfm-rank-count">${Number(trk.playcount || 0).toLocaleString('en-US')} PLAYS</span>
           </div>
         `).join('');
@@ -314,7 +318,9 @@ export async function initLastFm(lastfmConfig = {}) {
           return;
         }
       }
-    } catch {}
+    } catch (err) {
+      console.debug('sessionStorage telemetry read skipped:', err);
+    }
 
     try {
       const base = 'https://ws.audioscrobbler.com/2.0/?format=json&period=1month&limit=5';
@@ -324,9 +330,9 @@ export async function initLastFm(lastfmConfig = {}) {
       const tracksUrl = `${base}&method=user.gettoptracks&user=${encodeURIComponent(username)}&api_key=${encodeURIComponent(apiKey)}`;
 
       const [artistsRes, tracksRes, recent30Res] = await Promise.allSettled([
-        fetch(artistsUrl, { signal: AbortSignal.timeout(5000) }),
-        fetch(tracksUrl, { signal: AbortSignal.timeout(5000) }),
-        fetch(recent30Url, { signal: AbortSignal.timeout(5000) })
+        fetch(artistsUrl, { signal: AbortSignal.timeout(5000), priority: 'low' }),
+        fetch(tracksUrl, { signal: AbortSignal.timeout(5000), priority: 'low' }),
+        fetch(recent30Url, { signal: AbortSignal.timeout(5000), priority: 'low' })
       ]);
 
       const telemetryData = {
@@ -365,9 +371,8 @@ export async function initLastFm(lastfmConfig = {}) {
         }
       }
 
-      renderTelemetry(telemetryData);
-
       if (hasAnyTelemetry) {
+        renderTelemetry(telemetryData);
         try {
           sessionStorage.setItem(cacheKey, JSON.stringify({
             timestamp: Date.now(),
@@ -376,6 +381,8 @@ export async function initLastFm(lastfmConfig = {}) {
         } catch (storageErr) {
           console.debug('sessionStorage telemetry write skipped:', storageErr);
         }
+      } else {
+        setStandby();
       }
     } catch (err) {
       console.warn('Last.fm telemetry unavailable:', err);
@@ -391,12 +398,6 @@ export async function initLastFm(lastfmConfig = {}) {
       const fallbackUrl = `https://www.last.fm/user/${encodeURIComponent(username)}`;
       const url = (rawHref && rawHref !== '#') ? elements.trackLink.href : fallbackUrl;
       window.open(url, '_blank', 'noopener,noreferrer');
-    };
-    elements.stage.onkeydown = (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        elements.stage.click();
-      }
     };
   }
 

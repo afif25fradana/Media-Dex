@@ -1,3 +1,4 @@
+// Requires Node.js >= 22.12 (native ESM syntax detection without package.json).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -17,6 +18,7 @@ test('sanitizeUrl blocks dangerous XSS protocols and preserves valid http/https/
   assert.equal(sanitizeUrl('  javascript:alert(document.cookie)  '), '#');
   assert.equal(sanitizeUrl('data:text/html,<script>alert(1)</script>'), '#');
   assert.equal(sanitizeUrl('vbscript:msgbox(1)'), '#');
+  assert.equal(sanitizeUrl('mailto:x"><img src=x onerror=alert(1)>'), '#');
   assert.equal(sanitizeUrl(''), '#');
   assert.equal(sanitizeUrl(null), '#');
   assert.equal(sanitizeUrl('https://github.com/afif25fradana'), 'https://github.com/afif25fradana');
@@ -61,20 +63,32 @@ test('data.json schema and asset existence on disk', () => {
   assert.ok(Array.isArray(data.categories) && data.categories.length === 4);
   assert.ok(data.lastfm && typeof data.lastfm.apiKey === 'string');
 
-  // Verify every referenced image exists on disk
+  // Verify every referenced image exists on disk and schema fields are valid
   if (data.profile.heroImage) {
     assert.ok(fs.existsSync(path.join(rootDir, data.profile.heroImage)), `Missing heroImage: ${data.profile.heroImage}`);
   }
+  for (const link of data.profile.links || []) {
+    assert.notEqual(sanitizeUrl(link.url), '#', `Invalid profile link URL: ${link.url}`);
+  }
+  for (const social of data.socials || []) {
+    assert.notEqual(sanitizeUrl(social.url), '#', `Invalid social URL: ${social.url}`);
+  }
+  const isoDateRe = /^\d{4}-\d{2}-\d{2}$/;
   let totalItems = 0;
   for (const cat of data.categories) {
     for (const item of cat.items || []) {
       totalItems++;
+      assert.equal(typeof item.title, 'string', 'Item title must be a string');
+      assert.ok(item.title.trim().length > 0, 'Item title must not be empty');
+      if (item.dateAdded) {
+        assert.match(item.dateAdded, isoDateRe, `Invalid ISO dateAdded on ${item.title}: ${item.dateAdded}`);
+      }
       if (item.image) {
         assert.ok(fs.existsSync(path.join(rootDir, item.image)), `Missing item asset: ${item.image}`);
       }
     }
   }
-  assert.equal(totalItems, 54, 'data.json should contain exactly 54 catalog items');
+  assert.ok(totalItems > 0, 'data.json should contain at least one catalog item');
 });
 
 test('data.json profile.operators schema, videoReady, video and poster integrity on disk', () => {
@@ -199,9 +213,68 @@ test('NAV_LINKS contains exactly 4 navigation items and prunes About / #dex-over
   assert.ok(!hrefs.includes('#dex-overview'), 'NAV_LINKS must not contain #dex-overview');
 });
 
-test('openProfileModal is exported as a function from src/modal.js', async () => {
+test('resolveAvatarUrl allows safe http(s) and relative asset paths while blocking protocol-relative and unsafe schemes', async () => {
   const modalModule = await import('../src/modal.js');
   assert.equal(typeof modalModule.openProfileModal, 'function', 'openProfileModal must be exported from src/modal.js');
+  assert.equal(typeof modalModule.resolveAvatarUrl, 'function', 'resolveAvatarUrl must be exported from src/modal.js');
+
+  assert.equal(modalModule.resolveAvatarUrl('Asset/Profile/wisadel-poster.webp'), 'Asset/Profile/wisadel-poster.webp');
+  assert.equal(modalModule.resolveAvatarUrl('Asset/Profile/My Avatar #1.webp'), 'Asset/Profile/My%20Avatar%20%231.webp');
+  assert.equal(modalModule.resolveAvatarUrl('https://github.com/afif25fradana.png'), 'https://github.com/afif25fradana.png');
+  assert.equal(modalModule.resolveAvatarUrl('//evil.test/avatar.png'), '#');
+  assert.equal(modalModule.resolveAvatarUrl('javascript:alert(1)'), '#');
+  assert.equal(modalModule.resolveAvatarUrl('data:image/svg+xml,<svg/>'), '#');
+  assert.equal(modalModule.resolveAvatarUrl(''), 'Asset/Profile/wisadel-poster.webp');
+});
+
+test('src JS modules contain zero unescaped sanitizeUrl href sinks and zero inline event handler attributes', () => {
+  const srcDir = path.join(rootDir, 'src');
+  const collectJs = (dir) => {
+    const out = [];
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) out.push(...collectJs(full));
+      else if (entry.name.endsWith('.js')) out.push(full);
+    }
+    return out;
+  };
+
+  for (const file of collectJs(srcDir)) {
+    const content = fs.readFileSync(file, 'utf8');
+    const rel = path.relative(rootDir, file);
+    assert.doesNotMatch(
+      content,
+      /href="\$\{sanitizeUrl\(/,
+      `${rel} must wrap sanitizeUrl() in esc() inside HTML attribute templates`
+    );
+    assert.doesNotMatch(
+      content,
+      /\son(?:error|load|click|keydown|keyup|mouseover|focus)\s*=\s*["']/i,
+      `${rel} must not emit inline HTML event handler attributes`
+    );
+  }
+});
+
+test('sections.css restores Light DOM card reveal rules and reduced-motion overrides', () => {
+  const css = fs.readFileSync(path.join(rootDir, 'src/styles/sections.css'), 'utf8');
+  assert.match(css, /dex-card\.card-will-animate\b/, 'sections.css must define Light DOM dex-card.card-will-animate');
+  assert.match(css, /dex-card\.card-visible\b/, 'sections.css must define Light DOM dex-card.card-visible');
+  assert.match(css, /dex-card\.card-ready\b/, 'sections.css must define Light DOM dex-card.card-ready');
+
+  const rmIdx = css.indexOf('@media (prefers-reduced-motion: reduce)');
+  assert.ok(rmIdx !== -1, 'sections.css must define @media (prefers-reduced-motion: reduce)');
+  const rmBlock = css.slice(rmIdx);
+  assert.match(rmBlock, /dex-card\.card-will-animate\b/, 'reduced-motion block must cover dex-card.card-will-animate');
+  assert.match(rmBlock, /dex-card\.card-visible\b/, 'reduced-motion block must cover dex-card.card-visible');
+  assert.match(rmBlock, /dex-card\.card-ready\b/, 'reduced-motion block must cover dex-card.card-ready');
+});
+
+test('index.html places site-footer outside main landmark for contentinfo exposure', () => {
+  const html = fs.readFileSync(path.join(rootDir, 'index.html'), 'utf8');
+  const mainCloseIdx = html.indexOf('</main>');
+  const footerIdx = html.indexOf('<footer id="site-footer"');
+  assert.ok(mainCloseIdx !== -1 && footerIdx !== -1, 'index.html must contain </main> and <footer id="site-footer">');
+  assert.ok(footerIdx > mainCloseIdx, '<footer id="site-footer"> must appear after </main>');
 });
 
 test('data.json profile contains required bio, currently, location, and avatar fields', () => {

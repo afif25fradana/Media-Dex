@@ -119,11 +119,14 @@ export function initHalftoneBackground() {
   const bucketBuffers = Array.from({ length: BUCKET_COUNT }, () => new Float32Array(MAX_DOTS_PER_BUCKET * 3));
   const bucketCounts = new Int32Array(BUCKET_COUNT);
 
+  const FRAME_INTERVAL_MS = 33;
   let width = 0;
   let height = 0;
   let isRunning = false;
   let simTime = 0;
   let lastTimestamp = performance.now();
+  let lastDrawTime = 0;
+  let cachedScrollY = window.scrollY || 0;
   let rafId = null;
   let dpr = 1;
 
@@ -195,6 +198,11 @@ export function initHalftoneBackground() {
   };
   window.addEventListener('mousedown', handleMouseDown, { passive: true });
 
+  const handleScroll = () => {
+    cachedScrollY = window.scrollY || 0;
+  };
+  window.addEventListener('scroll', handleScroll, { passive: true });
+
   const BASE_NOISE_SCALE = 0.0028;
 
   function evaluateFluid(px, py, t) {
@@ -220,7 +228,7 @@ export function initHalftoneBackground() {
     const hasRipples = ripples.length > 0;
     const mouseActive = mouse.active && mouse.x > -1000;
 
-    const scrollOffsetY = (window.scrollY || 0) * 0.35;
+    const scrollOffsetY = cachedScrollY * 0.35;
 
     for (let y = 0; y < height + spacing; y += spacing) {
       for (let x = 0; x < width + spacing; x += spacing) {
@@ -311,6 +319,12 @@ export function initHalftoneBackground() {
   function loop(currentTime) {
     if (!isRunning) return;
 
+    if (lastDrawTime !== 0 && currentTime - lastDrawTime < FRAME_INTERVAL_MS) {
+      rafId = requestAnimationFrame(loop);
+      return;
+    }
+    lastDrawTime = currentTime;
+
     const dt = Math.min((currentTime - lastTimestamp) / 1000, 0.1);
     lastTimestamp = currentTime;
 
@@ -383,18 +397,6 @@ export function initHalftoneBackground() {
       start();
     }
   };
-
-  const motionQuery = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-    ? window.matchMedia('(prefers-reduced-motion: reduce)')
-    : null;
-
-  if (motionQuery) {
-    if (typeof motionQuery.addEventListener === 'function') {
-      motionQuery.addEventListener('change', handleMotionChange);
-    } else if (typeof motionQuery.addListener === 'function') {
-      motionQuery.addListener(handleMotionChange);
-    }
-  }
   window.addEventListener('motionpreferencechange', handleMotionChange);
 
   // Suspend when tab is inactive to preserve CPU / battery; wakeup refreshes dimensions & ground
@@ -424,15 +426,9 @@ export function initHalftoneBackground() {
     }
     window.removeEventListener('mousemove', handleMouseMove);
     window.removeEventListener('mousedown', handleMouseDown);
+    window.removeEventListener('scroll', handleScroll);
     window.removeEventListener('operatorchange', handleOperatorChange);
     window.removeEventListener('resize', handleResize);
-    if (motionQuery) {
-      if (typeof motionQuery.removeEventListener === 'function') {
-        motionQuery.removeEventListener('change', handleMotionChange);
-      } else if (typeof motionQuery.removeListener === 'function') {
-        motionQuery.removeListener(handleMotionChange);
-      }
-    }
     window.removeEventListener('motionpreferencechange', handleMotionChange);
     document.removeEventListener('visibilitychange', handleVisibilityChange);
   };

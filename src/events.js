@@ -1,32 +1,7 @@
 import { openDetailModal, openProfileModal } from './modal.js';
 import { prefersReducedMotion } from './motion.js';
 import { reobserveCards } from './animations.js';
-import { toggleOperator, mountHeroMedia, teardownVideo, getInitialOperator } from './operator.js';
-
-const OPERATOR_DEFAULTS = {
-  wisadel: {
-    id: 'wisadel',
-    displayName: 'WISADEL',
-    code: 'ID: WSD-014',
-    tagline: 'A personal collection of games, manhwa, movies, series, and music.',
-    quote: 'Living a life surrounded by stories I love.',
-    video: 'Asset/Profile/wisadel-bg-fast.webm',
-    videoReady: true,
-    poster: 'Asset/Profile/wisadel-poster.webp',
-    alt: 'Wisadel animated character portrait'
-  },
-  shu: {
-    id: 'shu',
-    displayName: 'SHU',
-    code: 'ID: SHU-012',
-    tagline: 'A quiet archive of games, manhwa, films, and music.',
-    quote: 'Gathered slowly, kept for good company.',
-    video: 'Asset/Profile/shu-bg-short.webm',
-    videoReady: true,
-    poster: 'Asset/Profile/shu-poster.webp',
-    alt: 'Shu animated character portrait'
-  }
-};
+import { toggleOperator, mountHeroMedia, teardownVideo, getInitialOperator, OPERATOR_DEFAULTS } from './operator.js';
 
 export function initEvents(actions, profile = null, socials = null) {
   const profileConfig = profile;
@@ -49,9 +24,6 @@ export function initEvents(actions, profile = null, socials = null) {
 
     const openMenuBtn = e.target.closest('#navbar-menu-btn, #navbar-menu-desktop-btn');
     if (openMenuBtn && actions.openMenu) {
-      document.querySelectorAll('#navbar-menu-btn, #navbar-menu-desktop-btn').forEach(btn => {
-        btn.setAttribute('aria-expanded', 'true');
-      });
       actions.openMenu();
       return;
     }
@@ -59,9 +31,6 @@ export function initEvents(actions, profile = null, socials = null) {
     const closeMenuBtn = e.target.closest('#mobile-menu-close');
     const menuLink = e.target.closest('.mobile-menu-link, .mobile-menu-cat');
     if ((closeMenuBtn || menuLink) && actions.closeMenu) {
-      document.querySelectorAll('#navbar-menu-btn, #navbar-menu-desktop-btn').forEach(btn => {
-        btn.setAttribute('aria-expanded', 'false');
-      });
       actions.closeMenu();
       // Don't early return if it's a link, so smooth scroll logic below still runs.
       if (closeMenuBtn) return;
@@ -189,9 +158,6 @@ export function initEvents(actions, profile = null, socials = null) {
 
     if (e.key === 'Escape') {
       if (menu && menu.classList.contains('menu-open') && actions.closeMenu) {
-        document.querySelectorAll('#navbar-menu-btn, #navbar-menu-desktop-btn').forEach(btn => {
-          btn.setAttribute('aria-expanded', 'false');
-        });
         actions.closeMenu();
       }
     }
@@ -248,19 +214,13 @@ export function initEvents(actions, profile = null, socials = null) {
     // 4. Mount hero media with clean crossfade
     const heroIllustration = document.getElementById('heroIllustration');
     if (heroIllustration) {
-      const { posterImg } = mountHeroMedia(heroIllustration, {
+      mountHeroMedia(heroIllustration, {
         poster: opConfig.poster,
         video: opConfig.video || opConfig.videoSrc,
         videoSrc: opConfig.video || opConfig.videoSrc,
         videoReady: Boolean(opConfig.videoReady),
         alt: opConfig.alt || `${opConfig.displayName} character portrait`
       });
-      if (posterImg) {
-        posterImg.id = 'heroPoster';
-        posterImg.setAttribute('fetchpriority', 'high');
-        posterImg.setAttribute('width', '600');
-        posterImg.setAttribute('height', '600');
-      }
     }
   });
 
